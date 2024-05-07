@@ -1,0 +1,50 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:2024.03.2
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pihole.rule=Host(`${HOST}`)
+      - traefik.http.routers.pihole.entrypoints=https
+      - traefik.http.routers.pihole.tls=true
+      - traefik.docker.network=proxy
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+    environment:
+      TZ: ${TZ}
+      VIRTUAL_HOST: ${HOST}
+      WEBTHEME: default-dark
+      WEBPASSWORD: ${WEBPASSWORD}
+    volumes:
+      - ${ETC_PIHOLE}:/etc/pihole
+      - ${ETC_DNSMASQ}:/etc/dnsmasq.d
+    networks:
+      - proxy
+      - backend
+    restart: unless-stopped
+  pihole-exporter:
+    container_name: pihole-exporter
+    image: ekofr/pihole-exporter:v0.4.0
+    environment:
+      PIHOLE_PROTOCOL: http
+      PIHOLE_HOSTNAME: pihole
+      PIHOLE_PASSWORD: ${WEBPASSWORD}
+      INTERVAL: 30s
+      PORT: 9617
+    ports:
+      - 9617:9617
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+    networks:
+      - backend
+      - monitoring
+    restart: always
+networks:
+  proxy:
+    external: true
+  backend:
+    external: true
+  monitoring:
+    external: true
