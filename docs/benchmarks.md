@@ -4,7 +4,7 @@
 
 Every benchmark is run three times. The written data are the average values.
 
-Benchmark: **ab -n 1000 -c 10 https://nextcloud.domain.com/**
+#### Benchmark: **ab -n 1000 -c 10 https://nextcloud.domain.com/**
 
 | Settings  | Min    | Max    | Mean   | Median | Std Dev | Time     |
 | --------- | ------ | ------ | ------ | ------ | ------- | -------- |
@@ -26,7 +26,7 @@ Benchmark: **ab -n 1000 -c 10 https://nextcloud.domain.com/**
 
 ![Benchmark Graph](../assets/nc-bench-1000.png)
 
-Benchmark: **ab -n 10000 -c 10 https://nextcloud.domain.com/**
+#### Benchmark: **ab -n 10000 -c 10 https://nextcloud.domain.com/**
 
 | Settings  | Min    | Max     | Mean   | Median | Std Dev  | Time      |
 | --------- | ------ | ------- | ------ | ------ | -------- | --------- |
