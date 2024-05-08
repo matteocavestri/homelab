@@ -1,0 +1,96 @@
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:29.0.0
+    container_name: nextcloud
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ}
+    volumes:
+      - ${NEXTCLOUD_CONFIG}:/config
+      - ${NEXTCLOUD_DATA}:/data
+    restart: unless-stopped
+    networks:
+      - proxy
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`${HOST}`)
+      - traefik.http.routers.nextcloud.entrypoints=https
+      - traefik.http.routers.nextcloud.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.nextcloud.tls=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.nextcloud.middlewares=nextcloud_redirectregex
+      - traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex=/.well-known/(card|cal)dav
+      - traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement=/remote.php/dav/
+    depends_on:
+      - mariadb
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:10.11.6
+    container_name: mariadb-nextcloud
+    environment:
+      PUID: 1000
+      PGID: 1000
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS}
+      TZ: ${TZ}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
+    volumes:
+      - ${DB_PATH}:/config
+    restart: unless-stopped
+    networks:
+      - backend
+  collabora:
+    image: collabora/code:24.04.1.4.1
+    container_name: collabora
+    restart: always
+    environment:
+      - domain=${COLLABORA_HOST}
+      - username=${COLL_USER}
+      - password=${COLL_PASS}
+      - dictionaries=en_US,it
+      - extra_params=--o:ssl.enable=false --o:ssl.termination=true
+    cap_add:
+      - MKNOD
+    tty: true
+    networks:
+      - proxy
+    ports:
+      - 9980:9980
+    expose:
+      - "9980"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.collabora.rule=Host(`${COLLABORA_HOST}`)
+      - traefik.http.routers.collabora.entrypoints=http
+      - traefik.http.middlewares.collabora-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.collabora.middlewares=collabora-https-redirect
+      - traefik.http.routers.collabora-secure.entrypoints=https
+      - traefik.http.routers.collabora-secure.rule=Host(`${COLLABORA_HOST}`)
+      - traefik.http.routers.collabora-secure.tls=true
+      - traefik.http.routers.collabora-secure.tls.certresolver=${RESOLVER}
+  redis:
+    image: docker.io/library/redis:7.2.4-alpine
+    container_name: nextcloud-redis
+    command: --save 60 1 --loglevel warning
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep PONG
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - ${REDIS_PATH}:/data
+    networks:
+      - backend
+    restart: unless-stopped
+networks:
+  proxy:
+    external: true
+  backend:
+    external: true
