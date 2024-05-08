@@ -1,0 +1,27 @@
+services:
+  dockge:
+    container_name: dockge
+    image: louislam/dockge:1.4.1
+    restart: unless-stopped
+    # ports:
+    # - 5001:5001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+      - /opt/stacks:/opt/stacks
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dockge-http.entrypoints=http
+      - traefik.http.routers.dockge-http.rule=Host(`${HOST}`)
+      - traefik.http.routers.dockge-https.entrypoints=https
+      - traefik.http.routers.dockge-https.rule=Host(`${HOST}`)
+      - traefik.http.routers.dockge-https.tls=true
+      - traefik.http.routers.dockge-https.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.dockge-https.middlewares=authentik@file
+    environment:
+      - DOCKGE_STACKS_DIR=/opt/stacks
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
