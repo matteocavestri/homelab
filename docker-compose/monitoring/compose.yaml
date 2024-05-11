@@ -107,6 +107,22 @@ services:
       - ${GRAPHITE_LOGS}:/var/log
     networks:
       - monitoring
+  influxdb:
+    image: influxdb:2.7.6-alpine
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    volumes:
+      - ${INFLUX_DATA}:/var/lib/influxdb2
+      - ${INFLUX_CONFIG}:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USER}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASS}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUX_BUCKET}
+    networks:
+      - monitoring
 networks:
   monitoring:
     external: true
