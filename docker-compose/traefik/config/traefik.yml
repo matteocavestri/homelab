@@ -1,8 +1,3 @@
-# log:
-#   level: INFO
-#   filePath: "/mnt/nfs/config/traefik/traefik.log"
-#   format: common
-
 metrics:
   prometheus:
     addEntryPointsLabels: true
@@ -22,6 +17,11 @@ entryPoints:
           scheme: https
   https:
     address: ":443"
+    http:
+      middlewares:
+        - simplecache@file
+        - log4shell@file
+        - crowdsec-bouncer@file
   metrics:
     address: ":8082"
 serversTransport:
@@ -46,3 +46,16 @@ certificatesResolvers:
         resolvers:
           - "1.1.1.1:53"
           - "1.0.0.1:53"
+experimental:
+  plugins:
+    plugin-simplecache:
+      moduleName: "github.com/traefik/plugin-simplecache"
+      version: "v0.2.1"
+    plugin-log4shell:
+      moduleName: "github.com/traefik/plugin-log4shell"
+      version: "v0.1.2"
+log:
+  level: "INFO"
+  filePath: "/var/log/traefik/traefik.log"
+accessLog:
+  filePath: "/var/log/traefik/access.log"

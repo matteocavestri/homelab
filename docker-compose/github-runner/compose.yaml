@@ -1,0 +1,11 @@
+services:
+  github-runner:
+    stdin_open: true
+    tty: true
+    environment:
+      - GITHUB_PERSONAL_TOKEN=${GH_TOKEN}
+      - GITHUB_OWNER=${GH_OWNER}
+      - GITHUB_REPOSITORY=${GH_REPO}
+    image: github-runner
+    container_name: domenicotosi-jekyll
+networks: {}

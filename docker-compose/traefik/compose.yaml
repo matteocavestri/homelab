@@ -26,6 +26,7 @@ services:
       - ${TRAEFIK_YAML}:/traefik.yml:ro
       - ${TRAEFIK_ACME}:/acme.json
       - ${CONFIG_YAML}:/config.yml:ro
+      - ${TRAEFIK_LOGS}:/var/log/traefik
     labels:
       - traefik.enable=true
       - traefik.http.routers.traefik.entrypoints=http

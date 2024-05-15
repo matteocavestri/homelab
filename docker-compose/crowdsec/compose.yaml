@@ -1,0 +1,32 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.6.1-2-slim
+    container_name: crowdsec
+    environment:
+      GID: ${GID-1000}
+      COLLECTIONS: crowdsecurity/linux crowdsecurity/traefik
+    volumes:
+      - ${ACQUIS}:/etc/crowdsec/acquis.yaml
+      - ${DB}:/var/lib/crowdsec/data/
+      - ${CONFIG}:/etc/crowdsec/
+      - ${TRAEFIK_LOGS}:/var/log/traefik/:ro
+    networks:
+      - proxy
+      - monitoring
+    restart: unless-stopped
+  bouncer-traefik:
+    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: bouncer-traefik
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${API_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    networks:
+      - proxy
+    depends_on:
+      - crowdsec
+    restart: unless-stopped
+networks:
+  proxy:
+    external: true
+  monitoring:
+    external: true
