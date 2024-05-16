@@ -120,6 +120,30 @@ services:
       - CF_API_TOKEN=${CF_API_TOKEN}
       - DOMAINS=${DOMAINS} # Your domains (separated by commas)
       - PROXIED=true
+  # -----------------------------------------------------------------------------------------------------
+  speedtest-tracker:
+    container_name: speedtest-tracker
+    #ports:
+    #  - 8089:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DB_CONNECTION=sqlite
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.speedtest-tracker.rule=Host(`${HOST_SPEEDTEST}`)
+      - traefik.http.routers.speedtest-tracker.entrypoints=https
+      - traefik.http.routers.speedtest-tracker.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.speedtest-tracker.tls=true
+      - traefik.http.services.speedtest-tracker.loadbalancer.server.port=80
+    volumes:
+      - ${SPEEDTEST_CONFIG}:/config
+    image: lscr.io/linuxserver/speedtest-tracker:v0.19.0-ls21
+    restart: unless-stopped
+    networks:
+      - proxy
+    depends_on:
+      - traefik
 # --------------------------------------------------------------------------------------------------------
 secrets:
   cf_api_token:
