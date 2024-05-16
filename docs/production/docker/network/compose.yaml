@@ -1,0 +1,135 @@
+services:
+  # ---------------------------------------------------------------------------------------------------
+  traefik:
+    image: traefik:v3.0.0
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+      - monitoring
+    ports:
+      - 80:80
+      - 443:443/tcp
+      - 443:443/udp
+    environment:
+      CF_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
+    secrets:
+      - cf_api_token
+    env_file: .env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${TRAEFIK_YAML}:/traefik.yml:ro
+      - ${TRAEFIK_ACME}:/acme.json
+      - ${CONFIG_YAML}:/config.yml:ro
+      - ${TRAEFIK_LOGS}:/var/log/traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=http
+      - traefik.http.routers.traefik.rule=Host(`${HOST_TRAEFIK}`)
+      - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+      - traefik.http.routers.traefik.middlewares=traefik-https-redirect
+      - traefik.http.routers.traefik-secure.entrypoints=https
+      - traefik.http.routers.traefik-secure.rule=Host(`${HOST_TRAEFIK}`)
+      - traefik.http.routers.traefik-secure.middlewares=authentik@file
+      - traefik.http.routers.traefik-secure.tls=true
+      - traefik.http.routers.traefik-secure.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN}
+      - traefik.http.routers.traefik-secure.tls.domains[0].sans=${SANS}
+      - traefik.http.routers.traefik-secure.service=api@internal
+      - traefik.docker.network=proxy
+      # ---------------------------------------------------------------------------------------------------
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.6.1-2-slim
+    container_name: crowdsec
+    environment:
+      GID: ${GID-1000}
+      COLLECTIONS: crowdsecurity/linux crowdsecurity/traefik
+    volumes:
+      - ${ACQUIS}:/etc/crowdsec/acquis.yaml
+      - ${DB}:/var/lib/crowdsec/data/
+      - ${CONFIG}:/etc/crowdsec/
+      - ${TRAEFIK_LOGS}:/var/log/traefik/:ro
+    networks:
+      - proxy
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - traefik
+      # ---------------------------- Use Crowdsec Bouncer after Crowdsec deployment ---------------------
+  bouncer-traefik:
+    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: bouncer-traefik
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${API_KEY} # docker exec crowdsec cscli bouncers add bouncer-traefik
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    networks:
+      - proxy
+    depends_on:
+      - crowdsec
+      - traefik
+    restart: unless-stopped
+    # ---------------------------------------------------------------------------------------------------
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:2024.05.0
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pihole.rule=Host(`${HOST_PIHOLE}`)
+      - traefik.http.routers.pihole.entrypoints=https
+      - traefik.http.routers.pihole.tls=true
+      - traefik.docker.network=proxy
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+    environment:
+      TZ: ${TZ}
+      VIRTUAL_HOST: ${HOST_PIHOLE}
+      WEBTHEME: default-dark
+      WEBPASSWORD: ${WEBPASSWORD}
+    depends_on:
+      - traefik
+    volumes:
+      - ${ETC_PIHOLE}:/etc/pihole
+      - ${ETC_DNSMASQ}:/etc/dnsmasq.d
+    networks:
+      - proxy
+      - backend
+    restart: unless-stopped
+    # ---------------------------------------------------------------------------------------------------
+  cloudflare-ddns:
+    container_name: cloudflareddns
+    image: favonia/cloudflare-ddns:1.11.0
+    network_mode: host
+    restart: always
+    cap_add:
+      - SETUID
+      - SETGID
+    cap_drop:
+      - all
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - CF_API_TOKEN=${CF_API_TOKEN}
+      - DOMAINS=${DOMAINS} # Your domains (separated by commas)
+      - PROXIED=true
+# --------------------------------------------------------------------------------------------------------
+secrets:
+  cf_api_token:
+    file: ${CF_API}
+# --------------------------------------------------------------------------------------------------------
+networks:
+  backend:
+    external: true
+  proxy:
+    external: true
+  monitoring:
+    external: true
+# --------------------------------------------------------------------------------------------------------
