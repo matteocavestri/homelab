@@ -1,0 +1,177 @@
+services:
+  # ---------------------------------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana-oss:11.0.0
+    container_name: grafana
+    networks:
+      - monitoring
+      - proxy
+    restart: unless-stopped
+    environment:
+      GF_USERS_VIEWERS_CAN_EDIT: "true"
+      GF_SERVER_ROOT_URL: ${URL}
+      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
+      GF_AUTH_GENERIC_OAUTH_NAME: ${AUTH_NAME}
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
+      GF_AUTH_GENERIC_OAUTH_SCOPES: ${OAUTH_SCOPES}
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: ${AUTH_URL}
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: ${AUTH_URL_TOKEN}
+      GF_AUTH_GENERIC_OAUTH_API_URL: ${AUTH_URL_API}
+      GF_AUTH_SIGNOUT_REDIRECT_URL: ${AUTH_URL_REDIRECT}
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: ${OAUTH_ROLE}
+    volumes:
+      - ${GRAFANA_DATA}:/var/lib/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=monitoring-proxy
+      - traefik.http.routers.grafana.rule=Host(`${HOST}`)
+      - traefik.http.routers.grafana.entrypoints=https
+      - traefik.http.routers.grafana.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.grafana.tls=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+  # ---------------------------------------------------------------------------------------------------
+  uptimekuma:
+    image: louislam/uptime-kuma:1.23.13-alpine
+    container_name: uptimekuma
+    volumes:
+      - ${CONFIG_PATH}:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.uptimekuma-https.entrypoints=https
+      - traefik.http.routers.uptimekuma-https.rule=Host(`${HOST_UPTIMEKUMA}`)
+      - traefik.http.routers.uptimekuma-https.tls=true
+      - traefik.http.routers.uptimekuma-https.tls.certresolver=${RESOLVER}
+      - traefik.http.routers.uptimekuma-https.middlewares=authentik@file
+    networks:
+      - proxy
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  prometheus:
+    image: docker.io/prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring
+    command: --config.file=/etc/prometheus/prometheus.yaml
+    volumes:
+      - ${PROMETHEUS_CONFIG_FILE}:/etc/prometheus/prometheus.yaml:ro
+      - ${PROMETHEUS_DATA}:/prometheus
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    ports:
+      - 8080:8080
+    networks:
+      - monitoring
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    privileged: true
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.8.0
+    container_name: node_exporter
+    command: --path.rootfs=/host
+    pid: host
+    networks:
+      - monitoring
+    restart: unless-stopped
+    volumes:
+      - /:/host:ro,rslave
+  # ---------------------------------------------------------------------------------------------------
+  loki:
+    image: grafana/loki:k200-f00a0da
+    container_name: loki
+    volumes:
+      - ${LOKI_CONFIG_PATH}:/etc/loki
+    ports:
+      - 3100:3100
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - monitoring
+  # ---------------------------------------------------------------------------------------------------
+  promtail:
+    image: grafana/promtail:k200-f00a0da
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ${PROMTAIL_CONFIG_PATH}:/etc/promtail
+    ports:
+      - 1514:1514
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail-config.yml
+    networks:
+      - monitoring
+  # ---------------------------------------------------------------------------------------------------
+  graphite:
+    image: graphiteapp/graphite-statsd:1.1.10-5
+    container_name: graphite
+    restart: always
+    ports:
+      - 8085:80
+      - 2003-2004:2003-2004
+      - 2023-2024:2023-2024
+      - 8125:8125/udp
+      - 8126:8126
+    volumes:
+      - ${GRAPHITE_DATA}:/opt/graphite/storage
+      - ${GRAPHITE_LOGS}:/var/log
+    networks:
+      - monitoring
+  # ---------------------------------------------------------------------------------------------------
+  influxdb:
+    image: influxdb:2.7.6-alpine
+    container_name: influxdb
+    ports:
+      - 8086:8086
+    volumes:
+      - /mnt/nfs/data/influxdb:/var/lib/influxdb2
+      - /mnt/nfs/config/influxdb:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USER}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASS}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUX_BUCKET}
+    networks:
+      - monitoring
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  pihole-exporter:
+    container_name: pihole-exporter
+    image: ekofr/pihole-exporter:v0.4.0
+    environment:
+      PIHOLE_PROTOCOL: http
+      PIHOLE_HOSTNAME: pihole
+      PIHOLE_PASSWORD: ${WEBPASSWORD}
+      INTERVAL: 30s
+      PORT: 9617
+    ports:
+      - 9617:9617
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+    networks:
+      - backend
+      - monitoring
+    restart: always
+# ---------------------------------------------------------------------------------------------------
+networks:
+  monitoring:
+    external: true
+  proxy:
+    external: true
+  backend:
+    external: true
+# ---------------------------------------------------------------------------------------------------

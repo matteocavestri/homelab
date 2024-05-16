@@ -1,0 +1,32 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  # external_labels:
+  #  monitor: 'codelab-monitor'
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'prometheus' # --> Prometheus exporter
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'node_exporter' # --> Node exporter
+    static_configs:
+      - targets: ['node_exporter:9100']
+  - job_name: 'cadvisor' # --> Cadvisor scraper
+    static_configs:
+      - targets: ['cadvisor:8080']
+  - job_name: 'traefik' # --> traefik monitoring
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['traefik:8082']
+  - job_name: 'pihole' # --> pihole exporter
+    static_configs:
+      - targets: ['pihole-exporter:9617']
+  - job_name: 'authentik' # --> authentik metrics
+    static_configs:
+      - targets: ['authentik-server:9300']
+  - job_name: "crowdsec" # --> crowdsec metrics
+    static_configs:
+      - targets: ['crowdsec:6060']
