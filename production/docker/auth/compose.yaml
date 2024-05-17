@@ -1,0 +1,127 @@
+services:
+  # ---------------------------------------------------------------------------------------------------
+  postgres:
+    image: docker.io/library/postgres:16.3-alpine
+    container_name: authentik-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TZ}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "${POSTGRES_USER}"
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  redis:
+    image: docker.io/library/redis:7.2.4-alpine
+    container_name: authentik-redis
+    command: --save 60 1 --loglevel warning
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep PONG
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - ${REDIS_DATA}:/data
+    networks:
+      - backend
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  server:
+    image: ghcr.io/goauthentik/server:2024.4.2
+    container_name: authentik-server
+    command: server
+    environment:
+      - AUTHENTIK_REDIS__HOST=authentik-redis
+      - AUTHENTIK_POSTGRESQL__HOST=authentik-db
+      - AUTHENTIK_POSTGRESQL__USER=${POSTGRES_USER}
+      - AUTHENTIK_POSTGRESQL__NAME=${POSTGRES_DB}
+      - AUTHENTIK_POSTGRESQL__PASSWORD=${POSTGRES_PASSWORD}
+      - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
+      - AUTHENTIK_ERROR_REPORTING__ENABLED=${AUTHENTIK_ERROR_REPORTING}
+      - AUTHENTIK_LISTEN__METRICS=0.0.0.0:9300
+      # (Optional)  Enable Email Sending
+      # - AUTHENTIK_EMAIL__HOST=${EMAIL_HOST:?error}
+      # - AUTHENTIK_EMAIL__PORT=${EMAIL_PORT:-25}
+      # - AUTHENTIK_EMAIL__USERNAME=${EMAIL_USERNAME:?error}
+      # - AUTHENTIK_EMAIL__PASSWORD=${EMAIL_PASSWORD:?error}
+      # - AUTHENTIK_EMAIL__USE_TLS=${EMAIL_USE_TLS:-false}
+      # - AUTHENTIK_EMAIL__USE_SSL=${EMAIL_USE_SSL:-false}
+      # - AUTHENTIK_EMAIL__TIMEOUT=${EMAIL_TIMEOUT:-10}
+      # - AUTHENTIK_EMAIL__FROM=${EMAIL_FROM:?error}
+      # ports:
+      #  - 9000:9000
+      #  - 9443:9443
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authentik-https.rule=Host(`${HOST}`)
+      - traefik.http.routers.authentik-https.entrypoints=https
+      - traefik.http.routers.authentik-https.tls=true
+      - traefik.http.services.authentik-server.loadbalancer.server.port=9000
+      - traefik.docker.network=proxy
+    volumes:
+      - ${AUTHENTIK_MEDIA}:/media
+      - ${AUTHENTIK_TEMPLATES}:/templates
+    networks:
+      - backend
+      - monitoring
+      - proxy
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+  # ---------------------------------------------------------------------------------------------------
+  worker:
+    image: ghcr.io/goauthentik/server:2024.4.2
+    container_name: authentik-worker
+    command: worker
+    environment:
+      - AUTHENTIK_REDIS__HOST=authentik-redis
+      - AUTHENTIK_POSTGRESQL__HOST=authentik-db
+      - AUTHENTIK_POSTGRESQL__USER=${POSTGRES_USER}
+      - AUTHENTIK_POSTGRESQL__NAME=${POSTGRES_DB}
+      - AUTHENTIK_POSTGRESQL__PASSWORD=${POSTGRES_PASSWORD}
+      - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
+      - AUTHENTIK_ERROR_REPORTING__ENABLED=${AUTHENTIK_ERROR_REPORTING}
+      # (Optional)  Enable Email Sending
+      # - AUTHENTIK_EMAIL__HOST=${EMAIL_HOST:?error}
+      # - AUTHENTIK_EMAIL__PORT=${EMAIL_PORT:-25}
+      # - AUTHENTIK_EMAIL__USERNAME=${EMAIL_USERNAME:?error}
+      # - AUTHENTIK_EMAIL__PASSWORD=${EMAIL_PASSWORD:?error}
+      # - AUTHENTIK_EMAIL__USE_TLS=${EMAIL_USE_TLS:-false}
+      # - AUTHENTIK_EMAIL__USE_SSL=${EMAIL_USE_SSL:-false}
+      # - AUTHENTIK_EMAIL__TIMEOUT=${EMAIL_TIMEOUT:-10}
+      # - AUTHENTIK_EMAIL__FROM=${EMAIL_FROM:?error}
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${AUTHENTIK_MEDIA}:/media
+      - ${AUTHENTIK_CERTS}:/certs
+      - ${AUTHENTIK_TEMPLATES}:/templates
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+# ---------------------------------------------------------------------------------------------------
+networks:
+  backend:
+    external: true
+  proxy:
+    external: true
+  monitoring:
+    external: true
