@@ -1,6 +1,6 @@
 services:
   jellyfin:
-    image: jellyfin/jellyfin:2024050906
+    image: jellyfin/jellyfin:2024052005
     container_name: jellyfin
     volumes:
       - ${CONFIG_PATH}:/config
