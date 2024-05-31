@@ -27,7 +27,7 @@ services:
     depends_on:
       - mariadb
   mariadb:
-    image: lscr.io/linuxserver/mariadb:10.11.6
+    image: lscr.io/linuxserver/mariadb:10.11.8
     container_name: mariadb-nextcloud
     environment:
       PUID: 1000
