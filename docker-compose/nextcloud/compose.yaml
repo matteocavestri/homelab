@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:29.0.0
+    image: lscr.io/linuxserver/nextcloud:29.0.1
     container_name: nextcloud
     environment:
       PUID: 1000
