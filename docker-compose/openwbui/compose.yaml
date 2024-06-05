@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     image: ollama/ollama:0.1.39
   open-webui:
-    image: ghcr.io/open-webui/open-webui:v0.1.125
+    image: ghcr.io/open-webui/open-webui:v0.2.5
     container_name: open-webui
     volumes:
       - ${OPENWEBUI_PATH}:/app/backend/data
