@@ -1,0 +1,29 @@
+services:
+  ollama:
+    volumes:
+      - ${OLLAMA_PATH}:/root/.ollama
+    container_name: ollama
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: ollama/ollama:0.1.42-rocm
+    environment:
+      - 'HSA_OVERRIDE_GFX_VERSION=${HSA_OVERRIDE}' # Setup for RDNA1,2,3 & GCN5
+      - 'ROC_ENABLE_PRE_VEGA={ROC_ENABLE_PRE_VEGA}' # Setup for GCN4
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.2.5
+    container_name: open-webui
+    volumes:
+      - ${OPENWEBUI_PATH}:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 3000:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
