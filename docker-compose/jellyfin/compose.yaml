@@ -1,6 +1,6 @@
 services:
   jellyfin:
-    image: jellyfin/jellyfin:2024052005
+    image: jellyfin/jellyfin:2024061005
     container_name: jellyfin
     runtime: nvidia
     environment:
