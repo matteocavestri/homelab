@@ -1,0 +1,130 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:2024061005
+    container_name: jellyfin
+    privileged: true
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - ${JELLYFIN_CONFIG_PATH}:/config
+      - ${MEDIA_PATH}:/media
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`${HOST_JELLYFIN}`)
+      - traefik.http.routers.jellyfin.entrypoints=https
+      - traefik.http.routers.jellyfin.tls.certresolver=${RESOLVER}
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:1.9.2
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=info
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyseer.rule=Host(`${HOST_JELLYSEERR}`)
+      - traefik.http.routers.jellyseer.entrypoints=https
+      - traefik.http.routers.jellyseer.tls.certresolver=${RESOLVER}
+      - traefik.http.services.jellyseer.loadbalancer.server.port=5055
+    volumes:
+      - ${JELLYSEERR_CONFIG_PATH}:/app/config
+    restart: unless-stopped
+    networks:
+      - proxy
+  gluetun:
+    image: qmcgaw/gluetun:v3.38.0
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - VPN_ENDPOINT_IP=${WIREGUARD_ENDPOINT_IP}
+      - VPN_ENDPOINT_PORT=51820
+      - WIREGUARD_PUBLIC_KEY=${WIREGUARD_PUBLIC_KEY}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESS}
+      - TZ=Europe/Rome
+      - DOT=on
+      - DOT_PROVIDERS=cloudflare
+    volumes:
+      - ${GLUETUN_CONFIG_PATH}:/gluetun
+    ports:
+      - 8082:8082/tcp # For the web UI of qBittorrent
+      - 6881:6881/tcp # For torrent downloads
+      - 6881:6881/udp # For torrent downloads
+      - 9696:9696/tcp # For the web UI of Prowlarr
+      - 7878:7878/tcp # For the web UI of Radarr
+      - 8989:8989/tcp # For the web UI of Sonarr
+    restart: unless-stopped
+    networks:
+      - gluetun
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:1.18.0
+    container_name: prowlarr
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ${PROWLARR_CONFIG_PATH}:/config
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+  radarr:
+    image: linuxserver/radarr:5.6.0
+    container_name: radarr
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ${RADARR_CONFIG_PATH}:/config
+      - ${DOWNLOADS_PATH}:/downloads
+      - ${MOVIES_PATH}:/movies
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ${SONARR_CONFIG_PATH}:/config
+      - ${DOWNLOADS_PATH}:/downloads
+      - ${TV_PATH}:/tv
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+  qbittorrent:
+    image: linuxserver/qbittorrent:4.6.5
+    container_name: qbittorrent
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+      - WEBUI_PORT=8082
+    volumes:
+      - ${QBITTORRENT_CONFIG_PATH}:/config
+      - ${DOWNLOADS_PATH}:/downloads
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+networks:
+  proxy:
+    external: true
+  gluetun:
+    external: true
