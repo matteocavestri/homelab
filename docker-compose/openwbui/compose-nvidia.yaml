@@ -1,7 +1,7 @@
 services:
   ollama:
     container_name: ollama
-    image: ollama/ollama:0.1.42
+    image: ollama/ollama:0.1.44
     volumes:
       - ${OLLAMA_PATH}:/root/.ollama
     pull_policy: always
