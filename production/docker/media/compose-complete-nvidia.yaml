@@ -1,4 +1,5 @@
 services:
+  # -------------------------------------------------------------------------------------------
   jellyfin:
     image: jellyfin/jellyfin:2024061005
     container_name: jellyfin
@@ -19,6 +20,7 @@ services:
       - traefik.http.routers.jellyfin.tls.certresolver=${RESOLVER}
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     restart: unless-stopped
+  # ------------------------------------------------------------------------------------------
   jellyseerr:
     image: fallenbagel/jellyseerr:1.9.2
     container_name: jellyseerr
@@ -35,6 +37,7 @@ services:
     restart: unless-stopped
     networks:
       - proxy
+  # ------------------------------------------------------------------------------------------
   gluetun:
     image: qmcgaw/gluetun:v3.38.0
     container_name: gluetun
@@ -51,8 +54,13 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESS}
       - TZ=Europe/Rome
+      - UPDATER_PERIOD=24h
       - DOT=on
       - DOT_PROVIDERS=cloudflare
+      - DOT_IPV6=on
+      - DNS_UPDATE_PERIOD=24h
+      - BLOCK_MALICIOUS=off
+      - UNBLOCK=news.usernetserver.com
     volumes:
       - ${GLUETUN_CONFIG_PATH}:/gluetun
     ports:
@@ -62,9 +70,11 @@ services:
       - 9696:9696/tcp # For the web UI of Prowlarr
       - 7878:7878/tcp # For the web UI of Radarr
       - 8989:8989/tcp # For the web UI of Sonarr
+      - 6789:6789/tcp # For the web UI of NZBget
     restart: unless-stopped
     networks:
       - gluetun
+  # -------------------------------------------------------------------------------------------
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:1.18.0
     container_name: prowlarr
@@ -78,6 +88,7 @@ services:
     restart: unless-stopped
     depends_on:
       - gluetun
+  # -------------------------------------------------------------------------------------------
   radarr:
     image: linuxserver/radarr:5.6.0
     container_name: radarr
@@ -93,6 +104,7 @@ services:
     restart: unless-stopped
     depends_on:
       - gluetun
+  # -------------------------------------------------------------------------------------------
   sonarr:
     image: linuxserver/sonarr
     container_name: sonarr
@@ -108,6 +120,7 @@ services:
     restart: unless-stopped
     depends_on:
       - gluetun
+  # -------------------------------------------------------------------------------------------
   qbittorrent:
     image: linuxserver/qbittorrent:4.6.5
     container_name: qbittorrent
@@ -121,10 +134,57 @@ services:
       - ${QBITTORRENT_CONFIG_PATH}:/config
       - ${DOWNLOADS_PATH}:/downloads
     restart: unless-stopped
-    depends_on:
-      - gluetun
+  # ------------------------------------------------------------------------------------------
+  nzbget:
+    image: linuxserver/nzbget:v24.1-ls143
+    container_name: nzbget
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ${NZBGET_CONFIG_PATH}:/config
+      - ${DOWNLOADS_PATH}:/downloads
+    restart: unless-stopped
+  # ------------------------------------------------------------------------------------------
+  tdarr:
+    container_name: tdarr
+    image: ghcr.io/haveagitgat/tdarr:latest
+    restart: unless-stopped
+    privileged: true
+    runtime: nvidia
+    ports:
+      - 8265:8265 # webUI port
+      - 8266:8266 # server port
+      - 8267:8267 # Internal node port
+    environment:
+      - TZ=Europe/Rome
+      - PUID=1000
+      - PGID=1000
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - nodeID=MyInternalNode
+      - nodeIP=0.0.0.0
+      - nodePort=8267
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ${TDARR_SERVER_PATH}:/app/server
+      - ${TDARR_CONFIG_PATH}:/app/configs
+      - ${TDARR_LOGS_PATH}:/app/logs
+      - ${MEDIA_PATH}:/media
+      - ${TDARR_TEMP_PATH}:/temp
+    networks:
+      - backend
+      # ------------------------------------------------------------------------------------------
 networks:
   proxy:
     external: true
   gluetun:
+    external: true
+  backend:
     external: true
