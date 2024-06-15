@@ -122,7 +122,7 @@ services:
       - gluetun
   # -------------------------------------------------------------------------------------------
   qbittorrent:
-    image: linuxserver/qbittorrent:4.6.5
+    image: linuxserver/qbittorrent:20.04.1
     container_name: qbittorrent
     network_mode: service:gluetun
     environment:
