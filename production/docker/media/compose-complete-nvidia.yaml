@@ -71,8 +71,23 @@ services:
       - 7878:7878/tcp # For the web UI of Radarr
       - 8989:8989/tcp # For the web UI of Sonarr
       - 6789:6789/tcp # For the web UI of NZBget
+      - 8191:8191/tcp # For the tcp port of flaresolver
+      - 8686:8686/tcp # For the web UI of Lidarr
     restart: unless-stopped
     networks:
+      - gluetun
+  # ------------------------------------------------------------------------------------------
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:v3.3.19
+    container_name: flaresolverr
+    network_mode: service:gluetun
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=Europe/Rome
+    restart: unless-stopped
+    depends_on:
       - gluetun
   # -------------------------------------------------------------------------------------------
   prowlarr:
@@ -106,7 +121,7 @@ services:
       - gluetun
   # -------------------------------------------------------------------------------------------
   sonarr:
-    image: linuxserver/sonarr
+    image: linuxserver/sonarr:4.0.5
     container_name: sonarr
     network_mode: service:gluetun
     environment:
@@ -117,6 +132,22 @@ services:
       - ${SONARR_CONFIG_PATH}:/config
       - ${DOWNLOADS_PATH}:/downloads
       - ${TV_PATH}:/tv
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+  # ---------------------------------------------------------------------------------------------
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:2.3.3
+    container_name: lidarr
+    network_mode: service:gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ${LIDARR_CONFIG_PATH}:/config
+      - ${MUSIC_PATH}:/music
+      - ${DOWNLOADS_PATH}:/downloads
     restart: unless-stopped
     depends_on:
       - gluetun
@@ -150,7 +181,7 @@ services:
   # ------------------------------------------------------------------------------------------
   tdarr:
     container_name: tdarr
-    image: ghcr.io/haveagitgat/tdarr:latest
+    image: ghcr.io/haveagitgat/tdarr:2.20.01
     restart: unless-stopped
     privileged: true
     runtime: nvidia
