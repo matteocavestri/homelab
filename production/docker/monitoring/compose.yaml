@@ -90,6 +90,22 @@ services:
     volumes:
       - /:/host:ro,rslave
   # ---------------------------------------------------------------------------------------------------
+  nvidia_exporter:
+    image: utkuozdemir/nvidia_gpu_exporter:1.2.0
+    container_name: nvidia_exporter
+    restart: unless-stopped
+    devices:
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia0:/dev/nvidia0
+    volumes:
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
+      - /usr/bin/nvidia-smi:/usr/bin/nvidia-smi
+    ports:
+      - 9835:9835
+    networks:
+      - monitoring
+  # ---------------------------------------------------------------------------------------------------
   loki:
     image: grafana/loki:k200-f00a0da
     container_name: loki
@@ -166,9 +182,109 @@ services:
       - backend
       - monitoring
     restart: always
-# ---------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------
+  sonarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:v2.0.1
+    container_name: sonarr-exporter
+    command:
+      - sonarr
+    environment:
+      PORT: 9707
+      URL: ${URL_SONARR}
+      APIKEY: ${APIKEY_SONARR}
+      ENABLE_ADDITIONAL_METRICS: true
+    networks:
+      - monitoring
+      - gluetun
+    ports:
+      - 9707:9707
+    restart: unless-stopped
+  # -----------------------------------------------------------------------------------------------------
+  radarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:v2.0.1
+    container_name: radarr-exporter
+    command:
+      - radarr
+    environment:
+      PORT: 9708
+      URL: ${URL_RADARR}
+      APIKEY: ${APIKEY_RADARR}
+      ENABLE_ADDITIONAL_METRICS: true
+    networks:
+      - monitoring
+      - gluetun
+    ports:
+      - 9708:9708
+    restart: unless-stopped
+  # --------------------------------------------------------------------------------------------------------
+  lidarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:v2.0.1
+    container_name: lidarr-exporter
+    command:
+      - lidarr
+    environment:
+      PORT: 9709
+      URL: ${URL_LIDARR}
+      APIKEY: ${APIKEY_LIDARR}
+      ENABLE_ADDITIONAL_METRICS: true
+    networks:
+      - monitoring
+      - gluetun
+    ports:
+      - 9709:9709
+    restart: unless-stopped
+  # --------------------------------------------------------------------------------------------------------
+  prowlarr-exporter:
+    image: ghcr.io/onedr0p/exportarr:v2.0.1
+    container_name: prowlarr-exporter
+    command:
+      - prowlarr
+    environment:
+      PORT: 9710
+      URL: ${URL_PROWLARR}
+      APIKEY: ${APIKEY_PROWLARR}
+      PROWLARR_BACKFILL: true
+      ENABLE_ADDITIONAL_METRICS: true
+    networks:
+      - monitoring
+      - gluetun
+    ports:
+      - 9710:9710
+    restart: unless-stopped
+    # -------------------------------------------------------------------------------------------------------
+  qbittorrent-exporter:
+    image: ghcr.io/esanchezm/prometheus-qbittorrent-exporter:v1.5.1
+    container_name: qbittorrent-exporter
+    networks:
+      - gluetun
+      - monitoring
+    environment:
+      - QBITTORRENT_PORT=${QBITTORRENT_PORT}
+      - QBITTORRENT_HOST=${QBITTORRENT_HOST}
+      - QBITTORRENT_USER=${QBITTORRENT_USER}
+      - QBITTORRENT_PASS=${QBITTORRENT_PASS}
+    ports:
+      - 8000:8000
+    restart: unless-stopped
+    # -------------------------------------------------------------------------------------------------------
+  nzbget_exporter:
+    container_name: nzbget_exporter
+    image: frebib/nzbget-exporter:3.19
+    tty: true
+    environment:
+      - NZBGET_HOST=${NZBGET_HOST}
+      - NZBGET_USERNAME=${NZBGET_USER}
+      - NZBGET_PASSWORD=${NZBGET_PASS}
+    ports:
+      - 9452:9452
+    networks:
+      - monitoring
+      - gluetun
+      # -------------------------------------------------------------------------------------------------------
 networks:
   monitoring:
+    external: true
+  gluetun:
     external: true
   proxy:
     external: true
