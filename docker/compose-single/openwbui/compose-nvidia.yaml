@@ -13,7 +13,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.3.4
+    image: ghcr.io/open-webui/open-webui:0.3.5
     container_name: open-webui
     volumes:
       - ${OPENWEBUI_PATH}:/app/backend/data
