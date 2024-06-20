@@ -1,7 +1,7 @@
 services:
   # -------------------------------------------------------------------------------------------
   jellyfin:
-    image: jellyfin/jellyfin:2024061005
+    image: jellyfin/jellyfin:2024061705
     container_name: jellyfin
     privileged: true
     runtime: nvidia
