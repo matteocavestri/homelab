@@ -14,7 +14,7 @@ services:
       - 'HSA_OVERRIDE_GFX_VERSION=${HSA_OVERRIDE}' # Setup for RDNA1,2,3 & GCN5
       - 'ROC_ENABLE_PRE_VEGA={ROC_ENABLE_PRE_VEGA}' # Setup for GCN4
   open-webui:
-    image: ghcr.io/open-webui/open-webui:0.3.5
+    image: ghcr.io/open-webui/open-webui:v0.3.6
     container_name: open-webui
     volumes:
       - ${OPENWEBUI_PATH}:/app/backend/data
