@@ -111,7 +111,7 @@ services:
       - /:/host:ro,rslave
   # ---------------------------------------------------------------------------------------------------
   nvidia_exporter:
-    image: utkuozdemir/nvidia_gpu_exporter:1.2.0
+    image: utkuozdemir/nvidia_gpu_exporter:1.2.1
     container_name: nvidia_exporter
     restart: unless-stopped
     devices:
