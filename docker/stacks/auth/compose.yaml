@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
   # ---------------------------------------------------------------------------------------------------
   server:
-    image: ghcr.io/goauthentik/server:2024.4.2
+    image: ghcr.io/goauthentik/server:2024.6.0
     container_name: authentik-server
     command: server
     environment:
@@ -85,7 +85,7 @@ services:
     restart: unless-stopped
   # ---------------------------------------------------------------------------------------------------
   worker:
-    image: ghcr.io/goauthentik/server:2024.4.2
+    image: ghcr.io/goauthentik/server:2024.6.0
     container_name: authentik-worker
     command: worker
     environment:
