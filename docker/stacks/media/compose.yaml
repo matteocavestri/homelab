@@ -91,7 +91,7 @@ services:
       - gluetun
   # -------------------------------------------------------------------------------------------
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.18.0
+    image: lscr.io/linuxserver/prowlarr:1.19.0
     container_name: prowlarr
     network_mode: service:gluetun
     environment:
