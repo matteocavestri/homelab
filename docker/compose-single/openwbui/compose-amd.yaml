@@ -9,7 +9,7 @@ services:
     pull_policy: always
     tty: true
     restart: unless-stopped
-    image: ollama/ollama:0.1.48-rocm
+    image: ollama/ollama:0.2.8-rocm
     environment:
       - 'HSA_OVERRIDE_GFX_VERSION=${HSA_OVERRIDE}' # Setup for RDNA1,2,3 & GCN5
       - 'ROC_ENABLE_PRE_VEGA={ROC_ENABLE_PRE_VEGA}' # Setup for GCN4
