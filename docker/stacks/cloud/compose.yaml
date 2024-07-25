@@ -94,7 +94,7 @@ services:
       - backend
     restart: unless-stopped
   nextcloud-appapi-dsp:
-    image: ghcr.io/cloud-py-api/nextcloud-appapi-dsp:v1.3.1
+    image: ghcr.io/cloud-py-api/nextcloud-appapi-dsp:v1.3.2
     container_name: nextcloud-appapi-dsp
     hostname: nextcloud-appapi-dsp
     environment:
