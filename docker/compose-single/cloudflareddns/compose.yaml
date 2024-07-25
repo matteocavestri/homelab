@@ -1,7 +1,7 @@
 services:
   cloudflare-ddns:
     container_name: cloudflareddns
-    image: favonia/cloudflare-ddns:1.11.0
+    image: favonia/cloudflare-ddns:1.13.2
     network_mode: host
     restart: always
     cap_add:
