@@ -108,7 +108,7 @@ services:
     networks:
       - monitoring
   influxdb:
-    image: influxdb:2.7.6-alpine
+    image: influxdb:2.7.10-alpine
     container_name: influxdb
     ports:
       - 8086:8086
