@@ -6,7 +6,7 @@ services:
     pull_policy: always
     tty: true
     restart: unless-stopped
-    image: ollama/ollama:0.2.8
+    image: ollama/ollama:0.3.11
   open-webui:
     image: ghcr.io/open-webui/open-webui:v0.3.10
     container_name: open-webui
