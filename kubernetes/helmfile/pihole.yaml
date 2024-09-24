@@ -1,0 +1,23 @@
+repositories:
+  - name: mojo2600
+    url: https://mojo2600.github.io/pihole-kubernetes
+releases:
+  - name: pihole
+    namespace: pihole-system
+    chart: mojo2600/pihole
+    version: 2.26.1
+    values:
+      - DNS1: {{ env "PIHOLE_DNS1" | default "192.168.1.1" }}
+      - persistentVolumeClaim:
+          enabled: true
+      - serviceWeb:
+          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          annotations:
+            metallb.universe.tf/allow-shared-ip: pihole-svc
+          type: LoadBalancer
+      - serviceDns:
+          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          annotations:
+            metallb.universe.tf/allow-shared-ip: pihole-svc
+          type: LoadBalancer
+      - replicaCount: 1

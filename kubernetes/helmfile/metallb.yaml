@@ -1,0 +1,8 @@
+repositories:
+  - name: metallb
+    url: https://metallb.github.io/metallb
+releases:
+  - name: metallb
+    chart: metallb/metallb
+    namespace: metallb-system
+    version: 0.14.8
