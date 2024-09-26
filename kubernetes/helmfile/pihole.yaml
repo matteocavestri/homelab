@@ -7,12 +7,46 @@ releases:
     chart: mojo2600/pihole
     version: 2.26.1
     values:
-      - DNS1: {{ env "PIHOLE_DNS1" | default "192.168.1.1" }}
-      - DNS2: {{ env "PIHOLE_DNS2" | default "1.1.1.1" }}
+      - adlists: {}
+      - adminPassword: {{ env "PIHOLE_PASS" | default "admin" }}
+      - doh:
+          enabled: true
+          name: cloudflared
+          pullPolicy: IfNotPresent
+          repository: crazymax/cloudflared
+          tag: 2024.6.1
+          probes:
+            liveness:
+              enabled: true
+              failureThreshold: 10
+              initialDelaySeconds: 60
+              probe: {'exec': {'command': ['nslookup', '-po=5053', 'cloudflare.com', '127.0.0.1']}}
+              timeoutSeconds: 5
+      - hostname: pihole-k3s
       - persistentVolumeClaim:
           enabled: true
-          size: "512Mi"
-      - serviceWeb:
+          size: 512Mi
+      - probes:
+          liveness:
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            type: httpGet
+          readiness:
+            enabled: true
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            port: http
+            timeoutSeconds: 5
+      - replicaCount: 1
+      - resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      - serviceDhcp:
           loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
           annotations:
             metallb.universe.tf/allow-shared-ip: pihole-svc
@@ -22,16 +56,10 @@ releases:
           annotations:
             metallb.universe.tf/allow-shared-ip: pihole-svc
           type: LoadBalancer
-      - replicaCount: 1
-      - resources:
-          requests:
-            cpu: "2"
-            memory: "1Gi"
-          limits:
-            cpu: "2"
-            memory: "1Gi"
-      - autoscaling:
-          enabled: true
-          minReplicas: 1
-          maxReplicas: 3
-          targetCPUUtilizationPercentage: 70
+      - serviceWeb:
+          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          annotations:
+            metallb.universe.tf/allow-shared-ip: pihole-svc
+          type: LoadBalancer
+      - strategyType: RollingUpdate
+      - virtualHost: pi.hole
