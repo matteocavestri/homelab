@@ -6,3 +6,13 @@ releases:
     namespace: longhorn-system
     chart: longhorn/longhorn
     version: 1.7.1
+    values:
+      - persistence:
+          defaultClass: true
+          defaultClassReplicaCount: 3
+      - csi:
+          attacherReplicaCount: 3
+          provisionerReplicaCount: 3
+          snapshotterReplicaCount: 3
+      - longhornUI:
+          replicas: 1

@@ -8,8 +8,10 @@ releases:
     version: 2.26.1
     values:
       - DNS1: {{ env "PIHOLE_DNS1" | default "192.168.1.1" }}
+      - DNS2: {{ env "PIHOLE_DNS2" | default "1.1.1.1" }}
       - persistentVolumeClaim:
           enabled: true
+          size: "512Mi"
       - serviceWeb:
           loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
           annotations:
@@ -21,3 +23,15 @@ releases:
             metallb.universe.tf/allow-shared-ip: pihole-svc
           type: LoadBalancer
       - replicaCount: 1
+      - resources:
+          requests:
+            cpu: "2"
+            memory: "1Gi"
+          limits:
+            cpu: "2"
+            memory: "1Gi"
+      - autoscaling:
+          enabled: true
+          minReplicas: 1
+          maxReplicas: 3
+          targetCPUUtilizationPercentage: 70
