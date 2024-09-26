@@ -181,7 +181,7 @@ services:
   # ------------------------------------------------------------------------------------------
   tdarr:
     container_name: tdarr
-    image: ghcr.io/haveagitgat/tdarr:2.22.01
+    image: ghcr.io/haveagitgat/tdarr:2.26.01
     restart: unless-stopped
     privileged: true
     runtime: nvidia
