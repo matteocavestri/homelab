@@ -14,6 +14,7 @@ apply_crd_if_missing() {
 	fi
 }
 
+# STORAGE DEPLOYMENTS
 echo ""
 echo -e "${GREEN}DEPLOYING LONGHORN${NC}"
 helmfile apply --wait -f helmfile/longhorn.yaml
@@ -23,10 +24,19 @@ echo ""
 echo -e "${GREEN}DEPLOYING NFS CSI AND NFS STORAGECLASS${NC}"
 echo ""
 helmfile apply --wait -f helmfile/nfs-csi.yaml
-kubectl apply -f kustomize/nfs-csi/storageclass.yaml
+kubectl apply -f manifests/storageclass/nfs.yaml
 echo ""
 echo ""
 
+echo -e "${GREEN}DEPLOYING SMB CSI AND SMB STORAGECLASS${NC}"
+echo ""
+helmfile apply --wait -f helmfile/smb-csi.yaml
+kubectl apply -f manifests/secrets/smbcreds.yaml
+kubectl apply -f manifests/storageclass/smb.yaml
+echo ""
+echo ""
+
+# HARDWARE DEPLOYMENTS (GPUS, FPGA, ...)
 echo -e "${GREEN}DEPLOYING INTEL GPU SUPPORT${NC}"
 echo ""
 helmfile apply --wait -f helmfile/nfd.yaml
@@ -35,6 +45,7 @@ helmfile apply --wait -f helmfile/intelgpu.yaml
 echo ""
 echo ""
 
+# LOAD BALANCING DEPLOYMENTS
 echo -e "${GREEN}DEPLOYING METALLB${NC}"
 echo ""
 helmfile apply --wait -f helmfile/metallb.yaml
@@ -43,6 +54,7 @@ kubectl apply -f kustomize/metallb/advert.yaml
 echo ""
 echo ""
 
+# INGRESSES AND REVERSE PROXY DEPLOYMENTS
 echo -e "${GREEN}DEPLOYING TRAEFIK${NC}"
 echo ""
 helmfile apply --wait -f helmfile/traefik.yaml
@@ -50,6 +62,7 @@ kubectl apply -f kustomize/traefik/default-headers.yaml
 echo ""
 echo ""
 
+# TLS CERTIFICATES DEPLOYMENTS
 echo -e "${GREEN}DEPLOYING CERTMANAGER${NC}"
 echo ""
 helmfile apply --wait -f helmfile/certmanager.yaml
@@ -59,6 +72,7 @@ kubectl apply -f kustomize/certmanager/default-cert.yaml
 echo ""
 echo ""
 
+# DNS SERVERS DEPLOYMENTS
 echo -e "${GREEN}DEPLOYING PIHOLE AND EXTERNALDNS FOR PIHOLE${NC}"
 echo ""
 helmfile apply --wait -f helmfile/pihole.yaml
@@ -67,9 +81,9 @@ helmfile apply --wait -f helmfile/externaldns.yaml
 echo ""
 echo ""
 
+# MONITORING STACK DEPLOYMENTS
 echo -e "${GREEN}DEPLOYING MONITORING STACK${NC}"
 echo ""
-
 apply_crd_if_missing "alertmanagerconfigs.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml"
 apply_crd_if_missing "alertmanagers.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml"
 apply_crd_if_missing "podmonitors.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml"
@@ -80,7 +94,6 @@ apply_crd_if_missing "prometheusrules.monitoring.coreos.com" "https://raw.github
 apply_crd_if_missing "scrapeconfigs.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_scrapeconfigs.yaml"
 apply_crd_if_missing "servicemonitors.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml"
 apply_crd_if_missing "thanosrulers.monitoring.coreos.com" "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml"
-
 kubectl apply -f kustomize/monitoring/cert.yaml
 kubectl apply -f kustomize/monitoring/credentials.yaml
 helmfile apply --wait -f helmfile/monitoring.yaml

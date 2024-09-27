@@ -1,0 +1,10 @@
+repositories:
+  - name: csi-driver-smb
+    url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts
+releases:
+  - name: smb-csi
+    namespace: kube-system
+    chart: csi-driver-smb/csi-driver-smb
+    version: v1.16.0
+    values:
+      - driver.name: smb.csi.k8s.io
