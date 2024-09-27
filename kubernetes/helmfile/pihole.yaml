@@ -8,13 +8,10 @@ releases:
     version: 2.26.1
     values:
       - adlists: {}
-      - adminPassword: {{ env "PIHOLE_PASS" | default "admin" }}
+      - adminPassword: admin
       - doh:
           enabled: true
           name: cloudflared
-          pullPolicy: IfNotPresent
-          repository: crazymax/cloudflared
-          tag: 2024.6.1
           probes:
             liveness:
               enabled: true
@@ -47,19 +44,31 @@ releases:
             cpu: 100m
             memory: 128Mi
       - serviceDhcp:
-          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          loadBalancerIP: 192.168.1.250
           annotations:
             metallb.universe.tf/allow-shared-ip: pihole-svc
           type: LoadBalancer
       - serviceDns:
-          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          loadBalancerIP: 192.168.1.250
           annotations:
             metallb.universe.tf/allow-shared-ip: pihole-svc
           type: LoadBalancer
       - serviceWeb:
-          loadBalancerIP: {{ env "PIHOLE_IP" | default "192.168.1.250" }}
+          type: ClusterIP
+      - ingress:
           annotations:
-            metallb.universe.tf/allow-shared-ip: pihole-svc
-          type: LoadBalancer
+            kubernetes.io/ingress.class: traefik
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: 'true'
+            cert-manager.io/cluster-issuer: letsencrypt-production
+            traefik.ingress.kubernetes.io/router.middlewares: default-default-headers@kubernetescrd
+          enabled: true
+          hosts:
+            - pihole.cavestri.net
+          path: /
+          tls:
+            - secretName: pihole-cavestri-net-tls
+              hosts:
+                - pihole.cavestri.net
       - strategyType: RollingUpdate
-      - virtualHost: pi.hole
+      - virtualHost: pihole.cavestri.net

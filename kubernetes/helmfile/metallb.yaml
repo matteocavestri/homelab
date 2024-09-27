@@ -6,3 +6,46 @@ releases:
     chart: metallb/metallb
     namespace: metallb-system
     version: 0.14.8
+    values:
+      - controller:
+          enabled: true
+          livenessProbe:
+            enabled: true
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            enabled: true
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          logLevel: info
+          strategy:
+            type: RollingUpdate
+      - crds:
+          enabled: true
+      - speaker:
+          enabled: true
+          livenessProbe:
+            enabled: true
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            enabled: true
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          logLevel: info
+          startupProbe:
+            enabled: true
+            failureThreshold: 30
+            periodSeconds: 5

@@ -16,3 +16,15 @@ releases:
           snapshotterReplicaCount: 3
       - longhornUI:
           replicas: 1
+      - ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: 'true'
+            traefik.ingress.kubernetes.io/router.middlewares: default-default-headers@kubernetescrd
+            cert-manager.io/cluster-issuer: letsencrypt-production
+          host: longhorn.cavestri.net
+          path: /
+          tls: true
+          tlsSecret: longhorn-cavestri-net-tls
