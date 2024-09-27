@@ -1,0 +1,8 @@
+repositories:
+  - name: nfd
+    url: https://kubernetes-sigs.github.io/node-feature-discovery/charts
+releases:
+  - name: nfd
+    namespace: node-feature-discovery
+    chart: nfd/node-feature-discovery
+    version: 0.16.4

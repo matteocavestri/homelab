@@ -22,8 +22,16 @@ echo ""
 
 echo -e "${GREEN}DEPLOYING NFS CSI AND NFS STORAGECLASS${NC}"
 echo ""
-helmfile apply --wait -f helmfile/nfscsi.yaml
-kubectl apply -f kustomize/kube-system/nfs-storageclass.yaml
+helmfile apply --wait -f helmfile/nfs-csi.yaml
+kubectl apply -f kustomize/nfs-csi/storageclass.yaml
+echo ""
+echo ""
+
+echo -e "${GREEN}DEPLOYING INTEL GPU SUPPORT${NC}"
+echo ""
+helmfile apply --wait -f helmfile/nfd.yaml
+helmfile apply --wait -f helmfile/intel-operator.yaml
+helmfile apply --wait -f helmfile/intelgpu.yaml
 echo ""
 echo ""
 
