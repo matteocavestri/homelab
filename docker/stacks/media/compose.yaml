@@ -137,7 +137,7 @@ services:
       - gluetun
   # ---------------------------------------------------------------------------------------------
   lidarr:
-    image: lscr.io/linuxserver/lidarr:2.3.3
+    image: lscr.io/linuxserver/lidarr:2.6.4
     container_name: lidarr
     network_mode: service:gluetun
     environment:
