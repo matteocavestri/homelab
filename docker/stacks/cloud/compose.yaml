@@ -106,7 +106,7 @@ services:
     networks:
       - proxy
   vaultwarden:
-    image: vaultwarden/server:1.30.5-alpine
+    image: vaultwarden/server:1.32.2-alpine
     container_name: vaultwarden
     environment:
       WEBSOCKET_ENABLED: "true"
