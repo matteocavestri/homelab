@@ -1,0 +1,42 @@
+---
+# daemon-reload is defined once, in roles/common/handlers/main.yml. See there.
+
+- name: "restart office.slice"
+  listen: "restart office.slice"
+  ansible.builtin.systemd_service:
+    name: "office.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart office.target"
+  listen: "restart office.target"
+  ansible.builtin.systemd_service:
+    name: "office.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-office.timer"
+  listen: "restart backup-office.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-office.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart freshrss.service"
+  listen: "restart freshrss.service"
+  ansible.builtin.systemd_service:
+    name: "freshrss.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart vaultwarden.service"
+  listen: "restart vaultwarden.service"
+  ansible.builtin.systemd_service:
+    name: "vaultwarden.service"
+    state: restarted
+    scope: user
+  failed_when: false

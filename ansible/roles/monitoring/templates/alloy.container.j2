@@ -1,0 +1,40 @@
+[Unit]
+Description=Grafana Alloy
+PartOf=monitoring.target
+After=monitoring.target loki.service mimir.service tempo.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.alloy.image }}:{{ versions.alloy.tag }}
+ContainerName=alloy
+Network=monitoring.network
+PublishPort=127.0.0.1:12345:12345
+PublishPort=127.0.0.1:14317:14317
+Volume=%h/.config/infrastructure/monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro,Z
+Volume=/var/log/journal:/var/log/journal:ro
+Volume=/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
+User=root
+Exec=run /etc/alloy/config.alloy --server.http.listen-addr=0.0.0.0:12345 --stability.level=public-preview
+EnvironmentFile=%h/.config/infrastructure/monitoring/alloy/alloy.env
+SecurityLabelDisable=true
+NoNewPrivileges=false
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=alloy
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

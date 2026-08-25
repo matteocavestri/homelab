@@ -1,0 +1,28 @@
+[Unit]
+Description=FlareSolverr - Cloudflare bypass
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.flaresolverr.image }}:{{ versions.flaresolverr.tag }}
+ContainerName=flaresolverr
+Network=container:gluetun
+EnvironmentFile=%h/.config/media/arr/flaresolverr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=flaresolverr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

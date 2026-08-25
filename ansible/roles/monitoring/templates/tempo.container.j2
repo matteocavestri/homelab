@@ -1,0 +1,33 @@
+[Unit]
+Description=Grafana Tempo
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+OnSuccess=notify-recovery@%n.service
+
+[Container]
+Image={{ versions.tempo.image }}:{{ versions.tempo.tag }}
+ContainerName=tempo
+Volume=tempo-data:/data/tempo
+Volume=%h/.config/infrastructure/monitoring/tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro,Z
+Network=monitoring.network
+PublishPort=127.0.0.1:3200:3200
+PublishPort=127.0.0.1:4317:4317
+Exec=-config.file=/etc/tempo/tempo.yaml -target=all
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tempo
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

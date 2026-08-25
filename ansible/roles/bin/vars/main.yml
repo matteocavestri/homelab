@@ -1,0 +1,5 @@
+---
+bin_files:
+  - src: "backup-target.sh"
+    dest: "~/.local/bin/backup-target.sh"
+    mode: "0755"

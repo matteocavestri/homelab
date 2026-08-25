@@ -1,0 +1,18 @@
+---
+office_slice:
+  memory_max: "2G"
+  memory_swap_max: "0"
+  cpu_quota: "400%"
+
+freshrss:
+  oidc_enabled: "1"
+  oidc_provider_metadata_url: "https://auth.cavestrihome.com/application/o/freshrss/.well-known/openid-configuration"
+  oidc_client_id: "S38qP4AALdIxr8n2FZyCcMABTafZyLA9E7Ed2A2O"
+  oidc_x_forwarded_headers: "X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host"
+  oidc_remote_user_claim: "preferred_username"
+  oidc_scopes: "openid email profile"
+
+vaultwarden:
+  rocket_port: "8080"
+  domain: "https://pass.cavestrihome.com"
+  signups_allowed: "false"

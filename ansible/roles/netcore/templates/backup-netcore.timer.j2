@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily netcore backup
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+AccuracySec=5m
+
+[Install]
+WantedBy=netcore.target

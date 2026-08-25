@@ -1,0 +1,36 @@
+[Unit]
+Description=MCPO - MCP to OpenAPI proxy
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.mcpo.image }}:{{ versions.mcpo.tag }}
+ContainerName=mcpo
+Network=ai.network
+Volume=%h/.config/ai/mcpo-config.json:/app/config.json:ro,Z
+Volume=%h/projects:/projects:z
+Volume=/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
+User=root
+Exec=--config /app/config.json --port 8000
+NoNewPrivileges=false
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mcpo
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

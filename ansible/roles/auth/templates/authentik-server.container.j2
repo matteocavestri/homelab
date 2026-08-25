@@ -1,0 +1,48 @@
+[Unit]
+Description=Authentik Server
+PartOf=auth.target
+After=auth.target authentik-postgres.service
+Requires=authentik-postgres.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+{% if versions.authentik.pin_digest is defined %}Image={{ versions.authentik.image }}@{{ versions.authentik.pin_digest }}
+{% else %}Image={{ versions.authentik.image }}:{{ versions.authentik.tag }}
+{% endif %}ContainerName=authentik-server
+Exec=server
+Volume=authentik-media:/media
+Volume=authentik-custom-templates:/templates
+Network=authentik.network
+Network=monitoring.network
+PublishPort=127.0.0.1:9000:9000
+EnvironmentFile=%h/.config/infrastructure/auth/authentik/authentik.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+# HealthCmd=curl -sf http://localhost:9000/-/health/live/ || exit 1
+# HealthInterval=30s
+# HealthTimeout=5s
+# HealthRetries=3
+# HealthStartPeriod=60s
+# HealthOnFailure=kill
+# Notify=healthy
+
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=authentik-server
+Slice=auth.slice
+
+[Install]
+WantedBy=auth.target

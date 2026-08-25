@@ -1,0 +1,45 @@
+[Unit]
+Description=Jellyfin Media Server
+PartOf=jellyfin.target
+After=jellyfin.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.jellyfin.image }}:{{ versions.jellyfin.tag }}
+ContainerName=jellyfin
+Network=jellyfin.network
+PublishPort=127.0.0.1:8096:8096
+SecurityLabelDisable=true
+AddDevice=nvidia.com/gpu=all
+Volume=jellyfin-config:/config
+Mount=type=tmpfs,target=/cache,tmpfs-size=2G
+Volume=/mnt/Media:/media
+EnvironmentFile=%h/.config/media/jellyfin/jellyfin.env
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+HealthCmd=curl -sf http://localhost:8096/health || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=60s
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=jellyfin
+Slice=jellyfin.slice
+
+[Install]
+WantedBy=jellyfin.target

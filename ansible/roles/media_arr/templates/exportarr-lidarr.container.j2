@@ -1,0 +1,29 @@
+[Unit]
+Description=Exportarr - Lidarr
+After=lidarr.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.exportarr.image }}:{{ versions.exportarr.tag }}
+ContainerName=exportarr-lidarr
+Network=arr.network
+Network=monitoring.network
+Exec=lidarr
+EnvironmentFile=%h/.config/media/arr/exportarr-lidarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=exportarr-lidarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

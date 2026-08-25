@@ -1,0 +1,29 @@
+[Unit]
+Description=Jellyseerr - Media Request Manager
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.jellyseerr.image }}:{{ versions.jellyseerr.tag }}
+ContainerName=jellyseerr
+Network=arr.network
+Network=jellyfin.network
+Volume=jellyseerr-config:/app/config
+EnvironmentFile=%h/.config/media/arr/jellyseerr.env
+PublishPort=127.0.0.1:5055:5055
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=jellyseerr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

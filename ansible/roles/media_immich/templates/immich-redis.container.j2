@@ -1,0 +1,30 @@
+[Unit]
+Description=Immich Redis (Valkey)
+PartOf=immich.target
+After=immich.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.immich_redis.image }}:{{ versions.immich_redis.tag }}
+ContainerName=immich-redis
+Network=immich.network
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=immich-redis
+Slice=immich.slice
+
+[Install]
+WantedBy=immich.target

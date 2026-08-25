@@ -1,0 +1,8 @@
+[Unit]
+Description=Immich Slice
+Before=slices.target
+
+[Slice]
+MemoryMax={{ immich_slice.memory_max }}
+MemorySwapMax={{ immich_slice.memory_swap_max }}
+CPUQuota={{ immich_slice.cpu_quota }}

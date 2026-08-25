@@ -1,0 +1,29 @@
+---
+# .target units expected on this host, one per role plus the two meta-targets.
+status_targets:
+  - ai
+  - auth
+  - arr
+  - immich
+  - jellyfin
+  - monitoring
+  - netcore
+  - office
+  - proxy
+  - infrastructure
+  - media
+
+# .timer units that should be running unattended (all backups + update-egr).
+status_timers:
+  - backup-auth
+  - backup-netcore
+  - backup-proxy
+  - backup-jellyfin
+  - backup-arr
+  - backup-monitoring
+  - backup-office
+  - backup-immich
+  - backup-ai
+  - update-egr
+
+status_ok_enabled_states: ["enabled", "enabled-runtime", "static", "linked", "linked-runtime"]

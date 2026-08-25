@@ -1,0 +1,29 @@
+---
+- name: Ensure destination directories exist (monitoring)
+  ansible.builtin.file:
+    path: "{{ (item.dest | dirname) }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ monitoring_files + monitoring_static_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Deploy templated quadlet/config files (monitoring)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ monitoring_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  notify: "{{ item.notify + ['daemon-reload'] }}"
+
+- name: Deploy static (non-templated) config files (monitoring)
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ monitoring_static_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  notify: "{{ item.notify + ['daemon-reload'] }}"

@@ -1,0 +1,28 @@
+[Unit]
+Description=MaxMind GeoIP Update
+PartOf=proxy.target
+After=proxy.target
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.geoipupdate.image }}:{{ versions.geoipupdate.tag }}
+ContainerName=geoipupdate
+Network=proxy.network
+Volume=geoip-data:/usr/share/GeoIP
+EnvironmentFile=%h/.config/infrastructure/proxy/geoipupdate/geoipupdate.env
+AutoUpdate=registry
+
+[Service]
+Restart=on-failure
+RestartSec=30
+RestartSteps=3
+RestartMaxDelaySec=300
+TimeoutStartSec=120
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=geoipupdate
+Slice=proxy.slice
+
+[Install]
+WantedBy=proxy.target

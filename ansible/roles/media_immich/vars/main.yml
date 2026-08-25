@@ -1,0 +1,46 @@
+---
+media_immich_files:
+  - src: "immich.network.j2"
+    dest: "~/.config/containers/systemd/immich.network"
+    notify: []
+    mode: "0644"
+  - src: "immich.slice.j2"
+    dest: "~/.config/systemd/user/immich.slice"
+    notify: ['restart immich.slice']
+    mode: "0644"
+  - src: "immich.target.j2"
+    dest: "~/.config/systemd/user/immich.target"
+    notify: ['restart immich.target']
+    mode: "0644"
+  - src: "backup-immich.service.j2"
+    dest: "~/.config/systemd/user/backup-immich.service"
+    notify: []
+    mode: "0644"
+  - src: "backup-immich.timer.j2"
+    dest: "~/.config/systemd/user/backup-immich.timer"
+    notify: ['restart backup-immich.timer']
+    mode: "0644"
+  - src: "immich-machine-learning.container.j2"
+    dest: "~/.config/containers/systemd/immich-machine-learning.container"
+    notify: ['restart immich-machine-learning.service']
+    mode: "0644"
+  - src: "immich-postgres.container.j2"
+    dest: "~/.config/containers/systemd/immich-postgres.container"
+    notify: ['restart immich-postgres.service']
+    mode: "0644"
+  - src: "immich-redis.container.j2"
+    dest: "~/.config/containers/systemd/immich-redis.container"
+    notify: ['restart immich-redis.service']
+    mode: "0644"
+  - src: "immich-server.container.j2"
+    dest: "~/.config/containers/systemd/immich-server.container"
+    notify: ['restart immich-server.service']
+    mode: "0644"
+  - src: "immich-postgres.env.j2"
+    dest: "~/.config/media/immich/immich-postgres.env"
+    notify: ['restart immich-postgres.service']
+    mode: "0600"
+  - src: "immich.env.j2"
+    dest: "~/.config/media/immich/immich.env"
+    notify: ['restart immich-server.service']
+    mode: "0600"

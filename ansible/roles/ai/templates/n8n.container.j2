@@ -1,0 +1,34 @@
+[Unit]
+Description=n8n - Workflow Automation
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.n8n.image }}:{{ versions.n8n.tag }}
+ContainerName=n8n
+Network=ai.network
+PublishPort=127.0.0.1:5678:5678
+Volume=n8n-data:/home/node/.n8n
+EnvironmentFile=%h/.config/ai/n8n/n8n.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=n8n
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

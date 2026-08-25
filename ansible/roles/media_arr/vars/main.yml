@@ -1,0 +1,158 @@
+---
+media_arr_files:
+  - src: "arr.network.j2"
+    dest: "~/.config/containers/systemd/arr.network"
+    notify: []
+    mode: "0644"
+  - src: "arr.slice.j2"
+    dest: "~/.config/systemd/user/arr.slice"
+    notify: ['restart arr.slice']
+    mode: "0644"
+  - src: "arr.target.j2"
+    dest: "~/.config/systemd/user/arr.target"
+    notify: ['restart arr.target']
+    mode: "0644"
+  - src: "backup-arr.service.j2"
+    dest: "~/.config/systemd/user/backup-arr.service"
+    notify: []
+    mode: "0644"
+  - src: "backup-arr.timer.j2"
+    dest: "~/.config/systemd/user/backup-arr.timer"
+    notify: ['restart backup-arr.timer']
+    mode: "0644"
+  - src: "exportarr-lidarr.container.j2"
+    dest: "~/.config/containers/systemd/exportarr-lidarr.container"
+    notify: ['restart exportarr-lidarr.service']
+    mode: "0644"
+  - src: "exportarr-prowlarr.container.j2"
+    dest: "~/.config/containers/systemd/exportarr-prowlarr.container"
+    notify: ['restart exportarr-prowlarr.service']
+    mode: "0644"
+  - src: "exportarr-radarr.container.j2"
+    dest: "~/.config/containers/systemd/exportarr-radarr.container"
+    notify: ['restart exportarr-radarr.service']
+    mode: "0644"
+  - src: "exportarr-sonarr.container.j2"
+    dest: "~/.config/containers/systemd/exportarr-sonarr.container"
+    notify: ['restart exportarr-sonarr.service']
+    mode: "0644"
+  - src: "flaresolverr.container.j2"
+    dest: "~/.config/containers/systemd/flaresolverr.container"
+    notify: ['restart flaresolverr.service']
+    mode: "0644"
+  - src: "gluetun.container.j2"
+    dest: "~/.config/containers/systemd/gluetun.container"
+    notify: ['restart gluetun.service']
+    mode: "0644"
+  - src: "jellyseerr.container.j2"
+    dest: "~/.config/containers/systemd/jellyseerr.container"
+    notify: ['restart jellyseerr.service']
+    mode: "0644"
+  - src: "lidarr.container.j2"
+    dest: "~/.config/containers/systemd/lidarr.container"
+    notify: ['restart lidarr.service']
+    mode: "0644"
+  - src: "nzbget.container.j2"
+    dest: "~/.config/containers/systemd/nzbget.container"
+    notify: ['restart nzbget.service']
+    mode: "0644"
+  - src: "nzbget-exporter.container.j2"
+    dest: "~/.config/containers/systemd/nzbget-exporter.container"
+    notify: ['restart nzbget-exporter.service']
+    mode: "0644"
+  - src: "prowlarr.container.j2"
+    dest: "~/.config/containers/systemd/prowlarr.container"
+    notify: ['restart prowlarr.service']
+    mode: "0644"
+  - src: "qbittorrent.container.j2"
+    dest: "~/.config/containers/systemd/qbittorrent.container"
+    notify: ['restart qbittorrent.service']
+    mode: "0644"
+  - src: "qbittorrent-exporter.container.j2"
+    dest: "~/.config/containers/systemd/qbittorrent-exporter.container"
+    notify: ['restart qbittorrent-exporter.service']
+    mode: "0644"
+  - src: "radarr.container.j2"
+    dest: "~/.config/containers/systemd/radarr.container"
+    notify: ['restart radarr.service']
+    mode: "0644"
+  - src: "sonarr.container.j2"
+    dest: "~/.config/containers/systemd/sonarr.container"
+    notify: ['restart sonarr.service']
+    mode: "0644"
+  - src: "sportarr.container.j2"
+    dest: "~/.config/containers/systemd/sportarr.container"
+    notify: ['restart sportarr.service']
+    mode: "0644"
+  - src: "tdarr.container.j2"
+    dest: "~/.config/containers/systemd/tdarr.container"
+    notify: ['restart tdarr.service']
+    mode: "0644"
+  - src: "exportarr-lidarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-lidarr.env"
+    notify: ['restart exportarr-lidarr.service']
+    mode: "0600"
+  - src: "exportarr-prowlarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-prowlarr.env"
+    notify: ['restart exportarr-prowlarr.service']
+    mode: "0600"
+  - src: "exportarr-radarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-radarr.env"
+    notify: ['restart exportarr-radarr.service']
+    mode: "0600"
+  - src: "exportarr-sonarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-sonarr.env"
+    notify: ['restart exportarr-sonarr.service']
+    mode: "0600"
+  - src: "gluetun.env.j2"
+    dest: "~/.config/media/arr/gluetun.env"
+    notify: ['restart gluetun.service']
+    mode: "0600"
+  - src: "nzbget-exporter.env.j2"
+    dest: "~/.config/media/arr/nzbget-exporter.env"
+    notify: ['restart nzbget-exporter.service']
+    mode: "0600"
+  - src: "qbittorrent-exporter.env.j2"
+    dest: "~/.config/media/arr/qbittorrent-exporter.env"
+    notify: ['restart qbittorrent-exporter.service']
+    mode: "0600"
+  - src: "flaresolverr.env.j2"
+    dest: "~/.config/media/arr/flaresolverr.env"
+    notify: ['restart flaresolverr.service']
+    mode: "0600"
+  - src: "jellyseerr.env.j2"
+    dest: "~/.config/media/arr/jellyseerr.env"
+    notify: ['restart jellyseerr.service']
+    mode: "0600"
+  - src: "lidarr.env.j2"
+    dest: "~/.config/media/arr/lidarr.env"
+    notify: ['restart lidarr.service']
+    mode: "0600"
+  - src: "nzbget.env.j2"
+    dest: "~/.config/media/arr/nzbget.env"
+    notify: ['restart nzbget.service']
+    mode: "0600"
+  - src: "prowlarr.env.j2"
+    dest: "~/.config/media/arr/prowlarr.env"
+    notify: ['restart prowlarr.service']
+    mode: "0600"
+  - src: "qbittorrent.env.j2"
+    dest: "~/.config/media/arr/qbittorrent.env"
+    notify: ['restart qbittorrent.service']
+    mode: "0600"
+  - src: "radarr.env.j2"
+    dest: "~/.config/media/arr/radarr.env"
+    notify: ['restart radarr.service']
+    mode: "0600"
+  - src: "sonarr.env.j2"
+    dest: "~/.config/media/arr/sonarr.env"
+    notify: ['restart sonarr.service']
+    mode: "0600"
+  - src: "sportarr.env.j2"
+    dest: "~/.config/media/arr/sportarr.env"
+    notify: ['restart sportarr.service']
+    mode: "0600"
+  - src: "tdarr.env.j2"
+    dest: "~/.config/media/arr/tdarr.env"
+    notify: ['restart tdarr.service']
+    mode: "0600"

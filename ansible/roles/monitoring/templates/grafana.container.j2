@@ -1,0 +1,43 @@
+[Unit]
+Description=Grafana
+PartOf=monitoring.target
+After=monitoring.target mimir.service loki.service tempo.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.grafana.image }}:{{ versions.grafana.tag }}
+ContainerName=grafana
+Volume=grafana-data:/var/lib/grafana
+Volume=%h/.config/infrastructure/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro,Z
+Network=monitoring.network
+PublishPort=127.0.0.1:3000:3000
+EnvironmentFile=%h/.config/infrastructure/monitoring/grafana/grafana.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+HealthCmd=curl -sf http://localhost:3000/api/health || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=60s
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=grafana
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

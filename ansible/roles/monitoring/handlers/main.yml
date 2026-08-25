@@ -1,0 +1,114 @@
+---
+# daemon-reload is defined once, in roles/common/handlers/main.yml. See there.
+
+- name: "restart monitoring.slice"
+  listen: "restart monitoring.slice"
+  ansible.builtin.systemd_service:
+    name: "monitoring.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart monitoring.target"
+  listen: "restart monitoring.target"
+  ansible.builtin.systemd_service:
+    name: "monitoring.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-monitoring.timer"
+  listen: "restart backup-monitoring.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-monitoring.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart alertmanager.service"
+  listen: "restart alertmanager.service"
+  ansible.builtin.systemd_service:
+    name: "alertmanager.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart alloy.service"
+  listen: "restart alloy.service"
+  ansible.builtin.systemd_service:
+    name: "alloy.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart grafana.service"
+  listen: "restart grafana.service"
+  ansible.builtin.systemd_service:
+    name: "grafana.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart loki.service"
+  listen: "restart loki.service"
+  ansible.builtin.systemd_service:
+    name: "loki.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart mimir.service"
+  listen: "restart mimir.service"
+  ansible.builtin.systemd_service:
+    name: "mimir.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart node-exporter.service"
+  listen: "restart node-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "node-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart ntfy.service"
+  listen: "restart ntfy.service"
+  ansible.builtin.systemd_service:
+    name: "ntfy.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart nvidia-gpu-exporter.service"
+  listen: "restart nvidia-gpu-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "nvidia-gpu-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart podman-exporter.service"
+  listen: "restart podman-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "podman-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart pyroscope.service"
+  listen: "restart pyroscope.service"
+  ansible.builtin.systemd_service:
+    name: "pyroscope.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart tempo.service"
+  listen: "restart tempo.service"
+  ansible.builtin.systemd_service:
+    name: "tempo.service"
+    state: restarted
+    scope: user
+  failed_when: false

@@ -1,0 +1,35 @@
+[Unit]
+Description=Nvidia GPU Exporter
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.nvidia_gpu_exporter.image }}:{{ versions.nvidia_gpu_exporter.tag }}
+ContainerName=nvidia-gpu-exporter
+Network=monitoring.network
+AddDevice=nvidia.com/gpu=all
+SecurityLabelDisable=true
+NoNewPrivileges=true
+Volume=/usr/bin/nvidia-smi:/usr/bin/nvidia-smi:ro
+EnvironmentFile=%h/.config/infrastructure/monitoring/nvidia-gpu-exporter/nvidia-gpu-exporter.env
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nvidia-gpu-exporter
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

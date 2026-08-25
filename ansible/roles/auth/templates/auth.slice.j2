@@ -1,0 +1,13 @@
+[Unit]
+Description=Auth Slice
+Before=slices.target
+
+[Slice]
+CPUWeight={{ auth_slice.cpu_weight }}
+StartupCPUWeight={{ auth_slice.startup_cpu_weight }}
+CPUQuota={{ auth_slice.cpu_quota }}
+MemoryMin={{ auth_slice.memory_min }}
+MemoryLow={{ auth_slice.memory_low }}
+MemoryHigh={{ auth_slice.memory_high }}
+MemoryMax={{ auth_slice.memory_max }}
+MemorySwapMax={{ auth_slice.memory_swap_max }}

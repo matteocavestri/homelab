@@ -1,0 +1,43 @@
+[Unit]
+Description=Prometheus Podman Exporter
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.podman_exporter.image }}:{{ versions.podman_exporter.tag }}
+ContainerName=podman-exporter
+Network=monitoring.network
+Volume=/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock:ro
+User=root
+EnvironmentFile=%h/.config/infrastructure/monitoring/podman-exporter/podman-exporter.env
+Exec=--web.listen-address=0.0.0.0:9882 --collector.enable-all
+SecurityLabelDisable=true
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+HealthCmd=wget -qO- http://localhost:9882/metrics > /dev/null || exit 1
+HealthInterval=60s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=30s
+HealthOnFailure=kill
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=podman-exporter
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

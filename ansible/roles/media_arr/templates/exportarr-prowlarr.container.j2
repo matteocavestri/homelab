@@ -1,0 +1,29 @@
+[Unit]
+Description=Exportarr - Prowlarr
+After=prowlarr.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.exportarr.image }}:{{ versions.exportarr.tag }}
+ContainerName=exportarr-prowlarr
+Network=arr.network
+Network=monitoring.network
+Exec=prowlarr
+EnvironmentFile=%h/.config/media/arr/exportarr-prowlarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=exportarr-prowlarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

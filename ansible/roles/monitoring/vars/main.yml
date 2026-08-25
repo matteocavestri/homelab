@@ -1,0 +1,140 @@
+---
+monitoring_files:
+  - src: "monitoring.network.j2"
+    dest: "~/.config/containers/systemd/monitoring.network"
+    notify: []
+    mode: "0644"
+  - src: "monitoring.slice.j2"
+    dest: "~/.config/systemd/user/monitoring.slice"
+    notify: ['restart monitoring.slice']
+    mode: "0644"
+  - src: "monitoring.target.j2"
+    dest: "~/.config/systemd/user/monitoring.target"
+    notify: ['restart monitoring.target']
+    mode: "0644"
+  - src: "alertmanager.container.j2"
+    dest: "~/.config/containers/systemd/alertmanager.container"
+    notify: ['restart alertmanager.service']
+    mode: "0644"
+  - src: "alloy.container.j2"
+    dest: "~/.config/containers/systemd/alloy.container"
+    notify: ['restart alloy.service']
+    mode: "0644"
+  - src: "grafana.container.j2"
+    dest: "~/.config/containers/systemd/grafana.container"
+    notify: ['restart grafana.service']
+    mode: "0644"
+  - src: "loki.container.j2"
+    dest: "~/.config/containers/systemd/loki.container"
+    notify: ['restart loki.service']
+    mode: "0644"
+  - src: "mimir.container.j2"
+    dest: "~/.config/containers/systemd/mimir.container"
+    notify: ['restart mimir.service']
+    mode: "0644"
+  - src: "node-exporter.container.j2"
+    dest: "~/.config/containers/systemd/node-exporter.container"
+    notify: ['restart node-exporter.service']
+    mode: "0644"
+  - src: "ntfy.container.j2"
+    dest: "~/.config/containers/systemd/ntfy.container"
+    notify: ['restart ntfy.service']
+    mode: "0644"
+  - src: "nvidia-gpu-exporter.container.j2"
+    dest: "~/.config/containers/systemd/nvidia-gpu-exporter.container"
+    notify: ['restart nvidia-gpu-exporter.service']
+    mode: "0644"
+  - src: "podman-exporter.container.j2"
+    dest: "~/.config/containers/systemd/podman-exporter.container"
+    notify: ['restart podman-exporter.service']
+    mode: "0644"
+  - src: "pyroscope.container.j2"
+    dest: "~/.config/containers/systemd/pyroscope.container"
+    notify: ['restart pyroscope.service']
+    mode: "0644"
+  - src: "tempo.container.j2"
+    dest: "~/.config/containers/systemd/tempo.container"
+    notify: ['restart tempo.service']
+    mode: "0644"
+  - src: "backup-monitoring.service.j2"
+    dest: "~/.config/systemd/user/backup-monitoring.service"
+    notify: []
+    mode: "0644"
+  - src: "backup-monitoring.timer.j2"
+    dest: "~/.config/systemd/user/backup-monitoring.timer"
+    notify: ['restart backup-monitoring.timer']
+    mode: "0644"
+  - src: "alertmanager.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/alertmanager/alertmanager.yaml"
+    notify: ['restart alertmanager.service']
+    mode: "0644"  # bind-mounted ro into the container, read by its mapped UID
+  - src: "config.alloy.j2"
+    dest: "~/.config/infrastructure/monitoring/alloy/config.alloy"
+    notify: ['restart alloy.service']
+    mode: "0644"
+  - src: "grafana.env.j2"
+    dest: "~/.config/infrastructure/monitoring/grafana/grafana.env"
+    notify: ['restart grafana.service']
+    mode: "0600"
+  - src: "datasources.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/grafana/provisioning/datasources/datasources.yaml"
+    notify: ['restart grafana.service']
+    mode: "0644"
+  - src: "loki.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/loki/loki.yaml"
+    notify: ['restart loki.service']
+    mode: "0644"
+  - src: "mimir.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/mimir/mimir.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"
+  - src: "ntfy-server.yml.j2"
+    dest: "~/.config/infrastructure/monitoring/ntfy/server.yml"
+    notify: ['restart ntfy.service']
+    mode: "0644"
+  - src: "ntfy.env.j2"
+    dest: "~/.config/infrastructure/monitoring/ntfy/ntfy.env"
+    notify: []
+    mode: "0600"
+  - src: "pyroscope.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/pyroscope/pyroscope.yaml"
+    notify: ['restart pyroscope.service']
+    mode: "0644"
+  - src: "tempo.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/tempo/tempo.yaml"
+    notify: ['restart tempo.service']
+    mode: "0644"
+  - src: "alloy.env.j2"
+    dest: "~/.config/infrastructure/monitoring/alloy/alloy.env"
+    notify: ['restart alloy.service']
+    mode: "0600"
+  - src: "nvidia-gpu-exporter.env.j2"
+    dest: "~/.config/infrastructure/monitoring/nvidia-gpu-exporter/nvidia-gpu-exporter.env"
+    notify: ['restart nvidia-gpu-exporter.service']
+    mode: "0600"
+  - src: "podman-exporter.env.j2"
+    dest: "~/.config/infrastructure/monitoring/podman-exporter/podman-exporter.env"
+    notify: ['restart podman-exporter.service']
+    mode: "0600"
+
+monitoring_static_files:
+  - src: "mimir-rules-anonymous/authentik.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/authentik.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"  # bind-mounted ro into the container
+  - src: "mimir-rules-anonymous/blackbox.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/blackbox.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"  # bind-mounted ro into the container
+  - src: "mimir-rules-anonymous/crowdsec.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/crowdsec.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"  # bind-mounted ro into the container
+  - src: "mimir-rules-anonymous/jellyfin.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/jellyfin.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"  # bind-mounted ro into the container
+  - src: "mimir-rules-anonymous/node-exporter.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/node-exporter.yaml"
+    notify: ['restart mimir.service']
+    mode: "0644"  # bind-mounted ro into the container

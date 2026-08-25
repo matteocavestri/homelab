@@ -1,0 +1,34 @@
+[Unit]
+Description=Jellyfin Prometheus Exporter
+PartOf=jellyfin.target
+After=jellyfin.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.jellyfin_exporter.image }}:{{ versions.jellyfin_exporter.tag }}
+ContainerName=jellyfin-exporter
+Network=jellyfin.network
+Network=monitoring.network
+EnvironmentFile=%h/.config/media/jellyfin/jellyfin-exporter.env
+NoNewPrivileges=true
+AutoUpdate=registry
+Exec=--collector.storage --collector.tasks --collector.transcoding
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=jellyfin-exporter
+Slice=jellyfin.slice
+
+[Install]
+WantedBy=jellyfin.target

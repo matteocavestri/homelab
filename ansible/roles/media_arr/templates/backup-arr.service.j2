@@ -1,0 +1,13 @@
+[Unit]
+Description=Arr backup service
+Requires=media.target
+After=media.target
+OnFailure=notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/backup-target.sh arr
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup-arr
+TimeoutStartSec=3600

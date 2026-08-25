@@ -1,0 +1,5 @@
+---
+common:
+  timezone: "Europe/Rome"
+  admin_email: "admin@fmpt.company"  # Authentik SMTP from/username, NPMplus initial admin
+  acme_email: "matteo.cavestri@protonmail.ch"  # NPMplus ACME/Let's Encrypt requests

@@ -1,0 +1,415 @@
+// Metrics scraping -> Mimir
+
+prometheus.remote_write "mimir" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
+
+    queue_config {
+      max_samples_per_send = 10000
+      max_shards           = 5
+      capacity             = 20000
+    }
+  }
+  external_labels = {
+    cluster  = "leonardo",
+    instance = "leonardo",
+  }
+}
+
+prometheus.scrape "node" {
+  targets = [{
+    __address__ = "node-exporter:9100",
+    instance    = "leonardo",
+  }]
+  job_name        = "node"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "ipmi" {
+  targets = [{
+    __address__ = "host.containers.internal:9290",
+    instance    = "leonardo",
+  }]
+  job_name        = "ipmi"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "podman" {
+  targets = [{
+    __address__ = "podman-exporter:9882",
+    instance    = "leonardo",
+  }]
+  job_name        = "podman"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "alloy" {
+  targets = [{
+    __address__ = "localhost:12345",
+  }]
+  job_name        = "alloy"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "mimir" {
+  targets = [{
+    __address__ = "mimir:9009",
+  }]
+  job_name        = "mimir"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "loki" {
+  targets = [{
+    __address__ = "loki:3100",
+  }]
+  job_name        = "loki"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "tempo" {
+  targets = [{
+    __address__ = "tempo:3200",
+  }]
+  job_name        = "tempo"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "pyroscope" {
+  targets = [{
+    __address__ = "pyroscope:4040",
+  }]
+  job_name        = "pyroscope"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "authentik" {
+  targets = [{
+    __address__ = "authentik-server:9300",
+    instance    = "leonardo",
+  }]
+  job_name        = "authentik"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "crowdsec" {
+  targets = [{
+    __address__ = "host.containers.internal:6060",
+    instance    = "leonardo",
+  }]
+  job_name        = "crowdsec"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "jellyfin" {
+  targets = [{
+    __address__ = "jellyfin-exporter:9594",
+    instance    = "leonardo",
+  }]
+  job_name        = "jellyfin"
+  scrape_interval = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "nvidia_gpu" {
+  targets = [{
+    __address__ = "nvidia-gpu-exporter:9835",
+    instance    = "leonardo",
+  }]
+  job_name        = "nvidia_gpu"
+  scrape_interval = "15s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "radarr" {
+  targets = [{
+    __address__ = "exportarr-radarr:9707",
+    instance    = "leonardo",
+  }]
+  job_name        = "radarr"
+  scrape_interval = "60s"
+  scrape_timeout  = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "sonarr" {
+  targets = [{
+    __address__ = "exportarr-sonarr:9710",
+    instance    = "leonardo",
+  }]
+  job_name        = "sonarr"
+  scrape_interval = "60s"
+  scrape_timeout  = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "lidarr" {
+  targets = [{
+    __address__ = "exportarr-lidarr:9708",
+    instance    = "leonardo",
+  }]
+  job_name        = "lidarr"
+  scrape_interval = "60s"
+  scrape_timeout  = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "prowlarr" {
+  targets = [{
+    __address__ = "exportarr-prowlarr:9709",
+    instance    = "leonardo",
+  }]
+  job_name        = "prowlarr"
+  scrape_interval = "60s"
+  scrape_timeout  = "30s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "qbittorrent" {
+  targets = [{
+    __address__ = "qbittorrent-exporter:8090",
+    instance    = "leonardo",
+  }]
+  job_name        = "qbittorrent"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "nzbget" {
+  targets = [{
+    __address__ = "nzbget-exporter:9452",
+    instance    = "leonardo",
+  }]
+  job_name        = "nzbget"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+// HTTP/TLS blackbox probes
+
+prometheus.exporter.blackbox "probes" {
+  config = `{
+    "modules": {
+      "http_2xx": {
+        "prober": "http",
+        "timeout": "10s",
+        "http": {
+          "follow_redirects": true,
+          "preferred_ip_protocol": "ip4",
+          "tls_config": { "insecure_skip_verify": false }
+        }
+      },
+      "http_3xx": {
+        "prober": "http",
+        "timeout": "10s",
+        "http": {
+          "follow_redirects": false,
+          "valid_status_codes": [301, 302, 307, 308],
+          "preferred_ip_protocol": "ip4",
+          "tls_config": { "insecure_skip_verify": false }
+        }
+      }
+    }
+  }`
+
+  targets = [
+    { name = "authentik", address = "https://auth.fmpt.company", module = "http_2xx" },
+    { name = "grafana", address = "https://monitoring.fmpt.company", module = "http_2xx" },
+    { name = "jellyfin", address = "https://media.cavestrihome.com", module = "http_2xx" },
+    { name = "openweubui", address = "https://llm.cavestrihome.com", module = "http_2xx" },
+  ]
+}
+
+prometheus.scrape "blackbox" {
+  targets         = prometheus.exporter.blackbox.probes.targets
+  job_name        = "blackbox"
+  scrape_interval = "60s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
+// Journald logs (system, SELinux, audit)
+
+loki.source.journal "system" {
+  path          = "/var/log/journal"
+  max_age       = "24h"
+  relabel_rules = loki.relabel.journal.rules
+  forward_to    = [loki.write.default.receiver]
+  labels = {
+    job      = "systemd-journal",
+    instance = "leonardo",
+  }
+}
+
+loki.relabel "journal" {
+  forward_to = []
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "host"
+  }
+  rule {
+    source_labels = ["__journal_priority_keyword"]
+    target_label  = "level"
+  }
+  rule {
+    source_labels = ["__journal__transport"]
+    target_label  = "transport"
+  }
+  rule {
+    source_labels = ["__journal_syslog_identifier"]
+    target_label  = "syslog_identifier"
+  }
+}
+
+loki.source.journal "audit" {
+  path       = "/var/log/journal"
+  max_age    = "24h"
+  forward_to = [loki.write.default.receiver]
+  labels = {
+    job      = "audit",
+    instance = "leonardo",
+  }
+  matches = "_TRANSPORT=audit"
+}
+
+// Container logs (stdout/stderr via the Podman socket)
+
+discovery.docker "containers" {
+  host             = "unix:///run/user/1000/podman/podman.sock"
+  refresh_interval = "30s"
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_PODMAN_SYSTEMD_UNIT"]
+    target_label  = "systemd_unit"
+  }
+}
+
+loki.source.docker "containers" {
+  host             = "unix:///run/user/1000/podman/podman.sock"
+  targets          = discovery.relabel.containers.output
+  forward_to       = [loki.process.containers.receiver]
+  relabel_rules    = discovery.relabel.containers.rules
+  refresh_interval = "30s"
+  labels = {
+    job      = "containers",
+    instance = "leonardo",
+  }
+}
+
+// Jellyfin only: extract [INF]/[WRN]/[ERR] into a standard Grafana level label
+
+loki.process "containers" {
+  stage.match {
+    selector = "{container=~\".*jellyfin.*\"}"
+
+    stage.regex {
+      expression = "\\[(?P<jellyfin_level>[A-Z]{3})\\]"
+    }
+
+    stage.replace {
+      source      = "jellyfin_level"
+      expression  = "^INF$"
+      replace     = "info"
+    }
+
+    stage.replace {
+      source      = "jellyfin_level"
+      expression  = "^WRN$"
+      replace     = "warning"
+    }
+
+    stage.replace {
+      source      = "jellyfin_level"
+      expression  = "^ERR$"
+      replace     = "error"
+    }
+
+    stage.labels {
+      values = {
+        level = "jellyfin_level",
+      }
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+// OTLP receiver -> traces/metrics/logs
+
+otelcol.receiver.otlp "default" {
+  grpc { endpoint = "0.0.0.0:14317" }
+  http { endpoint = "0.0.0.0:14318" }
+  output {
+    traces  = [otelcol.exporter.otlp.tempo.input]
+    metrics = [otelcol.exporter.prometheus.mimir.input]
+    logs    = [otelcol.exporter.loki.default.input]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+    tls { insecure = true }
+  }
+}
+
+otelcol.exporter.prometheus "mimir" {
+  forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+// Profiles -> Pyroscope
+
+pyroscope.receive_http "default" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port    = 4321
+  }
+  forward_to = [pyroscope.write.default.receiver]
+}
+
+pyroscope.write "default" {
+  endpoint {
+    url = "http://pyroscope:4040"
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+livedebugging {
+  enabled = true
+}

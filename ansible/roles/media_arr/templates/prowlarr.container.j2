@@ -1,0 +1,29 @@
+[Unit]
+Description=Prowlarr - Indexer Manager
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.prowlarr.image }}:{{ versions.prowlarr.tag }}
+ContainerName=prowlarr
+Network=container:gluetun
+Volume=prowlarr-config:/config
+EnvironmentFile=%h/.config/media/arr/prowlarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=prowlarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

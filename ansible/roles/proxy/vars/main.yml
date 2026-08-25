@@ -1,0 +1,54 @@
+---
+proxy_files:
+  - src: "proxy.network.j2"
+    dest: "~/.config/containers/systemd/proxy.network"
+    notify: []
+    mode: "0644"
+  - src: "proxy.slice.j2"
+    dest: "~/.config/systemd/user/proxy.slice"
+    notify: ['restart proxy.slice']
+    mode: "0644"
+  - src: "proxy.target.j2"
+    dest: "~/.config/systemd/user/proxy.target"
+    notify: ['restart proxy.target']
+    mode: "0644"
+  - src: "crowdsec.container.j2"
+    dest: "~/.config/containers/systemd/crowdsec.container"
+    notify: ['restart crowdsec.service']
+    mode: "0644"
+  - src: "crowdsec-web-ui.container.j2"
+    dest: "~/.config/containers/systemd/crowdsec-web-ui.container"
+    notify: ['restart crowdsec-web-ui.service']
+    mode: "0644"
+  - src: "geoipupdate.container.j2"
+    dest: "~/.config/containers/systemd/geoipupdate.container"
+    notify: ['restart geoipupdate.service']
+    mode: "0644"
+  - src: "npmplus.container.j2"
+    dest: "~/.config/containers/systemd/npmplus.container"
+    notify: ['restart npmplus.service']
+    mode: "0644"
+  - src: "backup-proxy.service.j2"
+    dest: "~/.config/systemd/user/backup-proxy.service"
+    notify: []
+    mode: "0644"
+  - src: "backup-proxy.timer.j2"
+    dest: "~/.config/systemd/user/backup-proxy.timer"
+    notify: ['restart backup-proxy.timer']
+    mode: "0644"
+  - src: "crowdsec.env.j2"
+    dest: "~/.config/infrastructure/proxy/crowdsec/crowdsec.env"
+    notify: ['restart crowdsec.service']
+    mode: "0600"
+  - src: "crowdsec-web-ui.env.j2"
+    dest: "~/.config/infrastructure/proxy/crowdsec-web-ui/crowdsec-web-ui.env"
+    notify: ['restart crowdsec-web-ui.service']
+    mode: "0600"
+  - src: "geoipupdate.env.j2"
+    dest: "~/.config/infrastructure/proxy/geoipupdate/geoipupdate.env"
+    notify: ['restart geoipupdate.service']
+    mode: "0600"
+  - src: "npmplus.env.j2"
+    dest: "~/.config/infrastructure/proxy/npmplus/npmplus.env"
+    notify: ['restart npmplus.service']
+    mode: "0600"

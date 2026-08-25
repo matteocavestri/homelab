@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily office backup
+
+[Timer]
+OnCalendar=*-*-* 04:15:00
+AccuracySec=5m
+
+[Install]
+WantedBy=office.target

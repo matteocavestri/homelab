@@ -1,0 +1,31 @@
+[Unit]
+Description=Lidarr - Music Manager
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.lidarr.image }}:{{ versions.lidarr.tag }}
+ContainerName=lidarr
+Network=container:gluetun
+Volume=lidarr-config:/config
+Volume=/mnt/Media/Musica:/music:z
+Volume=/mnt/Downloads:/downloads:z
+EnvironmentFile=%h/.config/media/arr/lidarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lidarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

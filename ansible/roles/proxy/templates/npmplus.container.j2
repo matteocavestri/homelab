@@ -1,0 +1,38 @@
+[Unit]
+Description=NPMplus - Nginx Proxy Manager Fork
+PartOf=proxy.target
+After=proxy.target crowdsec.service geoipupdate.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.npmplus.image }}:{{ versions.npmplus.tag }}
+ContainerName=npmplus
+Network=host
+Volume=npmplus-data:/data
+Volume=geoip-data:/data/goaccess/geoip
+EnvironmentFile=%h/.config/infrastructure/proxy/npmplus/npmplus.env
+AutoUpdate=registry
+DNS=127.0.0.1
+
+HealthCmd=curl -sf http://localhost:81/ || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=60s
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=npmplus
+Slice=proxy.slice
+
+[Install]
+WantedBy=proxy.target

@@ -1,0 +1,33 @@
+---
+# Sole definition of daemon-reload in the repo (do not redefine in other roles):
+# Ansible silently keeps only the last-defined handler when several roles share a
+# name, running it where that role sits in site.yml. Defining it here, in the first
+# role's first handler, guarantees it always runs before any "restart <service>".
+- name: daemon-reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+
+- name: "restart infrastructure.target"
+  listen: "restart infrastructure.target"
+  ansible.builtin.systemd_service:
+    name: "infrastructure.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart media.target"
+  listen: "restart media.target"
+  ansible.builtin.systemd_service:
+    name: "media.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart homepage.service"
+  listen: "restart homepage.service"
+  ansible.builtin.systemd_service:
+    name: "homepage.service"
+    state: restarted
+    scope: user
+  failed_when: false

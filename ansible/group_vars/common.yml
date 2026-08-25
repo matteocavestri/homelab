@@ -1,0 +1,5 @@
+---
+homepage:
+  allowed_hosts: "gethomepage.dev,home.fmpt.company"
+  puid: "1000"
+  pgid: "1000"

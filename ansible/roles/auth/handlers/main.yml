@@ -1,0 +1,49 @@
+---
+
+- name: "restart auth.slice"
+  listen: "restart auth.slice"
+  ansible.builtin.systemd_service:
+    name: "auth.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart auth.target"
+  listen: "restart auth.target"
+  ansible.builtin.systemd_service:
+    name: "auth.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-auth.timer"
+  listen: "restart backup-auth.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-auth.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart authentik-postgres.service"
+  listen: "restart authentik-postgres.service"
+  ansible.builtin.systemd_service:
+    name: "authentik-postgres.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart authentik-server.service"
+  listen: "restart authentik-server.service"
+  ansible.builtin.systemd_service:
+    name: "authentik-server.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart authentik-worker.service"
+  listen: "restart authentik-worker.service"
+  ansible.builtin.systemd_service:
+    name: "authentik-worker.service"
+    state: restarted
+    scope: user
+  failed_when: false

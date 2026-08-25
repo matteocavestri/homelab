@@ -1,0 +1,8 @@
+[Unit]
+Description=Office Slice
+Before=slices.target
+
+[Slice]
+MemoryMax={{ office_slice.memory_max }}
+MemorySwapMax={{ office_slice.memory_swap_max }}
+CPUQuota={{ office_slice.cpu_quota }}

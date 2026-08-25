@@ -1,0 +1,19 @@
+---
+- name: Ensure destination directories exist (ai)
+  ansible.builtin.file:
+    path: "{{ (item.dest | dirname) }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ ai_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Deploy templated quadlet/config files (ai)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ ai_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  notify: "{{ item.notify + ['daemon-reload'] }}"

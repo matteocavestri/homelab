@@ -1,0 +1,11 @@
+[Unit]
+Description=Update EGR IPTV
+After=jellyfin.target
+Requires=jellyfin.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh %h/iptv/bin/update-egr.sh
+
+[Install]
+WantedBy=jellyfin.target

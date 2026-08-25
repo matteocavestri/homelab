@@ -1,0 +1,39 @@
+[Unit]
+Description=Tdarr Server + Internal Node
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.tdarr.image }}:{{ versions.tdarr.tag }}
+ContainerName=tdarr
+Network=arr.network
+Network=proxy.network
+Volume=tdarr-configs:/app/configs
+Volume=tdarr-logs:/app/logs
+Volume=tdarr-server:/app/server
+Volume=/mnt/Media:/media:z
+Volume=%h/.local/share/tdarr/temp:/temp:Z
+EnvironmentFile=%h/.config/media/arr/tdarr.env
+SecurityLabelDisable=true
+AddDevice=nvidia.com/gpu=all
+PublishPort=127.0.0.1:8265:8265
+PublishPort=127.0.0.1:8266:8266
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+ExecStartPre=mkdir -p %h/.local/share/tdarr/temp
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tdarr
+OOMPolicy=kill
+CPUQuota=400%
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

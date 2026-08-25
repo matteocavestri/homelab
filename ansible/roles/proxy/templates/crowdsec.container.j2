@@ -1,0 +1,37 @@
+[Unit]
+Description=CrowdSec - Security Engine
+PartOf=proxy.target
+After=proxy.target
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.crowdsec.image }}:{{ versions.crowdsec.tag }}
+ContainerName=crowdsec
+Network=host
+Volume=crowdsec-conf:/etc/crowdsec
+Volume=crowdsec-data:/var/lib/crowdsec/data
+Volume=%h/.local/share/containers/storage/volumes/npmplus-data/_data/nginx/logs:/opt/npmplus/nginx/logs:ro
+EnvironmentFile=%h/.config/infrastructure/proxy/crowdsec/crowdsec.env
+AutoUpdate=registry
+
+HealthCmd=cscli version || exit 1
+HealthInterval=60s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=30s
+HealthOnFailure=kill
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=crowdsec
+Slice=proxy.slice
+
+[Install]
+WantedBy=proxy.target

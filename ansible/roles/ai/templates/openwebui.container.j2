@@ -1,0 +1,36 @@
+[Unit]
+Description=Open WebUI - LLM Frontend
+PartOf=ai.target
+After=ai.target ollama.service
+Requires=ollama.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.openwebui.image }}:{{ versions.openwebui.tag }}
+ContainerName=openwebui
+Network=ai.network
+Network=monitoring.network
+PublishPort=127.0.0.1:8081:8080
+Volume=openwebui-data:/app/backend/data
+EnvironmentFile=%h/.config/ai/openwebui.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openwebui
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

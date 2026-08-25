@@ -1,0 +1,61 @@
+---
+vault_authentik:
+  postgres_password: "CHANGEME"
+  secret_key: "CHANGEME"
+  email_password: "CHANGEME"
+vault_immich:
+  # riusato sia in immich-postgres.env (POSTGRES_PASSWORD) che in immich.env (DB_PASSWORD)
+  postgres_password: "CHANGEME"
+vault_openterminal:
+  api_key: "CHANGEME"
+vault_openwebui:
+  secret_key: "CHANGEME"
+  oauth_client_id: "CHANGEME"
+  oauth_client_secret: "CHANGEME"
+vault_searxng:
+  secret_key: "CHANGEME"
+vault_openai_edge_tts:
+  # inline in openai-edge-tts.container (Environment=API_KEY=...), non in un .env
+  api_key: "CHANGEME"
+vault_grafana:
+  admin_password: "CHANGEME"
+  oauth_client_id: "CHANGEME"
+  oauth_client_secret: "CHANGEME"
+vault_alertmanager:
+  # username "alertmanager" e' statico nel template (alertmanager.yaml), solo la password e' segreta
+  ntfy_password: "CHANGEME"
+vault_ntfy:
+  # NTFY_USER=systemd resta plaintext in group_vars/monitoring.yml
+  password: "CHANGEME"
+vault_ddns_updater:
+  # intero blob CONFIG di ddns-updater: contiene le API key del provider DNS e il token Cloudflare
+  config_json: 'CHANGEME'
+vault_crowdsec_web_ui:
+  password: "CHANGEME"
+vault_geoipupdate:
+  # GEOIPUPDATE_ACCOUNT_ID resta plaintext in group_vars/proxy.yml
+  license_key: "CHANGEME"
+vault_npmplus:
+  initial_admin_password: "CHANGEME"
+vault_exportarr:
+  lidarr_apikey: "CHANGEME"
+  prowlarr_apikey: "CHANGEME"
+  radarr_apikey: "CHANGEME"
+  sonarr_apikey: "CHANGEME"
+vault_gluetun:
+  wireguard_private_key: "CHANGEME"
+  # chiave precedente, se serve tenerne traccia
+  wireguard_private_key_old: "CHANGEME"
+vault_nzbget:
+  # NZBGET_USERNAME=nzbget resta plaintext in group_vars/media_arr.yml
+  exporter_password: "CHANGEME"
+vault_qbittorrent:
+  # QBITTORRENT_USERNAME=admin resta plaintext in group_vars/media_arr.yml
+  exporter_password: "CHANGEME"
+vault_jellyfin:
+  exporter_token: "CHANGEME"
+vault_freshrss:
+  oidc_client_secret: "CHANGEME"
+  oidc_client_crypto_key: "CHANGEME"
+vault_vaultwarden:
+  admin_token: "CHANGEME"

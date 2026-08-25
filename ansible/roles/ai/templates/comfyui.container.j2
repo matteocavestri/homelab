@@ -1,0 +1,43 @@
+[Unit]
+Description=ComfyUI - Stable Diffusion Image Generation
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+# cu118-slim: only tag supporting Pascal sm_61 (Tesla P4)
+# Image=docker.io/yanwk/comfyui-boot:cu118-slim
+Image=localhost/comfyui-p4:latest
+ContainerName=comfyui
+Network=ai.network
+PublishPort=127.0.0.1:8188:8188
+
+# GPU via CDI, requires: nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+AddDevice=nvidia.com/gpu=all
+
+# single volume on /root, per upstream cu118-slim compose
+Volume=comfyui-storage:/root
+
+EnvironmentFile=%h/.config/ai/comfyui/comfyui.env
+
+# required for GPU access
+SecurityLabelDisable=true
+
+# AutoUpdate=registry
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=600
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=comfyui
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

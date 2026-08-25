@@ -1,0 +1,32 @@
+[Unit]
+Description=qBittorrent - Torrent Client
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.qbittorrent.image }}:{{ versions.qbittorrent.tag }}
+ContainerName=qbittorrent
+Network=container:gluetun
+Volume=qbittorrent-config:/config
+Volume=/mnt/Downloads:/downloads:z
+EnvironmentFile=%h/.config/media/arr/qbittorrent.env
+# NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=qbittorrent
+MemoryMax=4G
+MemorySwapMax=0
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

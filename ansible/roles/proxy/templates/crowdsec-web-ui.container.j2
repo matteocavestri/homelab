@@ -1,0 +1,35 @@
+[Unit]
+Description=CrowdSec - Web UI Dashboard
+PartOf=proxy.target
+After=proxy.target crowdsec.service
+Requires=crowdsec.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.crowdsec_web_ui.image }}:{{ versions.crowdsec_web_ui.tag }}
+ContainerName=crowdsec-web-ui
+Network=host
+Volume=crowdsec-web-ui-data:/app/data
+EnvironmentFile=%h/.config/infrastructure/proxy/crowdsec-web-ui/crowdsec-web-ui.env
+AutoUpdate=registry
+# HealthCmd=wget -qO- http://127.0.0.1:3000/api/health || exit 1
+# HealthInterval=60s
+# HealthTimeout=5s
+# HealthRetries=3
+# HealthStartPeriod=30s
+# HealthOnFailure=kill
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=crowdsec-web-ui
+Slice=proxy.slice
+
+[Install]
+WantedBy=proxy.target

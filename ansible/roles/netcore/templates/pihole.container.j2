@@ -1,0 +1,38 @@
+[Unit]
+Description=Pi-hole DNS Ad-Blocker
+Documentation=https://docs.pi-hole.net/docker/
+After=netcore.target
+PartOf=netcore.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.pihole.image }}:{{ versions.pihole.tag }}
+ContainerName=pihole
+AutoUpdate=registry
+Network=host
+Volume=pihole-data:/etc/pihole
+Volume=pihole-dnsmasq:/etc/dnsmasq.d
+EnvironmentFile=%h/.config/infrastructure/netcore/pihole/pihole.env
+ShmSize=256m
+# NoNewPrivileges=true
+User=root
+
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Slice=netcore.slice
+Restart=on-failure
+RestartSec=5s
+RestartSteps=3
+RestartMaxDelaySec=60s
+TimeoutStartSec=180s
+TimeoutStopSec=30s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pihole
+
+[Install]
+WantedBy=netcore.target

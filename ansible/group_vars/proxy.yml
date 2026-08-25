@@ -1,0 +1,30 @@
+---
+proxy_slice:
+  memory_max: "3G"
+  memory_swap_max: "0"
+  cpu_quota: "800%"
+
+crowdsec_web_ui:
+  crowdsec_url: "http://127.0.0.1:8080"
+  crowdsec_user: "crowdsec-web-ui"
+  crowdsec_prometheus_url: "http://127.0.0.1:6060/metrics"
+  auth_enabled: "true"
+  port: "3007"  # was inline Environment= in the container unit
+
+crowdsec:
+  use_wal: "true"
+  collections: "ZoeyVid/npmplus"
+
+geoipupdate:
+  edition_ids: "GeoLite2-Country GeoLite2-City GeoLite2-ASN"
+  account_id: "1232536"
+  frequency: "24"
+
+npmplus:
+  disable_ipv6: "true"
+  logrotate: "true"
+  logrotations: "7"
+  goa: "true"
+  initial_admin_email: "admin@fmpt.company"
+  nginx_worker_processes: "4"
+  nginx_load_geoip2_module: "true"

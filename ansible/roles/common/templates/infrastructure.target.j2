@@ -1,0 +1,8 @@
+[Unit]
+Description=Infrastructure services
+Documentation=https://github.com/matteocavestri/psm-homelab
+After=podman-user-wait-network-online.service
+Wants=netcore.target proxy.target auth.target monitoring.target
+
+[Install]
+WantedBy=default.target

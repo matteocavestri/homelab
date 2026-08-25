@@ -1,0 +1,31 @@
+use_default_settings:
+  engines:
+    keep_only:
+      - google
+      - bing
+      - duckduckgo
+      - brave
+      - wikipedia
+      - google news
+      - bing news
+
+general:
+  debug: false
+  instance_name: "SearXNG"
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "auto"
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: "{{ vault_searxng.secret_key }}"
+  bind_address: "0.0.0.0:8083"
+  base_url: "{{ searxng.base_url }}"
+  limiter: false
+
+ui:
+  default_theme: simple

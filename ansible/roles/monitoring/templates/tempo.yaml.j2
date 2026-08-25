@@ -1,0 +1,59 @@
+server:
+  http_listen_port: 3200
+  log_level: info
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /data/tempo/blocks
+    wal:
+      path: /data/tempo/wal
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: leonardo
+  storage:
+    path: /data/tempo/generator/wal
+    remote_write:
+      - url: http://mimir:9009/api/v1/push
+        send_exemplars: true
+  processor:
+    service_graphs:
+      dimensions:
+        - http.method
+        - http.status_code
+      peer_attributes:
+        - db.name
+        - db.system
+        - peer.service
+      enable_virtual_node_label: true
+    span_metrics:
+      dimensions:
+        - http.method
+        - http.status_code
+        - http.route
+        - db.system
+        - db.operation
+      enable_target_info: true
+      histogram_buckets:
+        [0.002, 0.004, 0.008, 0.016, 0.032, 0.064, 0.128, 0.256, 0.512, 1.024, 2.048]
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics]
+      max_active_series: 100000
+
+

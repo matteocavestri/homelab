@@ -1,0 +1,36 @@
+[Unit]
+Description=Ollama - Local LLM Server
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.ollama.image }}:{{ versions.ollama.tag }}
+ContainerName=ollama
+Network=ai.network
+PublishPort=127.0.0.1:11434:11434
+Volume=ollama-data:/root/.ollama
+EnvironmentFile=%h/.config/ai/ollama/ollama.env
+SecurityLabelDisable=true
+AddDevice=nvidia.com/gpu=all
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=180
+TimeoutStopSec=60
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ollama
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

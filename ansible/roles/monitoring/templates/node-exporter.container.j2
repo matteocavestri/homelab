@@ -1,0 +1,45 @@
+[Unit]
+Description=Prometheus Node Exporter
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.node_exporter.image }}:{{ versions.node_exporter.tag }}
+ContainerName=node-exporter
+Network=monitoring.network
+Volume=/proc:/host/proc:ro
+Volume=/sys:/host/sys:ro
+Volume=/:/host/root:ro,rslave
+Volume=/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+Exec=--path.procfs=/host/proc --path.sysfs=/host/sys --path.rootfs=/host/root --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run/credentials/.+|var/lib/containers/.+)($|/) --collector.processes --collector.systemd --collector.mountstats --collector.logind --collector.meminfo_numa --collector.pcidevice --collector.zoneinfo --collector.interrupts --collector.ksmd --collector.cgroups --collector.cpu_vulnerabilities --collector.ethtool --collector.network_route --collector.perf --collector.softirqs --collector.lnstat --collector.tcpstat --collector.swap --web.listen-address=0.0.0.0:9100
+PodmanArgs=--cap-add=SYS_ADMIN --cap-add=SYS_RESOURCE --cap-add=SYS_TIME --cap-add=NET_ADMIN --cap-add=SYS_PTRACE
+SecurityLabelDisable=true
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+HealthCmd=wget -qO- http://localhost:9100/ > /dev/null || exit 1
+HealthInterval=60s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=30s
+HealthOnFailure=kill
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=node-exporter
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

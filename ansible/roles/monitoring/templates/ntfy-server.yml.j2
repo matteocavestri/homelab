@@ -1,0 +1,29 @@
+base-url: https://ntfy.fmpt.company
+upstream-base-url: "https://ntfy.sh"
+
+behind-proxy: true
+
+listen-http: :80
+
+auth-file: /var/lib/ntfy/user.db
+auth-default-access: deny-all
+
+cache-file: /var/lib/ntfy/cache.db
+cache-duration: 24h
+cache-startup-queries: |
+  pragma journal_mode = WAL;
+  pragma synchronous = normal;
+
+attachment-cache-dir: /var/lib/ntfy/attachments
+attachment-total-size-limit: 1G
+attachment-file-size-limit: 15M
+attachment-expiry-duration: 24h
+
+global-topic-limit: 50
+visitor-subscription-limit: 50
+visitor-request-limit-burst: 100
+visitor-request-limit-replenish: 10s
+
+log-level: info
+
+

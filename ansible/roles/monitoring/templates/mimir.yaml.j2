@@ -1,0 +1,62 @@
+target: all  # monolithic mode, single process
+
+multitenancy_enabled: false
+
+server:
+  http_listen_port: 9009
+  grpc_listen_port: 9095
+  log_level: info
+
+common:
+  storage:
+    backend: filesystem
+    filesystem:
+      dir: /data/mimir
+
+blocks_storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/mimir/blocks
+  tsdb:
+    dir: /data/mimir/tsdb
+
+compactor:
+  data_dir: /data/mimir/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+distributor:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+
+ingester:
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+ruler_storage:
+  backend: local
+  local:
+    directory: /etc/mimir/rules
+
+ruler:
+  alertmanager_url: http://alertmanager:9093
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: memberlist
+  rule_path: /data/mimir/ruler-tmp
+  enable_api: true
+
+limits:
+  compactor_blocks_retention_period: 90d
+  ingestion_rate: 10000
+  ingestion_burst_size: 200000
+  max_global_series_per_user: 500000
+
+

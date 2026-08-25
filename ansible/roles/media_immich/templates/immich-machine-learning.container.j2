@@ -1,0 +1,35 @@
+[Unit]
+Description=Immich Machine Learning (CUDA)
+PartOf=immich.target
+After=immich.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.immich_machine_learning.image }}:{{ versions.immich_machine_learning.tag }}
+ContainerName=immich-machine-learning
+Network=immich.network
+# SecurityLabelDisable=true
+# AddDevice=nvidia.com/gpu=all
+Volume=immich-model-cache:/cache
+# Environment=NVIDIA_VISIBLE_DEVICES=all
+# Environment=NVIDIA_DRIVER_CAPABILITIES=compute,utility
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=180
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=immich-machine-learning
+Slice=immich.slice
+
+[Install]
+WantedBy=immich.target

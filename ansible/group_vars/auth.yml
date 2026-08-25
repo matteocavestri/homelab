@@ -1,0 +1,22 @@
+---
+auth_slice:
+  cpu_weight: "800"
+  startup_cpu_weight: "1000"
+  cpu_quota: "1400%"
+  memory_min: "384M"
+  memory_low: "768M"
+  memory_high: "3500M"
+  memory_max: "4G"
+  memory_swap_max: "0"
+
+authentik:
+  postgres_user: "authentik"
+  postgres_db: "authentik"
+  log_level: "info"
+  email_host: "smtp.protonmail.ch"
+  email_port: "587"
+  email_from: "admin@fmpt.company"
+  email_username: "admin@fmpt.company"
+  email_use_tls: "true"
+  email_use_ssl: "false"
+  email_timeout: "15"

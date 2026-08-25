@@ -1,0 +1,43 @@
+[Unit]
+Description=Ntfy Notification Service
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.ntfy.image }}:{{ versions.ntfy.tag }}
+ContainerName=ntfy
+Volume=ntfy-data:/var/lib/ntfy
+Volume=%h/.config/infrastructure/monitoring/ntfy/server.yml:/etc/ntfy/server.yml:ro,Z
+Network=monitoring.network
+PublishPort=127.0.0.1:8091:80
+Exec=serve
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+# HealthCmd=curl -sf http://localhost:80/v1/health || exit 1
+# HealthInterval=30s
+# HealthTimeout=5s
+# HealthRetries=3
+# HealthStartPeriod=30s
+# HealthOnFailure=kill
+# Notify=healthy
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ntfy
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

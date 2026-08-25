@@ -1,0 +1,34 @@
+[Unit]
+Description=DDNS Updater
+After=netcore.target
+PartOf=netcore.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.ddns_updater.image }}:{{ versions.ddns_updater.tag }}
+ContainerName=ddns-updater
+AutoUpdate=registry
+Volume=ddns-updater-data:/updater/data
+Network=netcore.network
+EnvironmentFile=%h/.config/infrastructure/netcore/ddns-updater/ddns.env
+NoNewPrivileges=true
+
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Slice=netcore.slice
+Restart=always
+RestartSec=10s
+RestartSteps=3
+RestartMaxDelaySec=60s
+TimeoutStartSec=60s
+TimeoutStopSec=30s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ddns-updater
+
+[Install]
+WantedBy=netcore.target

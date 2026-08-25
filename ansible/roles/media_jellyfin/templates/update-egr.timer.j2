@@ -1,0 +1,10 @@
+[Unit]
+Description=Update EGR IPTV - daily timer
+Requires=jellyfin.target
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target

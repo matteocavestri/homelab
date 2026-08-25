@@ -1,0 +1,34 @@
+[Unit]
+Description=Open WebUI Pipelines
+PartOf=ai.target
+After=ai.target openwebui.service
+Requires=openwebui.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.pipelines.image }}:{{ versions.pipelines.tag }}
+ContainerName=pipelines
+Network=ai.network
+Volume=pipelines-data:/app/pipelines
+EnvironmentFile=%h/.config/ai/pipelines/pipelines.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pipelines
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

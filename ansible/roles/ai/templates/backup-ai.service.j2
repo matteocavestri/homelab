@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup ai service
+Requires=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/backup-target.sh ai
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup-ai
+TimeoutStartSec=1800

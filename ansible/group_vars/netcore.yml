@@ -1,0 +1,27 @@
+---
+netcore_slice:
+  memory_max: "1G"
+  memory_swap_max: "0"
+  cpu_quota: "200%"
+
+ddns_updater:
+  period: "5m"
+  update_cooldown_period: "5m"
+  publicip_fetchers: "all"
+  publicip_http_providers: "all"
+  publicipv4_http_providers: "all"
+  publicip_dns_providers: "all"
+  publicip_dns_timeout: "3s"
+  http_timeout: "10s"
+  listening_address: "127.0.0.1:8000"
+  log_level: "info"
+  log_caller: "hidden"
+  backup_period: "72h"
+  backup_directory: "/updater/data"
+
+pihole:
+  dns_upstreams: "9.9.9.9;1.1.1.1"
+  dns_listening_mode: "all"
+  webserver_port: "3080"
+  dns_dnssec: "true"
+  dns_rev_servers: "true,192.168.1.0/24,192.168.1.1,lan"

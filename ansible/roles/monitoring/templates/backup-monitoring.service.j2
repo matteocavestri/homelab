@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup monitoring target
+Requires=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/backup-target.sh monitoring
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup-monitoring
+TimeoutStartSec=7200

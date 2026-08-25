@@ -1,0 +1,41 @@
+[Unit]
+Description=Grafana Pyroscope
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.pyroscope.image }}:{{ versions.pyroscope.tag }}
+ContainerName=pyroscope
+Volume=pyroscope-data:/data/pyroscope
+Volume=%h/.config/infrastructure/monitoring/pyroscope/pyroscope.yaml:/etc/pyroscope/config.yaml:ro,Z
+Network=monitoring.network
+Exec=-config.file=/etc/pyroscope/config.yaml -log.level=info -architecture.storage=v1 -write-path=ingester
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+# HealthCmd=curl -sf http://localhost:4040/ready || exit 1
+# HealthInterval=30s
+# HealthTimeout=5s
+# HealthRetries=3
+# HealthStartPeriod=60s
+# HealthOnFailure=kill
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pyroscope
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

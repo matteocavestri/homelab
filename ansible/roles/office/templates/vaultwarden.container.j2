@@ -1,0 +1,35 @@
+[Unit]
+Description=Vaultwarden Password Manager
+PartOf=office.target
+After=office.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.vaultwarden.image }}:{{ versions.vaultwarden.tag }}
+ContainerName=vaultwarden
+Network=office.network
+Network=monitoring.network
+PublishPort=127.0.0.1:8087:80
+Volume=vaultwarden-data:/data
+EnvironmentFile=%h/.config/office/vaultwarden.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vaultwarden
+Slice=office.slice
+
+[Install]
+WantedBy=office.target

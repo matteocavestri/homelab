@@ -1,0 +1,19 @@
+target: all
+
+server:
+  http_listen_port: 4040
+  grpc_listen_port: 9095
+
+storage:
+  backend: filesystem
+  filesystem:
+    dir: /data/pyroscope
+
+limits:
+  compactor_blocks_retention_period: 48h
+
+multitenancy_enabled: false
+
+self_profiling:
+  disable_push: false
+

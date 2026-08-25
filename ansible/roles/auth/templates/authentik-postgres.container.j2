@@ -1,0 +1,41 @@
+[Unit]
+Description=Authentik PostgreSQL Database
+PartOf=auth.target
+After=auth.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.authentik_postgres.image }}:{{ versions.authentik_postgres.tag }}
+ContainerName=authentik-postgres
+Volume=authentik-postgres-data:/var/lib/postgresql/data
+Network=authentik.network
+EnvironmentFile=%h/.config/infrastructure/auth/authentik/authentik.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+HealthCmd=pg_isready || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=30s
+HealthOnFailure=kill
+
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=authentik-postgres
+Slice=auth.slice
+
+[Install]
+WantedBy=auth.target

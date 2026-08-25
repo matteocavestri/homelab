@@ -1,0 +1,14 @@
+[Unit]
+Description=Notify recovery of %i
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/infrastructure/monitoring/ntfy/ntfy.env
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=notify-recovery
+Restart=on-failure
+RestartSec=30
+RestartSteps=3
+RestartMaxDelaySec=120
+ExecStart=/bin/bash -c 'curl -sf -u "${NTFY_USER}:${NTFY_PASS}" -H "Title: ✅ Recovered: %i" -H "Priority: default" -H "Tags: white_check_mark" -d "Service %i recovered on leonardo" "${NTFY_URL}/systemd-warning"'

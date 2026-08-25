@@ -1,0 +1,7 @@
+[Unit]
+Description=Auth Services
+PartOf=infrastructure.target
+After=network-core.target proxy.target
+
+[Install]
+WantedBy=infrastructure.target

@@ -1,0 +1,38 @@
+---
+netcore_files:
+  - src: "netcore.network.j2"
+    dest: "~/.config/containers/systemd/netcore.network"
+    notify: []
+    mode: "0644"
+  - src: "netcore.slice.j2"
+    dest: "~/.config/systemd/user/netcore.slice"
+    notify: ['restart netcore.slice']
+    mode: "0644"
+  - src: "netcore.target.j2"
+    dest: "~/.config/systemd/user/netcore.target"
+    notify: ['restart netcore.target']
+    mode: "0644"
+  - src: "ddns-updater.container.j2"
+    dest: "~/.config/containers/systemd/ddns-updater.container"
+    notify: ['restart ddns-updater.service']
+    mode: "0644"
+  - src: "pihole.container.j2"
+    dest: "~/.config/containers/systemd/pihole.container"
+    notify: ['restart pihole.service']
+    mode: "0644"
+  - src: "backup-netcore.service.j2"
+    dest: "~/.config/systemd/user/backup-netcore.service"
+    notify: []
+    mode: "0644"
+  - src: "backup-netcore.timer.j2"
+    dest: "~/.config/systemd/user/backup-netcore.timer"
+    notify: ['restart backup-netcore.timer']
+    mode: "0644"
+  - src: "ddns.env.j2"
+    dest: "~/.config/infrastructure/netcore/ddns-updater/ddns.env"
+    notify: ['restart ddns-updater.service']
+    mode: "0600"
+  - src: "pihole.env.j2"
+    dest: "~/.config/infrastructure/netcore/pihole/pihole.env"
+    notify: ['restart pihole.service']
+    mode: "0600"

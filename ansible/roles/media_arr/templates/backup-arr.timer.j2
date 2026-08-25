@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Arr backup timer
+PartOf=media.target
+
+[Timer]
+OnCalendar=*-*-* 03:45:00
+AccuracySec=5m
+
+[Install]
+WantedBy=media.target

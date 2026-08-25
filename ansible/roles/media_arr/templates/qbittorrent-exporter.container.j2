@@ -1,0 +1,28 @@
+[Unit]
+Description=qBittorrent Exporter
+After=qbittorrent.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.qbittorrent_exporter.image }}:{{ versions.qbittorrent_exporter.tag }}
+ContainerName=qbittorrent-exporter
+Network=arr.network
+Network=monitoring.network
+EnvironmentFile=%h/.config/media/arr/qbittorrent-exporter.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=qbittorrent-exporter
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

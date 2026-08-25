@@ -1,0 +1,19 @@
+[Unit]
+Description=Homepage dashboard
+
+[Container]
+Image={{ versions.homepage.image }}:{{ versions.homepage.tag }}
+ContainerName=homepage
+PublishPort=3057:3000
+EnvironmentFile=%h/.config/homepage/homepage.env
+Volume=homepage-config:/app/config
+# rootless podman socket, exposed as docker.sock
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

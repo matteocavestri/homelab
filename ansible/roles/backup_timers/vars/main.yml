@@ -1,0 +1,13 @@
+---
+# Every backup-*.timer deployed across the other roles. Unlike service .targets
+# (left for the operator to enable by choice), these must always run unattended.
+backup_timer_units:
+  - backup-auth
+  - backup-netcore
+  - backup-proxy
+  - backup-jellyfin
+  - backup-arr
+  - backup-monitoring
+  - backup-office
+  - backup-immich
+  - backup-ai

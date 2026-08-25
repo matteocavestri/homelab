@@ -1,0 +1,90 @@
+---
+arr_slice:
+  memory_max: "8G"
+  memory_swap_max: "0"
+  cpu_quota: "800%"
+
+exportarr_lidarr:
+  port: "9708"
+  url: "http://gluetun:8686"
+  enable_additional_metrics: "true"
+  instance_name: "lidarr"
+  log_level: "warn"
+
+exportarr_prowlarr:
+  port: "9709"
+  url: "http://gluetun:9696"
+  enable_additional_metrics: "true"
+  backfill: "true"
+  instance_name: "prowlarr"
+  log_level: "warn"
+
+exportarr_radarr:
+  port: "9707"
+  url: "http://gluetun:7878"
+  enable_additional_metrics: "true"
+  instance_name: "radarr"
+  log_level: "warn"
+
+exportarr_sonarr:
+  port: "9710"
+  url: "http://gluetun:8989"
+  enable_additional_metrics: "true"
+  instance_name: "sonarr"
+  log_level: "warn"
+
+gluetun:
+  vpn_service_provider: "protonvpn"
+  vpn_type: "wireguard"
+  server_countries: "Switzerland"
+  port_forward_only: "on"
+  vpn_port_forwarding: "on"
+  updater_period: "24h"
+  dns_update_period: "24h"
+  block_malicious: "off"
+  dot_providers: "quad9"
+  unblock: "news.usenetserver.com"
+  block_surveillance: "on"
+  shadowsocks: "on"
+  shadowsocks_log: "on"
+  httpproxy: "on"
+  httpproxy_log: "on"
+  httpproxy_stealth: "on"
+
+nzbget:
+  host: "http://gluetun:6789"
+  username: "nzbget"
+
+qbittorrent:
+  base_url: "http://gluetun:8082"
+  username: "admin"
+  webui_port: "8082"
+
+flaresolverr:
+  log_level: "info"
+  log_html: "false"
+  captcha_solver: "none"
+
+jellyseerr:
+  log_level: "info"
+  port: "5055"
+
+sportarr:
+  puid: "99"
+  pgid: "100"
+  umask: "022"
+
+tdarr:
+  puid: "1000"
+  pgid: "1000"
+  umask_set: "002"
+  server_ip: "0.0.0.0"
+  server_port: "8266"
+  webui_port: "8265"
+  in_container: "true"
+  ffmpeg_version: "7"
+  max_log_size_mb: "10"
+  internal_node: "true"
+  node_name: "LeonardoNode"
+  nvidia_visible_devices: "all"
+  nvidia_driver_capabilities: "all"

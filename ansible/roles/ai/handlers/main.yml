@@ -1,0 +1,121 @@
+---
+
+- name: "restart ai.slice"
+  listen: "restart ai.slice"
+  ansible.builtin.systemd_service:
+    name: "ai.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart ai.target"
+  listen: "restart ai.target"
+  ansible.builtin.systemd_service:
+    name: "ai.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-ai.timer"
+  listen: "restart backup-ai.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-ai.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart comfyui.service"
+  listen: "restart comfyui.service"
+  ansible.builtin.systemd_service:
+    name: "comfyui.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart crawl4ai.service"
+  listen: "restart crawl4ai.service"
+  ansible.builtin.systemd_service:
+    name: "crawl4ai.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart mcpo.service"
+  listen: "restart mcpo.service"
+  ansible.builtin.systemd_service:
+    name: "mcpo.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart n8n.service"
+  listen: "restart n8n.service"
+  ansible.builtin.systemd_service:
+    name: "n8n.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart ollama.service"
+  listen: "restart ollama.service"
+  ansible.builtin.systemd_service:
+    name: "ollama.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart openai-edge-tts.service"
+  listen: "restart openai-edge-tts.service"
+  ansible.builtin.systemd_service:
+    name: "openai-edge-tts.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart openterminal.service"
+  listen: "restart openterminal.service"
+  ansible.builtin.systemd_service:
+    name: "openterminal.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart openwebui.service"
+  listen: "restart openwebui.service"
+  ansible.builtin.systemd_service:
+    name: "openwebui.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart pipelines.service"
+  listen: "restart pipelines.service"
+  ansible.builtin.systemd_service:
+    name: "pipelines.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart qdrant.service"
+  listen: "restart qdrant.service"
+  ansible.builtin.systemd_service:
+    name: "qdrant.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart searxng.service"
+  listen: "restart searxng.service"
+  ansible.builtin.systemd_service:
+    name: "searxng.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart tika.service"
+  listen: "restart tika.service"
+  ansible.builtin.systemd_service:
+    name: "tika.service"
+    state: restarted
+    scope: user
+  failed_when: false

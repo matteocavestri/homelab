@@ -1,0 +1,50 @@
+---
+# daemon-reload is defined once, in roles/common/handlers/main.yml. See there.
+
+- name: "restart jellyfin.slice"
+  listen: "restart jellyfin.slice"
+  ansible.builtin.systemd_service:
+    name: "jellyfin.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart jellyfin.target"
+  listen: "restart jellyfin.target"
+  ansible.builtin.systemd_service:
+    name: "jellyfin.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-jellyfin.timer"
+  listen: "restart backup-jellyfin.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-jellyfin.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart update-egr.timer"
+  listen: "restart update-egr.timer"
+  ansible.builtin.systemd_service:
+    name: "update-egr.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart jellyfin.service"
+  listen: "restart jellyfin.service"
+  ansible.builtin.systemd_service:
+    name: "jellyfin.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart jellyfin-exporter.service"
+  listen: "restart jellyfin-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "jellyfin-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false

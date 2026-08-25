@@ -1,0 +1,34 @@
+[Unit]
+Description=SearXNG - Privacy-respecting Metasearch Engine
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.searxng.image }}:{{ versions.searxng.tag }}
+ContainerName=searxng
+Network=ai.network
+PublishPort=127.0.0.1:8083:8080
+Volume=%h/.config/ai/searxng/settings.yml:/etc/searxng/settings.yml:ro,Z
+EnvironmentFile=%h/.config/ai/searxng/searxng.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=searxng
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

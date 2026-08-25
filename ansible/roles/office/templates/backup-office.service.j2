@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup office service
+Requires=office.target
+After=office.target
+OnFailure=notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/backup-target.sh office
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup-office
+TimeoutStartSec=1800

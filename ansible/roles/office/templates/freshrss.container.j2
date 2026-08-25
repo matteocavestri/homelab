@@ -1,0 +1,36 @@
+[Unit]
+Description=FreshRSS RSS Reader
+PartOf=office.target
+After=office.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.freshrss.image }}:{{ versions.freshrss.tag }}
+ContainerName=freshrss
+Network=office.network
+Network=monitoring.network
+PublishPort=127.0.0.1:8183:80
+Volume=freshrss-data:/var/www/FreshRSS/data
+Volume=freshrss-extensions:/var/www/FreshRSS/extensions
+EnvironmentFile=%h/.config/office/freshrss.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=freshrss
+Slice=office.slice
+
+[Install]
+WantedBy=office.target

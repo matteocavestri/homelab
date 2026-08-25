@@ -1,0 +1,99 @@
+groups:
+
+  # ─── Authentik SSO / Identity Provider ──────────────────────────
+
+  - name: Authentik
+
+    rules:
+
+      # Authentik exporter is not responding
+      - alert: AuthentikDown
+        expr: 'up{job="authentik"} == 0'
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Authentik is down (instance {{ $labels.instance }})
+          description: "Authentik has not responded for 2 minutes. Users will be unable to authenticate.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Embedded outpost disconnected (proxy auth will stop working)
+      - alert: AuthentikOutpostDisconnected
+        expr: 'authentik_outpost_connection == 0'
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Authentik outpost disconnected ({{ $labels.outpost_name }})
+          description: "Outpost '{{ $labels.outpost_name }}' has been disconnected for 2 minutes. Proxy authentication is failing.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Outpost has not sent a heartbeat recently (stale connection)
+      - alert: AuthentikOutpostStale
+        expr: '(time() - authentik_outpost_last_update) > 300'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik outpost heartbeat stale ({{ $labels.outpost_name }})
+          description: "Outpost '{{ $labels.outpost_name }}' last update was more than 5 minutes ago.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # No background workers are connected
+      - alert: AuthentikWorkersDown
+        expr: 'sum(authentik_admin_workers) == 0'
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Authentik workers are down
+          description: "No Authentik background workers are connected. Scheduled tasks, email delivery, and event processing are suspended.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Worker version mismatch (after upgrade, old worker still running)
+      - alert: AuthentikWorkerVersionMismatch
+        expr: 'authentik_admin_workers{version_matched="False"} > 0'
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik worker version mismatch
+          description: "One or more Authentik workers are running a different version than the server. This may cause instability after an upgrade.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # High rate of HTTP 5xx errors (server-side failures)
+      - alert: AuthentikHigh5xxRate
+        expr: 'rate(django_http_responses_total_by_status_total{status=~"5.."}[5m]) > 0.05'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik high 5xx error rate
+          description: "More than 3 HTTP 5xx errors per minute in the last 5 minutes. Check Authentik logs for exceptions.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # High API response latency (p95 > 2s on core endpoints)
+      - alert: AuthentikHighLatency
+        expr: 'histogram_quantile(0.95, rate(authentik_main_request_duration_seconds_bucket{dest="core"}[5m])) > 2'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik API latency high
+          description: "95th percentile response time for core API is above 2 seconds. Users may experience slow logins.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Database query latency spike (p95 > 500ms)
+      - alert: AuthentikDatabaseSlowQueries
+        expr: 'histogram_quantile(0.95, rate(django_db_query_duration_seconds_bucket[5m])) > 0.5'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik database queries slow
+          description: "95th percentile DB query duration exceeded 500ms. PostgreSQL may be under pressure.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Background task queue building up (stuck worker or overload)
+      - alert: AuthentikTaskQueueBacklog
+        expr: 'sum(authentik_tasks_queued) by (queue_name) > 50'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Authentik task queue backlog ({{ $labels.queue_name }})
+          description: "More than 50 tasks are queued in '{{ $labels.queue_name }}'. Workers may be stuck or overloaded.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+

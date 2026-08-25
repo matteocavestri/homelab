@@ -1,0 +1,167 @@
+---
+# daemon-reload is defined once, in roles/common/handlers/main.yml. See there.
+#
+# arr.slice/arr.target/backup-arr.timer are independent of container start order,
+# so they sit above the container-ordering note below.
+- name: "restart arr.slice"
+  listen: "restart arr.slice"
+  ansible.builtin.systemd_service:
+    name: "arr.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart arr.target"
+  listen: "restart arr.target"
+  ansible.builtin.systemd_service:
+    name: "arr.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-arr.timer"
+  listen: "restart backup-arr.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-arr.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+#
+# gluetun must stay the first handler below: containers on Network=container:gluetun
+# (flaresolverr, lidarr, nzbget, prowlarr, qbittorrent, radarr, sonarr, sportarr) lose
+# networking if restarted before gluetun is recreated. Handlers run in listed order.
+- name: "restart gluetun.service"
+  listen: "restart gluetun.service"
+  ansible.builtin.systemd_service:
+    name: "gluetun.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart exportarr-lidarr.service"
+  listen: "restart exportarr-lidarr.service"
+  ansible.builtin.systemd_service:
+    name: "exportarr-lidarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart exportarr-prowlarr.service"
+  listen: "restart exportarr-prowlarr.service"
+  ansible.builtin.systemd_service:
+    name: "exportarr-prowlarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart exportarr-radarr.service"
+  listen: "restart exportarr-radarr.service"
+  ansible.builtin.systemd_service:
+    name: "exportarr-radarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart exportarr-sonarr.service"
+  listen: "restart exportarr-sonarr.service"
+  ansible.builtin.systemd_service:
+    name: "exportarr-sonarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart flaresolverr.service"
+  listen: "restart flaresolverr.service"
+  ansible.builtin.systemd_service:
+    name: "flaresolverr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart jellyseerr.service"
+  listen: "restart jellyseerr.service"
+  ansible.builtin.systemd_service:
+    name: "jellyseerr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart lidarr.service"
+  listen: "restart lidarr.service"
+  ansible.builtin.systemd_service:
+    name: "lidarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart nzbget.service"
+  listen: "restart nzbget.service"
+  ansible.builtin.systemd_service:
+    name: "nzbget.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart nzbget-exporter.service"
+  listen: "restart nzbget-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "nzbget-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart prowlarr.service"
+  listen: "restart prowlarr.service"
+  ansible.builtin.systemd_service:
+    name: "prowlarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart qbittorrent.service"
+  listen: "restart qbittorrent.service"
+  ansible.builtin.systemd_service:
+    name: "qbittorrent.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart qbittorrent-exporter.service"
+  listen: "restart qbittorrent-exporter.service"
+  ansible.builtin.systemd_service:
+    name: "qbittorrent-exporter.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart radarr.service"
+  listen: "restart radarr.service"
+  ansible.builtin.systemd_service:
+    name: "radarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart sonarr.service"
+  listen: "restart sonarr.service"
+  ansible.builtin.systemd_service:
+    name: "sonarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart sportarr.service"
+  listen: "restart sportarr.service"
+  ansible.builtin.systemd_service:
+    name: "sportarr.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart tdarr.service"
+  listen: "restart tdarr.service"
+  ansible.builtin.systemd_service:
+    name: "tdarr.service"
+    state: restarted
+    scope: user
+  failed_when: false

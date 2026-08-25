@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily auth backup
+
+[Timer]
+OnCalendar=*-*-* 01:00:00
+AccuracySec=5m
+
+[Install]
+WantedBy=auth.target

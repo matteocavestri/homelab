@@ -1,0 +1,28 @@
+[Unit]
+Description=NZBGet Exporter
+After=nzbget.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.nzbget_exporter.image }}:{{ versions.nzbget_exporter.tag }}
+ContainerName=nzbget-exporter
+Network=arr.network
+Network=monitoring.network
+EnvironmentFile=%h/.config/media/arr/nzbget-exporter.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nzbget-exporter
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

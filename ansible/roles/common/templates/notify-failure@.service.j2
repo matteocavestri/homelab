@@ -1,0 +1,14 @@
+[Unit]
+Description=Notify failure of %i
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/infrastructure/monitoring/ntfy/ntfy.env
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=notify-failure
+Restart=on-failure
+RestartSec=30
+RestartSteps=3
+RestartMaxDelaySec=120
+ExecStart=/bin/bash -c 'curl -sf  -u "${NTFY_USER}:${NTFY_PASS}" -H "Title: ❌ Failure: %i" -H "Priority: urgent" -H "Tags: warning,skull" -d "Service %i failed on leonardo" "${NTFY_URL}/${NTFY_TOPIC}"'

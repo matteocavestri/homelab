@@ -1,0 +1,8 @@
+[Unit]
+Description=Jellyfin Slice
+Before=slices.target
+
+[Slice]
+MemoryMax={{ jellyfin_slice.memory_max }}
+MemorySwapMax={{ jellyfin_slice.memory_swap_max }}
+CPUQuota={{ jellyfin_slice.cpu_quota }}

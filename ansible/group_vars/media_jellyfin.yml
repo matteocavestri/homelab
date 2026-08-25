@@ -1,0 +1,12 @@
+---
+jellyfin_slice:
+  memory_max: "4G"
+  memory_swap_max: "0"
+  cpu_quota: "800%"
+
+jellyfin_exporter:
+  jellyfin_address: "http://jellyfin:8096"
+
+jellyfin:
+  nvidia_visible_devices: "all"
+  nvidia_driver_capabilities: "compute,video,utility"

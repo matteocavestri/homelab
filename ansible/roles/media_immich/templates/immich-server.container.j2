@@ -1,0 +1,37 @@
+[Unit]
+Description=Immich Server
+PartOf=immich.target
+After=immich.target immich-postgres.service immich-redis.service
+Requires=immich-postgres.service immich-redis.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.immich_server.image }}:{{ versions.immich_server.tag }}
+ContainerName=immich-server
+Network=immich.network
+PublishPort=127.0.0.1:2283:2283
+SecurityLabelDisable=true
+AddDevice=nvidia.com/gpu=all
+Volume=/mnt/Media/Foto/immich:/usr/src/app/upload:Z
+Volume=/etc/localtime:/etc/localtime:ro
+EnvironmentFile=%E/media/immich/immich.env
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=180
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=immich-server
+Slice=immich.slice
+
+[Install]
+WantedBy=immich.target

@@ -1,0 +1,33 @@
+[Unit]
+Description=Immich PostgreSQL Database
+PartOf=immich.target
+After=immich.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.immich_postgres.image }}:{{ versions.immich_postgres.tag }}
+ContainerName=immich-postgres
+Network=immich.network
+Volume=immich-postgres-data:/var/lib/postgresql/data
+EnvironmentFile=%E/media/immich/immich-postgres.env
+ShmSize=128m
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=immich-postgres
+Slice=immich.slice
+
+[Install]
+WantedBy=immich.target

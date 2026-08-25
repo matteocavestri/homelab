@@ -1,0 +1,31 @@
+[Unit]
+Description=Sportarr - Sports Manager
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.sportarr.image }}:{{ versions.sportarr.tag }}
+ContainerName=sportarr
+Network=container:gluetun
+Volume=sportarr-config:/config
+Volume=/mnt/Media/Sports:/sports:z
+Volume=/mnt/Downloads:/downloads:z
+EnvironmentFile=%h/.config/media/arr/sportarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sportarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

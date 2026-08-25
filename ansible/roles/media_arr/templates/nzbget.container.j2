@@ -1,0 +1,30 @@
+[Unit]
+Description=NZBGet - Usenet Downloader
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.nzbget.image }}:{{ versions.nzbget.tag }}
+ContainerName=nzbget
+Network=container:gluetun
+Volume=nzbget-config:/config
+Volume=/mnt/Downloads:/downloads:z
+EnvironmentFile=%h/.config/media/arr/nzbget.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nzbget
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target

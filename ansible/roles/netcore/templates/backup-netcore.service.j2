@@ -1,0 +1,13 @@
+[Unit]
+Description=Backup netcore
+Requires=netcore.target
+After=netcore.target
+OnFailure=notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/backup-target.sh netcore
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup-netcore
+TimeoutStartSec=1800

@@ -1,0 +1,34 @@
+[Unit]
+Description=OpenAI Edge TTS - Text-to-Speech Service
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.openai_edge_tts.image }}:{{ versions.openai_edge_tts.tag }}
+ContainerName=openai-edge-tts
+Network=ai.network
+
+EnvironmentFile=%h/.config/ai/openai-edge-tts/openai-edge-tts.env
+
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=60
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openai-edge-tts
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

@@ -1,0 +1,69 @@
+groups:
+
+  # ─── Jellyfin Media Server ───────────────────────────────────────
+
+  - name: Jellyfin
+
+    rules:
+
+      # Jellyfin is unreachable (exporter cannot connect)
+      - alert: JellyfinDown
+        expr: 'jellyfin_up == 0'
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Jellyfin is down (instance {{ $labels.instance }})
+          description: "Jellyfin has been unreachable for 2 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Jellyfin exporter itself is not responding
+      - alert: JellyfinExporterDown
+        expr: 'up{job="jellyfin"} == 0'
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Jellyfin exporter is down (instance {{ $labels.instance }})
+          description: "The Jellyfin exporter has not responded for 2 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # One or more collectors are failing (media, playing, system, users)
+      - alert: JellyfinCollectorFailing
+        expr: 'jellyfin_scrape_collector_success == 0'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Jellyfin collector failing ({{ $labels.collector }})
+          description: "The '{{ $labels.collector }}' collector has been failing for 5 minutes. Jellyfin API may be partially unavailable.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Collector scrape is taking abnormally long (media collector baseline ~32ms)
+      - alert: JellyfinCollectorSlow
+        expr: 'jellyfin_scrape_collector_duration_seconds{collector="media"} > 10'
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Jellyfin media collector slow
+          description: "Media library scrape is taking more than 10 seconds. Jellyfin may be under heavy load or the library scan is running.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Significant drop in episode count (possible library corruption or accidental removal)
+      - alert: JellyfinEpisodeCountDrop
+        expr: 'delta(jellyfin_media_count{type="Episode"}[1h]) < -50'
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: Jellyfin episode count dropped significantly
+          description: "More than 50 episodes disappeared from the library in the last hour. Check for accidental deletions or a failed library scan.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      # Significant drop in movie count
+      - alert: JellyfinMovieCountDrop
+        expr: 'delta(jellyfin_media_count{type="Movie"}[1h]) < -10'
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: Jellyfin movie count dropped significantly
+          description: "More than 10 movies disappeared from the library in the last hour. Check for accidental deletions or a failed library scan.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+

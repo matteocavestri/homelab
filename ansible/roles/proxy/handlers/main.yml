@@ -1,0 +1,58 @@
+---
+# daemon-reload is defined once, in roles/common/handlers/main.yml. See there.
+
+- name: "restart proxy.slice"
+  listen: "restart proxy.slice"
+  ansible.builtin.systemd_service:
+    name: "proxy.slice"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart proxy.target"
+  listen: "restart proxy.target"
+  ansible.builtin.systemd_service:
+    name: "proxy.target"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart backup-proxy.timer"
+  listen: "restart backup-proxy.timer"
+  ansible.builtin.systemd_service:
+    name: "backup-proxy.timer"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart crowdsec.service"
+  listen: "restart crowdsec.service"
+  ansible.builtin.systemd_service:
+    name: "crowdsec.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart crowdsec-web-ui.service"
+  listen: "restart crowdsec-web-ui.service"
+  ansible.builtin.systemd_service:
+    name: "crowdsec-web-ui.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart geoipupdate.service"
+  listen: "restart geoipupdate.service"
+  ansible.builtin.systemd_service:
+    name: "geoipupdate.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
+- name: "restart npmplus.service"
+  listen: "restart npmplus.service"
+  ansible.builtin.systemd_service:
+    name: "npmplus.service"
+    state: restarted
+    scope: user
+  failed_when: false

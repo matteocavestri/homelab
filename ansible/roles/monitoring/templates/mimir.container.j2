@@ -1,0 +1,35 @@
+[Unit]
+Description=Grafana Mimir
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.mimir.image }}:{{ versions.mimir.tag }}
+ContainerName=mimir
+Volume=mimir-data:/data/mimir
+Volume=%h/.config/infrastructure/monitoring/mimir/mimir.yaml:/etc/mimir/mimir.yaml:ro,Z
+Volume=%h/.config/infrastructure/monitoring/mimir/rules:/etc/mimir/rules:ro,Z
+Network=monitoring.network
+Exec=-config.file=/etc/mimir/mimir.yaml
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=90
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mimir
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

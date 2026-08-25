@@ -1,0 +1,31 @@
+[Unit]
+Description=Sonarr - TV Series Manager
+After=gluetun.service
+Requires=gluetun.service
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.sonarr.image }}:{{ versions.sonarr.tag }}
+ContainerName=sonarr
+Network=container:gluetun
+Volume=sonarr-config:/config
+Volume=/mnt/Downloads:/downloads:z
+Volume=/mnt/Media/Serie-TV:/tv:z
+EnvironmentFile=%h/.config/media/arr/sonarr.env
+NoNewPrivileges=true
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sonarr
+Slice=arr.slice
+
+[Install]
+WantedBy=arr.target
