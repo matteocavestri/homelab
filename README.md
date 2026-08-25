@@ -98,7 +98,7 @@ Managed in `ansible/group_vars/all/versions.yml`, checked with
 | comfyui | `localhost/comfyui-p4` | local build (untracked) |
 | crawl4ai | `docker.io/unclecode/crawl4ai` | 0.9.2 |
 | mcpo | `ghcr.io/open-webui/mcpo` | latest (digest-tracked) |
-| n8n | `docker.io/n8nio/n8n` | 2.36.6 |
+| n8n | `docker.io/n8nio/n8n` | 2.37.1 |
 | ollama | `docker.io/ollama/ollama` | 0.32.15 |
 | openai-edge-tts | `docker.io/travisvn/openai-edge-tts` | latest (digest-tracked) |
 | openterminal | `ghcr.io/open-webui/open-terminal` | latest (digest-tracked) |

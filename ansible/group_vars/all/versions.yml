@@ -123,7 +123,7 @@ versions:
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: "2.36.6"
+    tag: "2.37.1"
     mode: semver
   node_exporter:
     image: docker.io/prom/node-exporter
