@@ -1,0 +1,23 @@
+[Unit]
+Description=Homarr dashboard
+After=infrastructure.target
+Wants=infrastructure.target
+
+[Container]
+Image={{ versions.homarr.image }}:{{ versions.homarr.tag }}
+ContainerName=homarr
+PublishPort=7575:7575
+# Map the host's own loopback into the container at a synthetic address
+Network=pasta:--map-host-loopback=169.254.1.2
+EnvironmentFile=%h/.config/homarr/homarr.env
+Volume=homarr-data:/appdata
+# rootless podman socket, exposed as docker.sock (optional, only for docker integration)
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

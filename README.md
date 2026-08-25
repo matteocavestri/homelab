@@ -119,6 +119,7 @@ Managed in `ansible/group_vars/all/versions.yml`, checked with
 
 | Service | Image | Version |
 |---|---|---|
+| homarr | `ghcr.io/homarr-labs/homarr` | v1.76.0 |
 | homepage | `ghcr.io/gethomepage/homepage` | v2.1.2 |
 
 ### media_arr
@@ -229,6 +230,7 @@ Ports are host-published bindings only; a service reachable solely on its
 
 | Service | Ports | Network | Volumes | Config |
 |---|---|---|---|---|
+| homarr | 7575:7575 | pasta, host loopback mapped to 169.254.1.2 | `homarr-data:/appdata`, rootless podman socket as `docker.sock` | `homarr.env` |
 | homepage | 3057:3000 | default | `homepage-config:/app/config`, rootless podman socket as `docker.sock` | `homepage.env` |
 
 ### media_arr — `arr.network`, `arr.slice`

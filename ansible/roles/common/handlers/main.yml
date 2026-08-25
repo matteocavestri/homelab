@@ -31,3 +31,11 @@
     state: restarted
     scope: user
   failed_when: false
+
+- name: "restart homarr.service"
+  listen: "restart homarr.service"
+  ansible.builtin.systemd_service:
+    name: "homarr.service"
+    state: restarted
+    scope: user
+  failed_when: false

@@ -68,6 +68,10 @@ versions:
     image: docker.io/grafana/grafana
     tag: "13.2.0"
     mode: semver
+  homarr:
+    image: ghcr.io/homarr-labs/homarr
+    tag: "v1.76.0"
+    mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
     tag: "v2.1.2"
