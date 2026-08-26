@@ -57,6 +57,14 @@
     scope: user
   failed_when: false
 
+- name: "restart memcached.service"
+  listen: "restart memcached.service"
+  ansible.builtin.systemd_service:
+    name: "memcached.service"
+    state: restarted
+    scope: user
+  failed_when: false
+
 - name: "restart mimir.service"
   listen: "restart mimir.service"
   ansible.builtin.systemd_service:

@@ -1,0 +1,32 @@
+[Unit]
+Description=Memcached (Mimir query-frontend results cache)
+PartOf=monitoring.target
+After=monitoring.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.memcached.image }}:{{ versions.memcached.tag }}
+ContainerName=memcached
+Network=monitoring.network
+Exec=-m 128 -I 5m -c 1024
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=30
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=memcached
+Slice=monitoring.slice
+
+[Install]
+WantedBy=monitoring.target

@@ -165,6 +165,7 @@ Managed in `ansible/group_vars/all/versions.yml`, checked with
 | alloy | `docker.io/grafana/alloy` | v1.19.0 |
 | grafana | `docker.io/grafana/grafana` | 13.2.0 |
 | loki | `docker.io/grafana/loki` | 3.7.6 |
+| memcached | `docker.io/library/memcached` | 1.6.43 |
 | mimir | `docker.io/grafana/mimir` | 3.2.0 |
 | node-exporter | `docker.io/prom/node-exporter` | v1.12.1 |
 | ntfy | `docker.io/binwiederhier/ntfy` | v2.27.0 |
@@ -282,6 +283,7 @@ containers above (updates an IPTV EPG file).
 | alloy | 127.0.0.1:12345, 14317 | monitoring.network | `config.alloy:ro`, `/var/log/journal:ro`, podman socket | `alloy.env` |
 | grafana | 127.0.0.1:3000 | monitoring.network | `grafana-data`, provisioning dir `:ro` | `grafana.env` |
 | loki | internal | monitoring.network | `loki-data`, `loki.yaml:ro` | — |
+| memcached | internal | monitoring.network | — | — (results cache for mimir's query-frontend) |
 | mimir | internal | monitoring.network | `mimir-data`, `mimir.yaml:ro`, `rules:ro` | — |
 | node-exporter | internal | monitoring.network | `/proc`, `/sys`, `/:/host/root:ro,rslave`, dbus socket | — |
 | ntfy | 127.0.0.1:8091 | monitoring.network | `ntfy-data:/var/lib/ntfy`, `server.yml:ro` | `ntfy.env` |

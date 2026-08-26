@@ -121,6 +121,10 @@ versions:
     tag: "latest"
     mode: digest
     last_digest: "sha256:1e82c9555c19e50b80745705f32b47a2647589f35279527b5118ecd3a71bd467"
+  memcached:
+    image: docker.io/library/memcached
+    tag: "1.6.43"
+    mode: semver
   mimir:
     image: docker.io/grafana/mimir
     tag: "3.2.0"

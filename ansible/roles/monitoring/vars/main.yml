@@ -28,6 +28,10 @@ monitoring_files:
     dest: "~/.config/containers/systemd/loki.container"
     notify: ['restart loki.service']
     mode: "0644"
+  - src: "memcached.container.j2"
+    dest: "~/.config/containers/systemd/memcached.container"
+    notify: ['restart memcached.service']
+    mode: "0644"
   - src: "mimir.container.j2"
     dest: "~/.config/containers/systemd/mimir.container"
     notify: ['restart mimir.service']

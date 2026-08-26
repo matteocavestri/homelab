@@ -53,6 +53,18 @@ ruler:
   rule_path: /data/mimir/ruler-tmp
   enable_api: true
 
+frontend:
+  cache_results: true
+  results_cache:
+    backend: memcached
+    memcached:
+      addresses: dns+memcached:11211
+      timeout: 200ms
+      max_item_size: 5242880
+      max_idle_connections: 100
+      max_async_concurrency: 10
+      max_get_multi_concurrency: 100
+
 limits:
   compactor_blocks_retention_period: 90d
   ingestion_rate: 10000

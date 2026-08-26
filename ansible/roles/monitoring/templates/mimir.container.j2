@@ -1,7 +1,8 @@
 [Unit]
 Description=Grafana Mimir
 PartOf=monitoring.target
-After=monitoring.target
+After=monitoring.target memcached.service
+Wants=memcached.service
 OnFailure=notify-failure@%n.service
 StartLimitIntervalSec=5min
 StartLimitBurst=5
