@@ -1,5 +1,7 @@
 [Unit]
 Description=Homepage dashboard
+After=infrastructure.target
+Wants=infrastructure.target
 
 [Container]
 Image={{ versions.homepage.image }}:{{ versions.homepage.tag }}
@@ -16,4 +18,4 @@ Restart=always
 RestartSec=5s
 
 [Install]
-WantedBy=default.target
+WantedBy=infrastructure.target

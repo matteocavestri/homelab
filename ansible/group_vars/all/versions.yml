@@ -11,7 +11,7 @@ versions:
     mode: semver
   alloy:
     image: docker.io/grafana/alloy
-    tag: "v1.19.0"
+    tag: "v1.19.1"
     mode: semver
   authentik:
     image: ghcr.io/goauthentik/server
@@ -111,7 +111,7 @@ versions:
     image: lscr.io/linuxserver/lidarr
     tag: "latest"
     mode: digest
-    last_digest: "sha256:2e4cdc7c8d5fa36915f446a29976ee01d3f9cc9722b8530a09121c76fbabef55"
+    last_digest: "sha256:c74c32408fdf6e7926ad62641fc1a5544206ee65c33f2188bb179edb30e28f5a"
   loki:
     image: docker.io/grafana/loki
     tag: "3.7.6"
@@ -158,7 +158,7 @@ versions:
     last_digest: "sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692"
   ollama:
     image: docker.io/ollama/ollama
-    tag: "0.32.15"
+    tag: "0.33.0"
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
@@ -169,10 +169,10 @@ versions:
     image: ghcr.io/open-webui/open-terminal
     tag: "latest"
     mode: digest
-    last_digest: "sha256:82fb58971431abe07568512068434d6af541c0f141c144f4c421d8798836fc3f"
+    last_digest: "sha256:5f48c86bb249dbbd9c18fca92cd4188a53787c50ac6ad0d8412b2b18f7071c61"
   openwebui:
     image: ghcr.io/open-webui/open-webui
-    tag: "v0.11.0"
+    tag: "v0.11.1"
     mode: semver
   pihole:
     image: docker.io/pihole/pihole
@@ -192,7 +192,7 @@ versions:
     image: lscr.io/linuxserver/prowlarr
     tag: "latest"
     mode: digest
-    last_digest: "sha256:1295cff29d10b486c0d8324d1559a552140a5932bf8b3d87e398654414f63f92"
+    last_digest: "sha256:ab91301778251f82a31bbfc87f0497376d59e84439d9a1ceff6a61d594d1e3d7"
   pyroscope:
     image: docker.io/grafana/pyroscope
     tag: "2.3.0"
@@ -228,7 +228,7 @@ versions:
     last_digest: "sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224"
   sportarr:
     image: docker.io/sportarr/sportarr
-    tag: "4.1.3.1113"
+    tag: "4.1.5.1115"
     mode: semver
   tdarr:
     image: ghcr.io/haveagitgat/tdarr

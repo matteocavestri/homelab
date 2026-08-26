@@ -1,7 +1,7 @@
 [Unit]
 Description=Immich backup service
-Requires=media.target
-After=media.target
+Requires=immich.target
+After=immich.target
 OnFailure=notify-failure@%n.service
 
 [Service]

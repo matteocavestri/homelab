@@ -1,9 +1,10 @@
 [Unit]
 Description=Daily proxy backup
+PartOf=proxy.target
 
 [Timer]
 OnCalendar=*-*-* 03:00:00
 AccuracySec=5m
 
 [Install]
-WantedBy=infrastructure.target
+WantedBy=proxy.target

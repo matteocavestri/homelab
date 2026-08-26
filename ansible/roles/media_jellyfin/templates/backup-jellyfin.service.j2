@@ -1,7 +1,7 @@
 [Unit]
 Description=Jellyfin backup service
-Requires=media.target
-After=media.target
+Requires=jellyfin.target
+After=jellyfin.target
 OnFailure=notify-failure@%n.service
 
 [Service]

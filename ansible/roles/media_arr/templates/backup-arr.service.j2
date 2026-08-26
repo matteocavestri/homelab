@@ -1,7 +1,7 @@
 [Unit]
 Description=Arr backup service
-Requires=media.target
-After=media.target
+Requires=arr.target
+After=arr.target
 OnFailure=notify-failure@%n.service
 
 [Service]

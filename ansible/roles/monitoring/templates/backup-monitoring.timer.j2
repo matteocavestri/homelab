@@ -1,9 +1,10 @@
 [Unit]
 Description=Daily monitoring backup
+PartOf=monitoring.target
 
 [Timer]
 OnCalendar=*-*-* 04:00:00
 AccuracySec=5m
 
 [Install]
-WantedBy=infrastructure.target
+WantedBy=monitoring.target

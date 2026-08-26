@@ -1,10 +1,10 @@
 [Unit]
 Description=Daily Jellyfin backup timer
-PartOf=media.target
+PartOf=jellyfin.target
 
 [Timer]
 OnCalendar=*-*-* 03:30:00
 AccuracySec=5m
 
 [Install]
-WantedBy=media.target
+WantedBy=jellyfin.target
