@@ -11,7 +11,7 @@ versions:
     mode: semver
   alloy:
     image: docker.io/grafana/alloy
-    tag: "v1.19.1"
+    tag: "v1.19.2"
     mode: semver
   authentik:
     image: ghcr.io/goauthentik/server
@@ -70,7 +70,7 @@ versions:
     mode: semver
   homarr:
     image: ghcr.io/homarr-labs/homarr
-    tag: "v1.76.0"
+    tag: "v1.76.1"
     mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
@@ -123,7 +123,7 @@ versions:
     last_digest: "sha256:1e82c9555c19e50b80745705f32b47a2647589f35279527b5118ecd3a71bd467"
   memcached:
     image: docker.io/library/memcached
-    tag: "1.6.43"
+    tag: "1.6.45"
     mode: semver
   mimir:
     image: docker.io/grafana/mimir
@@ -131,7 +131,7 @@ versions:
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: "2.37.1"
+    tag: "2.37.3"
     mode: semver
   node_exporter:
     image: docker.io/prom/node-exporter
@@ -162,7 +162,7 @@ versions:
     last_digest: "sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692"
   ollama:
     image: docker.io/ollama/ollama
-    tag: "0.33.0"
+    tag: "0.33.1"
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
