@@ -1,8 +1,14 @@
 ---
+# Tier: medium
 office_slice:
-  memory_max: "2G"
-  memory_swap_max: "0"
+  cpu_weight: "150"
+  startup_cpu_weight: "300"
   cpu_quota: "400%"
+  memory_min: "128M"
+  memory_low: "256M"
+  memory_high: "1536M"
+  memory_max: "2G"
+  memory_swap_max: "1G"   # low-traffic apps, tolerant of swap
 
 freshrss:
   oidc_enabled: "1"

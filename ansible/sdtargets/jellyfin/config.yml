@@ -1,8 +1,14 @@
 ---
+# Tier: medium
 jellyfin_slice:
-  memory_max: "4G"
-  memory_swap_max: "0"
+  cpu_weight: "150"
+  startup_cpu_weight: "300"
   cpu_quota: "800%"
+  memory_min: "256M"
+  memory_low: "512M"
+  memory_high: "3G"
+  memory_max: "4G"
+  memory_swap_max: "2G"   # idle most of the time, transcoding is a burst
 
 jellyfin_exporter:
   jellyfin_address: "http://jellyfin:8096"

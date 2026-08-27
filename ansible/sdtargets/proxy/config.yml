@@ -1,8 +1,14 @@
 ---
+# Tier: high (edge reverse proxy + WAF - keep alive under pressure)
 proxy_slice:
-  memory_max: "3G"
-  memory_swap_max: "0"
+  cpu_weight: "500"
+  startup_cpu_weight: "900"
   cpu_quota: "800%"
+  memory_min: "256M"
+  memory_low: "512M"
+  memory_high: "2G"
+  memory_max: "3G"
+  memory_swap_max: "512M"   # small: request path latency-sensitive, cold pages only
 
 crowdsec_web_ui:
   crowdsec_url: "http://127.0.0.1:8080"

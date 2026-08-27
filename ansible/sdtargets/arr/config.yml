@@ -1,8 +1,14 @@
 ---
+# Tier: low (best-effort - compressible under host pressure)
 arr_slice:
-  memory_max: "8G"
-  memory_swap_max: "0"
+  cpu_weight: "50"
+  startup_cpu_weight: "100"
   cpu_quota: "800%"
+  memory_min: "256M"
+  memory_low: "512M"
+  memory_high: "6G"
+  memory_max: "8G"
+  memory_swap_max: "4G"   # best-effort: download clients / tdarr tolerate swap
 
 exportarr_lidarr:
   port: "9708"

@@ -1,8 +1,14 @@
 ---
+# Tier: medium
 immich_slice:
-  memory_max: "8G"
-  memory_swap_max: "0"
+  cpu_weight: "150"
+  startup_cpu_weight: "300"
   cpu_quota: "800%"
+  memory_min: "256M"
+  memory_low: "512M"
+  memory_high: "6G"
+  memory_max: "8G"
+  memory_swap_max: "4G"   # ML model + background jobs, very swap-tolerant
 
 immich_postgres:
   user: "immich"

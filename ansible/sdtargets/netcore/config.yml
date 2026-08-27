@@ -1,8 +1,14 @@
 ---
+# Tier: high (core network path - keep alive under pressure)
 netcore_slice:
-  memory_max: "1G"
-  memory_swap_max: "0"
+  cpu_weight: "500"
+  startup_cpu_weight: "900"
   cpu_quota: "200%"
+  memory_min: "128M"
+  memory_low: "256M"
+  memory_high: "640M"
+  memory_max: "1G"
+  memory_swap_max: "256M"   # small: cold-page eviction only, DNS latency-sensitive
 
 ddns_updater:
   period: "5m"

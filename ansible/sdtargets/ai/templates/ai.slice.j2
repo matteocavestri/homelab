@@ -3,7 +3,16 @@ Description=AI Slice
 Before=slices.target
 
 [Slice]
+# CPU
+CPUWeight={{ ai_slice.cpu_weight }}
+StartupCPUWeight={{ ai_slice.startup_cpu_weight }}
+CPUQuota={{ ai_slice.cpu_quota }}
+{% if ai_slice.allowed_cpus is defined and ai_slice.allowed_cpus %}
+AllowedCPUs={{ ai_slice.allowed_cpus }}
+{% endif %}
+# Memory
+MemoryMin={{ ai_slice.memory_min }}
+MemoryLow={{ ai_slice.memory_low }}
+MemoryHigh={{ ai_slice.memory_high }}
 MemoryMax={{ ai_slice.memory_max }}
 MemorySwapMax={{ ai_slice.memory_swap_max }}
-CPUQuota={{ ai_slice.cpu_quota }}
-AllowedCPUs={{ ai_slice.allowed_cpus }}

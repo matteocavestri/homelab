@@ -3,9 +3,14 @@ Description=Auth Slice
 Before=slices.target
 
 [Slice]
+# CPU
 CPUWeight={{ auth_slice.cpu_weight }}
 StartupCPUWeight={{ auth_slice.startup_cpu_weight }}
 CPUQuota={{ auth_slice.cpu_quota }}
+{% if auth_slice.allowed_cpus is defined and auth_slice.allowed_cpus %}
+AllowedCPUs={{ auth_slice.allowed_cpus }}
+{% endif %}
+# Memory
 MemoryMin={{ auth_slice.memory_min }}
 MemoryLow={{ auth_slice.memory_low }}
 MemoryHigh={{ auth_slice.memory_high }}

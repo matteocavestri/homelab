@@ -3,6 +3,16 @@ Description=Office Slice
 Before=slices.target
 
 [Slice]
+# CPU
+CPUWeight={{ office_slice.cpu_weight }}
+StartupCPUWeight={{ office_slice.startup_cpu_weight }}
+CPUQuota={{ office_slice.cpu_quota }}
+{% if office_slice.allowed_cpus is defined and office_slice.allowed_cpus %}
+AllowedCPUs={{ office_slice.allowed_cpus }}
+{% endif %}
+# Memory
+MemoryMin={{ office_slice.memory_min }}
+MemoryLow={{ office_slice.memory_low }}
+MemoryHigh={{ office_slice.memory_high }}
 MemoryMax={{ office_slice.memory_max }}
 MemorySwapMax={{ office_slice.memory_swap_max }}
-CPUQuota={{ office_slice.cpu_quota }}

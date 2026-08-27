@@ -1,9 +1,17 @@
 ---
+# Tier: low (best-effort - compressible under host pressure).
+# allowed_cpus pins the slice to NUMA node 0 (one physical CPU) to avoid
+# cross-socket memory access; cpu_quota 2800% == the 28 threads of that node.
 ai_slice:
-  memory_max: "24G"
-  memory_swap_max: "16G"
+  cpu_weight: "50"
+  startup_cpu_weight: "100"
   cpu_quota: "2800%"
   allowed_cpus: "0-13,28-41"
+  memory_min: "1G"
+  memory_low: "2G"
+  memory_high: "20G"
+  memory_max: "24G"
+  memory_swap_max: "16G"   # model weights offload; spills to the 16G LVM swap
 
 openwebui:
   oauth_provider_name: "authentik"

@@ -3,6 +3,16 @@ Description=Netcore Slice
 Before=slices.target
 
 [Slice]
+# CPU
+CPUWeight={{ netcore_slice.cpu_weight }}
+StartupCPUWeight={{ netcore_slice.startup_cpu_weight }}
+CPUQuota={{ netcore_slice.cpu_quota }}
+{% if netcore_slice.allowed_cpus is defined and netcore_slice.allowed_cpus %}
+AllowedCPUs={{ netcore_slice.allowed_cpus }}
+{% endif %}
+# Memory
+MemoryMin={{ netcore_slice.memory_min }}
+MemoryLow={{ netcore_slice.memory_low }}
+MemoryHigh={{ netcore_slice.memory_high }}
 MemoryMax={{ netcore_slice.memory_max }}
 MemorySwapMax={{ netcore_slice.memory_swap_max }}
-CPUQuota={{ netcore_slice.cpu_quota }}

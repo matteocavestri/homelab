@@ -1,13 +1,14 @@
 ---
+# Tier: high (SSO - every other service depends on it)
 auth_slice:
-  cpu_weight: "800"
-  startup_cpu_weight: "1000"
+  cpu_weight: "500"
+  startup_cpu_weight: "900"
   cpu_quota: "1400%"
   memory_min: "384M"
   memory_low: "768M"
   memory_high: "3500M"
   memory_max: "4G"
-  memory_swap_max: "0"
+  memory_swap_max: "1G"   # postgres/worker cold pages; zram keeps it cheap
 
 authentik:
   postgres_user: "authentik"

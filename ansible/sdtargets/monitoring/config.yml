@@ -1,8 +1,14 @@
 ---
+# Tier: high (observability - must survive to diagnose incidents)
 monitoring_slice:
-  memory_max: "8G"
-  memory_swap_max: "0"
+  cpu_weight: "500"
+  startup_cpu_weight: "900"
   cpu_quota: "800%"
+  memory_min: "512M"
+  memory_low: "1G"
+  memory_high: "6G"
+  memory_max: "8G"
+  memory_swap_max: "2G"   # TSDB cold index pages swap well; keep responsive during incidents
 
 grafana:
   server_root_url: "https://monitoring.fmpt.company"
