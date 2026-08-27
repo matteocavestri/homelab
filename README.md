@@ -126,7 +126,24 @@ Ports are host-published bindings only; a service reachable solely on its
 managed in `ansible/group_vars/all/versions.yml` and checked with
 `scripts/check_updates.py`.
 
+Each target's containers run in a dedicated `systemd` slice (`Slice=<name>.slice`,
+limits in `sdtargets/<name>/config.yml`). The **Resource slice** table under each
+target lists them: `CPUWeight` run/startup (relative CPU share under contention,
+1–10000), `CPUQuota` (hard CPU ceiling, 100% = 1 thread), `AllowedCPUs` (thread
+pinning), memory `MemoryMin`/`MemoryLow`/`MemoryHigh`/`MemoryMax`
+(hard-guaranteed / soft-guaranteed / throttle / OOM ceiling), and `MemorySwapMax`.
+Host: 56 threads, 32 GB RAM, 12 GB zram + 16 GB LVM swap. Tiers — **high**
+(netcore, proxy, auth, monitoring: keep alive under pressure), **medium**
+(immich, jellyfin, office), **low** (ai, arr: best-effort, compressible).
+`infrastructure`/`media` have no dedicated slice.
+
 ### netcore.target
+
+**Resource slice** — `netcore.slice`, tier: high
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 500 / 900 | 200% | — | 128M / 256M / 640M / 1G | 256M |
 
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
@@ -134,6 +151,12 @@ managed in `ansible/group_vars/all/versions.yml` and checked with
 | pihole | `docker.io/pihole/pihole` | 2026.07.2 | host | host | `pihole-data:/etc/pihole`, `pihole-dnsmasq:/etc/dnsmasq.d` | `pihole.env` |
 
 ### proxy.target
+
+**Resource slice** — `proxy.slice`, tier: high
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 500 / 900 | 800% | — | 256M / 512M / 2G / 3G | 512M |
 
 Most proxy-facing services use `Network=host` directly rather than
 `proxy.network`.
@@ -147,6 +170,12 @@ Most proxy-facing services use `Network=host` directly rather than
 
 ### auth.target
 
+**Resource slice** — `auth.slice`, tier: high
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 500 / 900 | 1400% | — | 384M / 768M / 3500M / 4G | 1G |
+
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
 | authentik-postgres | `docker.io/library/postgres` | 17-alpine (digest-tracked) | internal | authentik.network | `authentik-postgres-data:/var/lib/postgresql/data` | `authentik.env` |
@@ -154,6 +183,12 @@ Most proxy-facing services use `Network=host` directly rather than
 | authentik-worker | `ghcr.io/goauthentik/server` | 2026.8.0, pinned by digest | internal | authentik.network | media/templates volumes + `authentik-certs:/certs` | `authentik.env` |
 
 ### monitoring.target
+
+**Resource slice** — `monitoring.slice`, tier: high
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 500 / 900 | 800% | — | 512M / 1G / 6G / 8G | 2G |
 
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
@@ -172,12 +207,20 @@ Most proxy-facing services use `Network=host` directly rather than
 
 ### common (infrastructure.target)
 
+**Resource slice** — none; containers run in the default user slice.
+
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
 | homarr | `ghcr.io/homarr-labs/homarr` | v1.76.0 | 7575:7575 | pasta, host loopback mapped to 169.254.1.2 | `homarr-data:/appdata`, rootless podman socket as `docker.sock` | `homarr.env` |
 | homepage | `ghcr.io/gethomepage/homepage` | v2.1.2 | 3057:3000 | default | `homepage-config:/app/config`, rootless podman socket as `docker.sock` | `homepage.env` |
 
 ### ai.target
+
+**Resource slice** — `ai.slice`, tier: low
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 50 / 100 | 2800% | `0-13,28-41` (NUMA node 0) | 1G / 2G / 20G / 24G | 16G |
 
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
@@ -195,6 +238,15 @@ Most proxy-facing services use `Network=host` directly rather than
 | tika | `docker.io/apache/tika` | 4.0.0-1-full | internal | ai.network | `tika-data:/root/.tika` | `tika.env` |
 
 ### arr.target
+
+**Resource slice** — `arr.slice`, tier: low
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 50 / 100 | 800% | — | 256M / 512M / 6G / 8G | 4G |
+
+`qbittorrent` further caps itself at `MemoryMax=4G` / `MemorySwapMax=2G`,
+`tdarr` at `CPUQuota=400%`.
 
 Downloaders/indexers route through Gluetun's VPN network namespace; their host
 ports are actually published by `gluetun.container` itself.
@@ -218,6 +270,12 @@ ports are actually published by `gluetun.container` itself.
 
 ### immich.target
 
+**Resource slice** — `immich.slice`, tier: medium
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 150 / 300 | 800% | — | 256M / 512M / 6G / 8G | 4G |
+
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
 | immich-postgres | `ghcr.io/immich-app/postgres` | 14-vectorchord0.4.3-pgvectors0.2.0 | internal | immich.network | `immich-postgres-data:/var/lib/postgresql/data` | `immich-postgres.env` |
@@ -226,6 +284,12 @@ ports are actually published by `gluetun.container` itself.
 | immich-server | `ghcr.io/immich-app/immich-server` | release (digest-tracked) | 127.0.0.1:2283 | immich.network, GPU | `/mnt/Media/Foto/immich:/usr/src/app/upload`, `/etc/localtime:ro` | `immich.env` |
 
 ### jellyfin.target
+
+**Resource slice** — `jellyfin.slice`, tier: medium
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 150 / 300 | 800% | — | 256M / 512M / 3G / 4G | 2G |
 
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
@@ -236,6 +300,12 @@ Also ships `update-egr.service`/`.timer`, a daily unit unrelated to the
 containers above (updates an IPTV EPG file).
 
 ### office.target
+
+**Resource slice** — `office.slice`, tier: medium
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 150 / 300 | 400% | — | 128M / 256M / 1536M / 2G | 1G |
 
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
