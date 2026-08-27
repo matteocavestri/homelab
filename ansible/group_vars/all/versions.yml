@@ -1,254 +1,241 @@
----
-# Image tag/digest per container, managed by scripts/check_updates.py.
-#   mode: semver -> comparable tag (skopeo list-tags); tag_pattern is an optional override.
-#   mode: digest -> rolling tag, tracked by digest in last_digest (skopeo inspect).
-#   pin_digest   -> if set, the quadlet uses Image=<repo>@<pin_digest> instead of :<tag>.
-# Local images (localhost/*, e.g. comfyui-p4) are not tracked here.
 versions:
   alertmanager:
     image: docker.io/prom/alertmanager
-    tag: "v0.34.0"
+    tag: v0.34.0
     mode: semver
   alloy:
     image: docker.io/grafana/alloy
-    tag: "v1.19.2"
+    tag: v1.19.2
     mode: semver
   authentik:
     image: ghcr.io/goauthentik/server
-    tag: "2026.8.0"
+    tag: 2026.8.0
     mode: semver
-    # This image publishes a doubly-nested manifest list; Podman/skopeo can't resolve
-    # it by tag alone (fails with "Unexpectedly received a manifest list instead of a
-    # manifest"). Pull by digest instead. tag is kept for readable tracking only -
-    # check_updates.py still bumps it, but the running container stays on pin_digest
-    # until this is updated/removed by hand.
-    pin_digest: "sha256:5217eed4e86a3c6666ecf81c3430753ef958f97f93ac614070d458c10e0b2b33"
+    pin_digest: sha256:5217eed4e86a3c6666ecf81c3430753ef958f97f93ac614070d458c10e0b2b33
   authentik_postgres:
     image: docker.io/library/postgres
-    tag: "17-alpine"
-    mode: digest  # rolling tag (latest 17.x patch), not a fixed version
-    last_digest: "sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73"
+    tag: 17-alpine
+    mode: digest
+    last_digest: sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
   crawl4ai:
     image: docker.io/unclecode/crawl4ai
-    tag: "0.9.2"
+    tag: 0.9.2
     mode: semver
   crowdsec:
     image: docker.io/crowdsecurity/crowdsec
-    tag: "v1.7.8"
+    tag: v1.7.8
     mode: semver
   crowdsec_web_ui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
-    tag: "2026.8.1"
+    tag: 2026.8.1
     mode: semver
   ddns_updater:
     image: docker.io/qmcgaw/ddns-updater
-    tag: "2.10.0"
+    tag: 2.10.0
     mode: semver
   exportarr:
     image: ghcr.io/onedr0p/exportarr
-    tag: "v2.3.0"
+    tag: v2.3.0
     mode: semver
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr
-    tag: "v3.5.0"
+    tag: v3.5.0
     mode: semver
   freshrss:
     image: docker.io/freshrss/freshrss
-    tag: "1.29.1"
+    tag: 1.29.1
     mode: semver
   geoipupdate:
     image: ghcr.io/maxmind/geoipupdate
-    tag: "v8.0.0"
+    tag: v8.0.0
     mode: semver
   gluetun:
     image: docker.io/qmcgaw/gluetun
-    tag: "v3.41.3"
+    tag: v3.41.3
     mode: semver
   grafana:
     image: docker.io/grafana/grafana
-    tag: "13.2.0"
+    tag: 13.2.0
     mode: semver
   homarr:
     image: ghcr.io/homarr-labs/homarr
-    tag: "v1.76.1"
+    tag: v1.76.1
     mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
-    tag: "v2.1.2"
+    tag: v2.1.2
     mode: semver
   immich_machine_learning:
     image: ghcr.io/immich-app/immich-machine-learning
-    tag: "release"
+    tag: release
     mode: digest
-    last_digest: ""
+    last_digest: sha256:5a0839dc5303cd7215bcd2180a26aed3af41675aefb3e75e5157e9f10ad16e6e
   immich_postgres:
     image: ghcr.io/immich-app/postgres
-    tag: "14-vectorchord0.4.3-pgvectors0.3.0"
+    tag: 14-vectorchord0.4.3-pgvectors0.3.0
     mode: semver
-    tag_pattern: '^14-vectorchord[0-9.]+-pgvectors[0-9.]+$'  # pinned to major 14
+    tag_pattern: ^14-vectorchord[0-9.]+-pgvectors[0-9.]+$
   immich_redis:
     image: docker.io/valkey/valkey
-    tag: "9.1.1"
+    tag: 9.1.1
     mode: semver
   immich_server:
     image: ghcr.io/immich-app/immich-server
-    tag: "release"
+    tag: release
     mode: digest
-    last_digest: "sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb"
+    last_digest: sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb
   jellyfin:
     image: docker.io/jellyfin/jellyfin
-    tag: "10.11.11"
+    tag: 10.11.11
     mode: semver
   jellyfin_exporter:
     image: docker.io/rebelcore/jellyfin-exporter
-    tag: "v1.5.2"
+    tag: v1.5.2
     mode: semver
   jellyseerr:
     image: ghcr.io/seerr-team/seerr
-    tag: "v3.4.1"
+    tag: v3.4.1
     mode: semver
   lidarr:
     image: lscr.io/linuxserver/lidarr
-    tag: "latest"
-    mode: digest
-    last_digest: "sha256:c74c32408fdf6e7926ad62641fc1a5544206ee65c33f2188bb179edb30e28f5a"
+    tag: 3.1.0.4875-ls40
+    mode: semver
   loki:
     image: docker.io/grafana/loki
-    tag: "3.7.6"
+    tag: 3.7.6
     mode: semver
   mcpo:
     image: ghcr.io/open-webui/mcpo
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:1e82c9555c19e50b80745705f32b47a2647589f35279527b5118ecd3a71bd467"
+    last_digest: sha256:1e82c9555c19e50b80745705f32b47a2647589f35279527b5118ecd3a71bd467
   memcached:
     image: docker.io/library/memcached
-    tag: "1.6.45"
+    tag: 1.6.45
     mode: semver
   mimir:
     image: docker.io/grafana/mimir
-    tag: "3.2.0"
+    tag: 3.2.0
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: "2.37.3"
+    tag: 2.37.3
     mode: semver
   node_exporter:
     image: docker.io/prom/node-exporter
-    tag: "v1.12.1"
+    tag: v1.12.1
     mode: semver
   npmplus:
     image: docker.io/zoeyvid/npmplus
-    tag: "2026-07-24-r1"
+    tag: 2026-07-24-r1
     mode: semver
-    tag_pattern: '^\d{4}-\d{2}-\d{2}-r\d+$'  # date-based tag, not PEP440: compared as text
+    tag_pattern: ^\d{4}-\d{2}-\d{2}-r\d+$
   ntfy:
     image: docker.io/binwiederhier/ntfy
-    tag: "v2.27.0"
+    tag: v2.27.0
     mode: semver
   nvidia_gpu_exporter:
     image: docker.io/utkuozdemir/nvidia_gpu_exporter
-    tag: "1.14.0"
+    tag: 1.14.0
     mode: semver
   nzbget:
     image: lscr.io/linuxserver/nzbget
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:1dca6a4407e08313919d2780bf2a6bc17e21b947a6e8e34624b9e115795fcf8c"
+    last_digest: sha256:1dca6a4407e08313919d2780bf2a6bc17e21b947a6e8e34624b9e115795fcf8c
   nzbget_exporter:
     image: docker.io/frebib/nzbget-exporter
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692"
+    last_digest: sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692
   ollama:
     image: docker.io/ollama/ollama
-    tag: "0.33.1"
+    tag: 0.33.1
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:af8df8fb39719623cb6c3dbcba87ab65813030d97e20ae436d3161a53d41d72a"
+    last_digest: sha256:af8df8fb39719623cb6c3dbcba87ab65813030d97e20ae436d3161a53d41d72a
   openterminal:
     image: ghcr.io/open-webui/open-terminal
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:5f48c86bb249dbbd9c18fca92cd4188a53787c50ac6ad0d8412b2b18f7071c61"
+    last_digest: sha256:5f48c86bb249dbbd9c18fca92cd4188a53787c50ac6ad0d8412b2b18f7071c61
   openwebui:
     image: ghcr.io/open-webui/open-webui
-    tag: "v0.11.1"
+    tag: v0.11.1
     mode: semver
   pihole:
     image: docker.io/pihole/pihole
-    tag: "2026.07.2"
+    tag: 2026.07.2
     mode: semver
   pipelines:
     image: ghcr.io/open-webui/pipelines
-    tag: "main"
+    tag: main
     mode: digest
-    last_digest: "sha256:b48e9bc338ce2be0acfbeff01810db72408a12f07739f9e3879c1f2b00952d6e"
+    last_digest: sha256:b48e9bc338ce2be0acfbeff01810db72408a12f07739f9e3879c1f2b00952d6e
   podman_exporter:
     image: quay.io/navidys/prometheus-podman-exporter
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:b32899364b6761e2f4f496f110f2bc91a6cbab064f737c19efff200f7f3a25bf"
+    last_digest: sha256:b32899364b6761e2f4f496f110f2bc91a6cbab064f737c19efff200f7f3a25bf
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:ab91301778251f82a31bbfc87f0497376d59e84439d9a1ceff6a61d594d1e3d7"
+    last_digest: sha256:ab91301778251f82a31bbfc87f0497376d59e84439d9a1ceff6a61d594d1e3d7
   pyroscope:
     image: docker.io/grafana/pyroscope
-    tag: "2.3.0"
+    tag: 2.3.0
     mode: digest
-    last_digest: "sha256:881328cdbff0ef7601e23a0e7647fecb7099b4fe4c74fcdd204cb64722e2b2d0"
+    last_digest: sha256:881328cdbff0ef7601e23a0e7647fecb7099b4fe4c74fcdd204cb64722e2b2d0
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
-    tag: "5.1.4-r3-ls453"
+    tag: 5.1.4-r3-ls453
     mode: semver
-    tag_pattern: '[\d.]+-r\d+-ls\d+'
   qbittorrent_exporter:
     image: ghcr.io/martabal/qbittorrent-exporter
-    tag: "v2.0.2"
+    tag: v2.0.2
     mode: semver
   qdrant:
     image: docker.io/qdrant/qdrant
-    tag: "v1.19"
+    tag: v1.19
     mode: semver
   radarr:
     image: lscr.io/linuxserver/radarr
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:119aaa4a4f7349bcd2a136c5373a0d7925b5479915c7dfe0c0ad352db2a6d438"
+    last_digest: sha256:119aaa4a4f7349bcd2a136c5373a0d7925b5479915c7dfe0c0ad352db2a6d438
   searxng:
     image: docker.io/searxng/searxng
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:11a9b34cdc0b1ec2b991470a2762ecb5a1a531898289fb51dcd015260450729e"
+    last_digest: sha256:11a9b34cdc0b1ec2b991470a2762ecb5a1a531898289fb51dcd015260450729e
   sonarr:
     image: lscr.io/linuxserver/sonarr
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224"
+    last_digest: sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224
   sportarr:
     image: docker.io/sportarr/sportarr
-    tag: "4.1.5.1115"
+    tag: 4.1.5.1115
     mode: semver
   tdarr:
     image: ghcr.io/haveagitgat/tdarr
-    tag: "latest"
+    tag: latest
     mode: digest
-    last_digest: "sha256:45742f00e51a58553844c8b13d97e7ae9b2ee9a056bd8e5993d9a8282a45a23f"
+    last_digest: sha256:45742f00e51a58553844c8b13d97e7ae9b2ee9a056bd8e5993d9a8282a45a23f
   tempo:
     image: docker.io/grafana/tempo
-    tag: "3.0.3"
+    tag: 3.0.3
     mode: semver
   tika:
     image: docker.io/apache/tika
-    tag: "4.0.0-1-full"
+    tag: 4.0.0-1-full
     mode: semver
-    tag_pattern: '^(?P<version>\d+\.\d+\.\d+)(-\d+)?-full$'  # only the "-full" flavor tags
+    tag_pattern: ^(?P<version>\d+\.\d+\.\d+)(-\d+)?-full$
   vaultwarden:
     image: docker.io/vaultwarden/server
-    tag: "1.37.2"
+    tag: 1.37.2
     mode: semver

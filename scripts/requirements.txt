@@ -1,5 +1,4 @@
 PyYAML>=6.0
-packaging>=23.0
 # optional but recommended: preserves comments in versions.yml when using --apply
 # (without it, --apply still works but rewrites the file without comments)
 ruamel.yaml>=0.18

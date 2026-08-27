@@ -95,7 +95,15 @@ python3 scripts/check_updates.py                 # table
 python3 scripts/check_updates.py --json           # machine-readable
 python3 scripts/check_updates.py --only jellyfin  # single image
 python3 scripts/check_updates.py --apply          # write updates to versions.yml
+python3 scripts/check_updates.py --refresh        # ignore the 6h tag-list cache
 ```
+
+`semver` entries only compare a pinned tag against tags of the same shape (so
+`3.1.0.4875-ls39` tracks `…-ls40`, never a stray `8.1.2135` or a `nightly-`/
+`amd64-` variant), and a detected update must also be a genuinely newer image.
+Tag lists are cached under `~/.cache/homelab-check-updates/` for 6h; the first
+run of the day is slow (open-webui alone publishes ~39k tags), later runs are
+seconds.
 
 ## Backups
 
