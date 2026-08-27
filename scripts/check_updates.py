@@ -22,8 +22,8 @@ Logic:
 skopeo calls run in parallel and each result prints as soon as it's ready, so a
 slow or unreachable registry doesn't silently block the whole run.
 
---apply only writes versions.yml: it never touches the Ansible roles and never
-runs the playbook. The actual deploy stays a separate, explicit step.
+--apply only writes versions.yml: it never touches the Ansible sdtargets and
+never runs the playbook. The actual deploy stays a separate, explicit step.
 """
 import argparse
 import concurrent.futures
@@ -204,7 +204,7 @@ def apply_updates(results):
               "(see scripts/requirements.txt).")
 
     print("versions.yml was only written to disk: no container was touched.")
-    print("To deploy the new images: ansible-playbook site.yml --diff --ask-vault-pass")
+    print("To deploy the new images: ansible-playbook deploy.yml --diff --ask-vault-pass")
 
 
 def main():

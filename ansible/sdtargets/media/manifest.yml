@@ -1,0 +1,6 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files: []

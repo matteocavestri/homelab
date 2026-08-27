@@ -1,0 +1,14 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "immich-postgres.env.j2"
+    dest: "~/.config/media/immich/immich-postgres.env"
+    mode: "0600"
+    restart: ["immich-postgres.service"]
+  - src: "immich.env.j2"
+    dest: "~/.config/media/immich/immich.env"
+    mode: "0600"
+    restart: ["immich-server.service"]

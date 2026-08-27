@@ -1,0 +1,79 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "alertmanager.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/alertmanager/alertmanager.yaml"
+    mode: "0644"
+    restart: ["alertmanager.service"]
+  - src: "alloy.env.j2"
+    dest: "~/.config/infrastructure/monitoring/alloy/alloy.env"
+    mode: "0600"
+    restart: ["alloy.service"]
+  - src: "config.alloy.j2"
+    dest: "~/.config/infrastructure/monitoring/alloy/config.alloy"
+    mode: "0644"
+    restart: ["alloy.service"]
+  - src: "grafana.env.j2"
+    dest: "~/.config/infrastructure/monitoring/grafana/grafana.env"
+    mode: "0600"
+    restart: ["grafana.service"]
+  - src: "datasources.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/grafana/provisioning/datasources/datasources.yaml"
+    mode: "0644"
+    restart: ["grafana.service"]
+  - src: "loki.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/loki/loki.yaml"
+    mode: "0644"
+    restart: ["loki.service"]
+  - src: "mimir.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/mimir/mimir.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]
+  - src: "ntfy.env.j2"
+    dest: "~/.config/infrastructure/monitoring/ntfy/ntfy.env"
+    mode: "0600"
+    restart: []
+  - src: "ntfy-server.yml.j2"
+    dest: "~/.config/infrastructure/monitoring/ntfy/server.yml"
+    mode: "0644"
+    restart: ["ntfy.service"]
+  - src: "nvidia-gpu-exporter.env.j2"
+    dest: "~/.config/infrastructure/monitoring/nvidia-gpu-exporter/nvidia-gpu-exporter.env"
+    mode: "0600"
+    restart: ["nvidia-gpu-exporter.service"]
+  - src: "podman-exporter.env.j2"
+    dest: "~/.config/infrastructure/monitoring/podman-exporter/podman-exporter.env"
+    mode: "0600"
+    restart: ["podman-exporter.service"]
+  - src: "pyroscope.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/pyroscope/pyroscope.yaml"
+    mode: "0644"
+    restart: ["pyroscope.service"]
+  - src: "tempo.yaml.j2"
+    dest: "~/.config/infrastructure/monitoring/tempo/tempo.yaml"
+    mode: "0644"
+    restart: ["tempo.service"]
+static_files:
+  - src: "mimir-rules-anonymous/authentik.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/authentik.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]
+  - src: "mimir-rules-anonymous/blackbox.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/blackbox.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]
+  - src: "mimir-rules-anonymous/crowdsec.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/crowdsec.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]
+  - src: "mimir-rules-anonymous/jellyfin.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/jellyfin.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]
+  - src: "mimir-rules-anonymous/node-exporter.yaml"
+    dest: "~/.config/infrastructure/monitoring/mimir/rules/anonymous/node-exporter.yaml"
+    mode: "0644"
+    restart: ["mimir.service"]

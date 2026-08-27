@@ -1,0 +1,156 @@
+---
+# Generic per-sdtarget deploy engine. The caller sets `sdtarget` to a directory
+# name under sdtargets/ (never "common", which tasks/deploy_common.yml handles).
+#
+# Reproduces exactly what the old per-role tasks/vars/handlers trio did:
+#   * quadlet & systemd unit files (templates/*.{container,network,target,slice,
+#     service,timer}.j2)      -> deployed by filename convention
+#   * env & other config files -> deployed from manifest.yml (explicit dest/mode/
+#     restart)
+#   * static (non-templated) files -> from manifest.yml static_files
+#   * ANY changed file         -> `systemctl --user daemon-reload` once
+#   * changed unit / config    -> restart the affected unit(s), never fatal
+#   * a backup-<sdtarget>.timer template, if present -> enabled + started
+#     (self-healing; replaces the old backup_timers role)
+
+- name: "{{ sdtarget }} | reset accumulators"
+  ansible.builtin.set_fact:
+    _conv_files: []
+
+- name: "{{ sdtarget }} | load application config (if any)"
+  ansible.builtin.include_vars: "{{ item }}"
+  loop: "{{ query('fileglob', playbook_dir ~ '/sdtargets/' ~ sdtarget ~ '/config.yml') }}"
+  loop_control:
+    label: "{{ item | basename }}"
+
+- name: "{{ sdtarget }} | load deploy manifest"
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/sdtargets/{{ sdtarget }}/manifest.yml"
+    name: _manifest
+
+- name: "{{ sdtarget }} | discover convention unit templates"
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}/sdtargets/{{ sdtarget }}/templates"
+    patterns:
+      - "*.container.j2"
+      - "*.network.j2"
+      - "*.target.j2"
+      - "*.slice.j2"
+      - "*.service.j2"
+      - "*.timer.j2"
+    recurse: false
+  register: _conv_found
+  delegate_to: localhost   # the sdtargets/ tree lives on the controller, not the host
+
+- name: "{{ sdtarget }} | resolve convention unit files"
+  ansible.builtin.set_fact:
+    _conv_files: >-
+      {{ _conv_files + [{
+           'src': item,
+           'dest': _conv_dir[_kind] ~ '/' ~ _base,
+           'mode': '0644',
+           'restart': ([_unit] if _kind in ['container', 'target', 'slice', 'timer'] else []),
+         }] }}
+  loop: "{{ _conv_found.files | map(attribute='path') | sort }}"
+  loop_control:
+    label: "{{ _base }}"
+  vars:
+    _base: "{{ item | basename | regex_replace('\\.j2$', '') }}"
+    _kind: "{{ _base | regex_replace('^.*\\.', '') }}"
+    _stem: "{{ _base | regex_replace('\\.[^.]+$', '') }}"
+    _unit: "{{ (_stem ~ '.service') if _kind == 'container' else _base }}"
+    _conv_dir:
+      container: "~/.config/containers/systemd"
+      network: "~/.config/containers/systemd"
+      target: "~/.config/systemd/user"
+      slice: "~/.config/systemd/user"
+      service: "~/.config/systemd/user"
+      timer: "~/.config/systemd/user"
+
+- name: "{{ sdtarget }} | every template must be convention-matched or in the manifest"
+  ansible.builtin.assert:
+    that: _unaccounted | length == 0
+    fail_msg: >-
+      {{ sdtarget }}: templates neither matched by convention nor listed in
+      manifest.config_files: {{ _unaccounted }}
+    quiet: true
+  vars:
+    _all_j2: "{{ query('fileglob', playbook_dir ~ '/sdtargets/' ~ sdtarget ~ '/templates/*.j2') | map('basename') | list }}"
+    _conv_j2: "{{ _conv_found.files | map(attribute='path') | map('basename') | list }}"
+    _manifest_j2: "{{ (_manifest.config_files | default([])) | map(attribute='src') | list }}"
+    _unaccounted: "{{ _all_j2 | difference(_conv_j2) | difference(_manifest_j2) }}"
+
+- name: "{{ sdtarget }} | ensure parent directories exist"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: >-
+    {{ (_conv_files
+        + (_manifest.config_files | default([]))
+        + (_manifest.static_files | default([])))
+       | map(attribute='dest') | map('dirname') | unique | sort }}
+
+- name: "{{ sdtarget }} | deploy quadlet & systemd unit files (convention)"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ _conv_files }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  register: _r_conv
+
+- name: "{{ sdtarget }} | deploy env & config files (manifest)"
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/sdtargets/{{ sdtarget }}/templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ _manifest.config_files | default([]) }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  register: _r_cfg
+
+- name: "{{ sdtarget }} | deploy static (non-templated) files (manifest)"
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/sdtargets/{{ sdtarget }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ _manifest.static_files | default([]) }}"
+  loop_control:
+    label: "{{ item.dest }}"
+  register: _r_static
+
+- name: "{{ sdtarget }} | collect what changed"
+  ansible.builtin.set_fact:
+    _changed_results: >-
+      {{ (_r_conv.results | default([]))
+         + (_r_cfg.results | default([]))
+         + (_r_static.results | default([])) }}
+
+- name: "{{ sdtarget }} | systemctl --user daemon-reload"
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+  when: _changed_results | selectattr('changed') | list | length > 0
+
+- name: "{{ sdtarget }} | restart units affected by changed files"
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: restarted
+    scope: user
+  loop: >-
+    {{ _changed_results | selectattr('changed')
+       | map(attribute='item.restart') | flatten | unique | sort }}
+  failed_when: false
+
+- name: "{{ sdtarget }} | enable & start backup timer (self-heal, if defined)"
+  ansible.builtin.systemd_service:
+    name: "backup-{{ sdtarget }}.timer"
+    scope: user
+    enabled: true
+    state: started
+  loop: "{{ query('fileglob', playbook_dir ~ '/sdtargets/' ~ sdtarget ~ '/templates/backup-' ~ sdtarget ~ '.timer.j2') }}"
+  loop_control:
+    label: "backup-{{ sdtarget }}.timer"
+  when: not ansible_check_mode   # unit file isn't on disk during --check

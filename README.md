@@ -6,28 +6,45 @@ Ansible playbook that deploys a Podman Quadlet container stack (rootless,
 ## Layout
 
 ```
+Makefile                   # deploy / deploy-<target> / diff / check / updates / list
 ansible/
   ansible.cfg
   inventory/hosts.yml
-  group_vars/
-    all/versions.yml   # image tag/digest per container
-    all/common.yml     # shared config (TZ, admin/ACME email)
-    all/vault.yml       # secrets (ansible-vault encrypted)
-    <target>.yml        # per-role slice limits + config
-  roles/
-    ai/ auth/ media_arr/ media_immich/ media_jellyfin/
-    monitoring/ netcore/ office/ proxy/
-    common/ bin/ backup_timers/ status/
-  site.yml
+  deploy.yml               # deploy the stack (whole, or --tags <sdtarget>)
+  check.yml                # read-only unit status report
+  group_vars/all/
+    versions.yml           # image tag/digest per container
+    common.yml             # shared config (TZ, admin/ACME email)
+    vault.yml              # secrets (ansible-vault encrypted)
+  tasks/
+    deploy_common.yml      # backup script, notify@ units, podman drop-ins
+    deploy_target.yml      # generic per-sdtarget deploy engine
+    report_status.yml      # check.yml body
+  sdtargets/
+    common/                # shared assets, not a systemd target
+      files/backup-target.sh
+      templates/           # notify@ units, podman drop-ins
+    <sdtarget>/            # ai auth arr immich jellyfin monitoring netcore
+      config.yml           #   office proxy infrastructure media
+      manifest.yml         # config.yml  = slice limits + app config
+      templates/*.j2       # manifest.yml = env/config file map + restarts
 scripts/
-  check_updates.py       # skopeo-based image update checker
+  check_updates.py         # skopeo-based image update checker
 ```
+
+Each `sdtargets/<name>/` is one systemd `.target`. Quadlet and systemd unit
+templates (`*.container/.network/.target/.slice/.service/.timer.j2`) are deployed
+by filename convention; `env` and other config files are declared explicitly in
+`manifest.yml` with their destination, mode and which units to restart on change.
 
 ## Usage
 
+The `Makefile` at the repo root wraps the common commands (`--ask-vault-pass` is
+added automatically, and it `cd`s into `ansible/` for you).
+
 ### Secrets
 
-`group_vars/all/vault.yml` is encrypted with `ansible-vault`:
+`ansible/group_vars/all/vault.yml` is encrypted with `ansible-vault`:
 
 ```bash
 cd ansible
@@ -37,10 +54,14 @@ ansible-vault edit group_vars/all/vault.yml
 ### Deploy
 
 ```bash
-cd ansible
-ansible-playbook site.yml --ask-vault-pass          # whole stack
-ansible-playbook site.yml --tags monitoring         # single role
-ansible-playbook site.yml --check --diff --ask-vault-pass   # dry run
+make deploy                 # whole stack
+make deploy-monitoring      # one sdtarget (== ansible-playbook deploy.yml --tags monitoring)
+make diff                   # dry run (--check --diff)
+make list                   # list deployable sdtargets
+
+# or call ansible directly, from ansible/:
+ansible-playbook deploy.yml --ask-vault-pass
+ansible-playbook deploy.yml --tags monitoring,ai --ask-vault-pass
 ```
 
 The playbook doesn't enable/start service targets on first deploy — after the
@@ -51,14 +72,18 @@ systemctl --user enable --now <name>.target
 loginctl enable-linger <user>
 ```
 
+Backup timers (`backup-<sdtarget>.timer`) are the exception: `make deploy` keeps
+them enabled and started.
+
 ### Check status
 
 ```bash
-ansible-playbook site.yml --tags status --ask-vault-pass
+make check        # == ansible-playbook check.yml --ask-vault-pass
 ```
 
-Read-only: reports `is-enabled`/`is-active` for every target and backup timer,
-and lists any failed unit.
+Read-only: reports `is-enabled`/`is-active` for every sdtarget `.target` and
+every backup/EGR `.timer`, lists failed units, and fails if a timer is not
+enabled+active or a unit has failed.
 
 ### Check for image updates
 

@@ -1,0 +1,101 @@
+---
+# Single play so daemon-reload / restarts happen in a shared context.
+# become: false everywhere - Quadlets are systemd --user units owned by the
+# rootless user in the inventory (ansible_user), never root.
+#
+# Whole stack:   ansible-playbook deploy.yml --ask-vault-pass
+# One sdtarget:  ansible-playbook deploy.yml --tags monitoring --ask-vault-pass
+# Dry run:       ansible-playbook deploy.yml --check --diff --ask-vault-pass
+# List targets:  ansible-playbook deploy.yml --list-tags
+# (or use the Makefile: make deploy / make deploy-monitoring / make diff)
+#
+# `apply: { tags: [...] }` is required on every include_tasks: without it a
+# dynamic include's tag gates only the include statement, not the tasks it pulls
+# in, so `--tags <sdtarget>` would run nothing.
+
+- name: Deploy homelab (Podman Quadlet via Ansible)
+  hosts: all
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: "common: shared assets (backup script, notify units, podman drop-ins)"
+      ansible.builtin.import_tasks: tasks/deploy_common.yml
+      tags: [common]
+
+    - name: "sdtarget: infrastructure"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [infrastructure] }
+      vars: { sdtarget: infrastructure }
+      tags: [infrastructure]
+
+    - name: "sdtarget: media"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [media] }
+      vars: { sdtarget: media }
+      tags: [media]
+
+    - name: "sdtarget: netcore"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [netcore] }
+      vars: { sdtarget: netcore }
+      tags: [netcore]
+
+    - name: "sdtarget: proxy"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [proxy] }
+      vars: { sdtarget: proxy }
+      tags: [proxy]
+
+    - name: "sdtarget: auth"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [auth] }
+      vars: { sdtarget: auth }
+      tags: [auth]
+
+    - name: "sdtarget: monitoring"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [monitoring] }
+      vars: { sdtarget: monitoring }
+      tags: [monitoring]
+
+    - name: "sdtarget: ai"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [ai] }
+      vars: { sdtarget: ai }
+      tags: [ai]
+
+    - name: "sdtarget: arr"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [arr] }
+      vars: { sdtarget: arr }
+      tags: [arr]
+
+    - name: "sdtarget: immich"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [immich] }
+      vars: { sdtarget: immich }
+      tags: [immich]
+
+    - name: "sdtarget: jellyfin"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [jellyfin] }
+      vars: { sdtarget: jellyfin }
+      tags: [jellyfin]
+
+    - name: "sdtarget: office"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [office] }
+      vars: { sdtarget: office }
+      tags: [office]

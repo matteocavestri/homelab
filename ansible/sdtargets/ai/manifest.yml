@@ -1,0 +1,58 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "comfyui.env.j2"
+    dest: "~/.config/ai/comfyui/comfyui.env"
+    mode: "0600"
+    restart: ["comfyui.service"]
+  - src: "crawl4ai.env.j2"
+    dest: "~/.config/ai/crawl4ai/crawl4ai.env"
+    mode: "0600"
+    restart: ["crawl4ai.service"]
+  - src: "mcpo-config.json.j2"
+    dest: "~/.config/ai/mcpo-config.json"
+    mode: "0644"
+    restart: ["mcpo.service"]
+  - src: "n8n.env.j2"
+    dest: "~/.config/ai/n8n/n8n.env"
+    mode: "0600"
+    restart: ["n8n.service"]
+  - src: "ollama.env.j2"
+    dest: "~/.config/ai/ollama/ollama.env"
+    mode: "0600"
+    restart: ["ollama.service"]
+  - src: "openai-edge-tts.env.j2"
+    dest: "~/.config/ai/openai-edge-tts/openai-edge-tts.env"
+    mode: "0600"
+    restart: ["openai-edge-tts.service"]
+  - src: "openterminal.env.j2"
+    dest: "~/.config/ai/openterminal/openterminal.env"
+    mode: "0600"
+    restart: ["openterminal.service"]
+  - src: "openwebui.env.j2"
+    dest: "~/.config/ai/openwebui.env"
+    mode: "0600"
+    restart: ["openwebui.service"]
+  - src: "pipelines.env.j2"
+    dest: "~/.config/ai/pipelines/pipelines.env"
+    mode: "0600"
+    restart: ["pipelines.service"]
+  - src: "qdrant.env.j2"
+    dest: "~/.config/ai/qdrant/qdrant.env"
+    mode: "0600"
+    restart: ["qdrant.service"]
+  - src: "searxng.env.j2"
+    dest: "~/.config/ai/searxng/searxng.env"
+    mode: "0600"
+    restart: ["searxng.service"]
+  - src: "searxng-settings.yml.j2"
+    dest: "~/.config/ai/searxng/settings.yml"
+    mode: "0644"
+    restart: ["searxng.service"]
+  - src: "tika.env.j2"
+    dest: "~/.config/ai/tika/tika.env"
+    mode: "0600"
+    restart: ["tika.service"]

@@ -1,0 +1,74 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "exportarr-lidarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-lidarr.env"
+    mode: "0600"
+    restart: ["exportarr-lidarr.service"]
+  - src: "exportarr-prowlarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-prowlarr.env"
+    mode: "0600"
+    restart: ["exportarr-prowlarr.service"]
+  - src: "exportarr-radarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-radarr.env"
+    mode: "0600"
+    restart: ["exportarr-radarr.service"]
+  - src: "exportarr-sonarr.env.j2"
+    dest: "~/.config/media/arr/exportarr-sonarr.env"
+    mode: "0600"
+    restart: ["exportarr-sonarr.service"]
+  - src: "flaresolverr.env.j2"
+    dest: "~/.config/media/arr/flaresolverr.env"
+    mode: "0600"
+    restart: ["flaresolverr.service"]
+  - src: "gluetun.env.j2"
+    dest: "~/.config/media/arr/gluetun.env"
+    mode: "0600"
+    restart: ["gluetun.service"]
+  - src: "jellyseerr.env.j2"
+    dest: "~/.config/media/arr/jellyseerr.env"
+    mode: "0600"
+    restart: ["jellyseerr.service"]
+  - src: "lidarr.env.j2"
+    dest: "~/.config/media/arr/lidarr.env"
+    mode: "0600"
+    restart: ["lidarr.service"]
+  - src: "nzbget-exporter.env.j2"
+    dest: "~/.config/media/arr/nzbget-exporter.env"
+    mode: "0600"
+    restart: ["nzbget-exporter.service"]
+  - src: "nzbget.env.j2"
+    dest: "~/.config/media/arr/nzbget.env"
+    mode: "0600"
+    restart: ["nzbget.service"]
+  - src: "prowlarr.env.j2"
+    dest: "~/.config/media/arr/prowlarr.env"
+    mode: "0600"
+    restart: ["prowlarr.service"]
+  - src: "qbittorrent-exporter.env.j2"
+    dest: "~/.config/media/arr/qbittorrent-exporter.env"
+    mode: "0600"
+    restart: ["qbittorrent-exporter.service"]
+  - src: "qbittorrent.env.j2"
+    dest: "~/.config/media/arr/qbittorrent.env"
+    mode: "0600"
+    restart: ["qbittorrent.service"]
+  - src: "radarr.env.j2"
+    dest: "~/.config/media/arr/radarr.env"
+    mode: "0600"
+    restart: ["radarr.service"]
+  - src: "sonarr.env.j2"
+    dest: "~/.config/media/arr/sonarr.env"
+    mode: "0600"
+    restart: ["sonarr.service"]
+  - src: "sportarr.env.j2"
+    dest: "~/.config/media/arr/sportarr.env"
+    mode: "0600"
+    restart: ["sportarr.service"]
+  - src: "tdarr.env.j2"
+    dest: "~/.config/media/arr/tdarr.env"
+    mode: "0600"
+    restart: ["tdarr.service"]

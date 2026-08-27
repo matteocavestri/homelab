@@ -1,0 +1,22 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "crowdsec-web-ui.env.j2"
+    dest: "~/.config/infrastructure/proxy/crowdsec-web-ui/crowdsec-web-ui.env"
+    mode: "0600"
+    restart: ["crowdsec-web-ui.service"]
+  - src: "crowdsec.env.j2"
+    dest: "~/.config/infrastructure/proxy/crowdsec/crowdsec.env"
+    mode: "0600"
+    restart: ["crowdsec.service"]
+  - src: "geoipupdate.env.j2"
+    dest: "~/.config/infrastructure/proxy/geoipupdate/geoipupdate.env"
+    mode: "0600"
+    restart: ["geoipupdate.service"]
+  - src: "npmplus.env.j2"
+    dest: "~/.config/infrastructure/proxy/npmplus/npmplus.env"
+    mode: "0600"
+    restart: ["npmplus.service"]

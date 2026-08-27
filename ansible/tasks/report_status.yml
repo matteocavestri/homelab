@@ -1,0 +1,105 @@
+---
+# Read-only status report. The target and timer lists are derived from sdtargets/
+# (no hand-maintained lists): every sdtarget dir is a .target; every
+# templates/*.timer.j2 across all sdtargets is a .timer that must run unattended.
+
+# The sdtargets/ tree lives on the controller, not the host -> delegate_to.
+- name: Enumerate sdtargets
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}/sdtargets"
+    file_type: directory
+    recurse: false
+  register: _sd_dirs
+  delegate_to: localhost
+
+- name: Enumerate backup / EGR timer templates
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}/sdtargets"
+    patterns: ["*.timer.j2"]
+    recurse: true
+  register: _timer_files
+  delegate_to: localhost
+
+- name: Build target & timer lists
+  ansible.builtin.set_fact:
+    status_targets: >-
+      {{ _sd_dirs.files | map(attribute='path') | map('basename')
+         | reject('equalto', 'common') | list | sort }}
+    status_timers: >-
+      {{ _timer_files.files | map(attribute='path') | map('basename')
+         | map('regex_replace', '\.timer\.j2$', '') | list | sort }}
+    status_ok_enabled_states: ["enabled", "enabled-runtime", "static", "linked", "linked-runtime"]
+
+# Two SSH round-trips total (not ~40 is-enabled/is-active calls): a host behind
+# crowdsec/sshd rate-limits would drop the connection storm.
+- name: Query every unit's state in one call
+  ansible.builtin.command:
+    argv: "{{ ['systemctl', '--user', 'show', '--property=Id,ActiveState,UnitFileState', '--']
+             + (status_targets | product(['.target']) | map('join') | list)
+             + (status_timers  | product(['.timer'])  | map('join') | list) }}"
+  register: _units_show
+  changed_when: false
+
+- name: List failed user units
+  ansible.builtin.command: "systemctl --user --state=failed --no-legend --plain list-units"
+  register: status_failed_units
+  changed_when: false
+  failed_when: false
+
+- name: Parse unit states
+  ansible.builtin.set_fact:
+    status_state: >-
+      {{ status_state | default({}) | combine({
+           (item | regex_findall('^Id=(.*)$', multiline=True) | first): {
+             'enabled': (item | regex_findall('^UnitFileState=(.*)$', multiline=True) | first | default('not-found', true)),
+             'active':  (item | regex_findall('^ActiveState=(.*)$', multiline=True) | first | default('unknown', true)),
+           }
+         }) }}
+  loop: "{{ _units_show.stdout.split('\n\n') }}"
+  loop_control:
+    label: "{{ item | regex_findall('^Id=(.*)$', multiline=True) | first }}"
+  when: "'Id=' in item"
+
+- name: "Report: targets"
+  ansible.builtin.debug:
+    msg: >-
+      {{ '%-24s enabled=%-16s active=%s'
+         | format(item ~ '.target',
+                  status_state[item ~ '.target'].enabled | default('?'),
+                  status_state[item ~ '.target'].active  | default('?')) }}
+  loop: "{{ status_targets }}"
+
+- name: "Report: timers"
+  ansible.builtin.debug:
+    msg: >-
+      {{ '%-24s enabled=%-16s active=%s'
+         | format(item ~ '.timer',
+                  status_state[item ~ '.timer'].enabled | default('?'),
+                  status_state[item ~ '.timer'].active  | default('?')) }}
+  loop: "{{ status_timers }}"
+
+- name: "Report: failed units"
+  ansible.builtin.debug:
+    msg: "{{ status_failed_units.stdout_lines if status_failed_units.stdout | trim | length > 0 else ['(none)'] }}"
+
+- name: Compute problem list
+  ansible.builtin.set_fact:
+    status_problems: >-
+      {%- set problems = [] -%}
+      {%- for t in status_timers -%}
+        {%- set st = status_state[t ~ '.timer'] | default({}) -%}
+        {%- set en = st.enabled | default('') -%}
+        {%- set ac = st.active | default('') -%}
+        {%- if en not in status_ok_enabled_states or ac != 'active' -%}
+          {%- set _ = problems.append(t ~ '.timer (enabled=' ~ en ~ ', active=' ~ ac ~ ')') -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if status_failed_units.stdout | trim | length > 0 -%}
+        {%- set _ = problems.append('failed unit(s): ' ~ (status_failed_units.stdout_lines | join(', '))) -%}
+      {%- endif -%}
+      {{ problems | join('; ') }}
+
+- name: Fail if problems were found
+  ansible.builtin.fail:
+    msg: "Problems found: {{ status_problems }}"
+  when: status_problems | length > 0

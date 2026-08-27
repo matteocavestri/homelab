@@ -1,0 +1,44 @@
+---
+# Shared assets that are not tied to any single sdtarget: the backup helper
+# script, the notify@ template units, and the podman drop-ins.
+# (Was roles/bin + the non-service half of roles/common.)
+
+- name: common | ensure directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - ~/.local/bin
+    - ~/.config/systemd/user/podman.service.d
+    - ~/.config/systemd/user/podman-auto-update.service.d
+
+- name: common | install backup-target.sh
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/sdtargets/common/files/backup-target.sh"
+    dest: ~/.local/bin/backup-target.sh
+    mode: "0755"
+
+- name: common | deploy shared systemd units & podman drop-ins
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/sdtargets/common/templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  loop:
+    - src: "notify-failure@.service.j2"
+      dest: "~/.config/systemd/user/notify-failure@.service"
+    - src: "notify-recovery@.service.j2"
+      dest: "~/.config/systemd/user/notify-recovery@.service"
+    - src: "podman.service.d/loglevel.conf.j2"
+      dest: "~/.config/systemd/user/podman.service.d/loglevel.conf"
+    - src: "podman-auto-update.service.d/override.conf.j2"
+      dest: "~/.config/systemd/user/podman-auto-update.service.d/override.conf"
+  loop_control:
+    label: "{{ item.dest }}"
+  register: _r_common
+
+- name: common | systemctl --user daemon-reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+  when: _r_common.results | selectattr('changed') | list | length > 0

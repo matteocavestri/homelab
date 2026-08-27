@@ -1,0 +1,14 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "freshrss.env.j2"
+    dest: "~/.config/office/freshrss.env"
+    mode: "0600"
+    restart: ["freshrss.service"]
+  - src: "vaultwarden.env.j2"
+    dest: "~/.config/office/vaultwarden.env"
+    mode: "0600"
+    restart: ["vaultwarden.service"]

@@ -1,0 +1,13 @@
+---
+# Read-only: reports is-enabled / is-active for every sdtarget .target and every
+# backup/EGR .timer, lists failed user units, and fails if a timer is not
+# enabled+active or a unit has failed. Never touches unit state.
+#
+#   ansible-playbook check.yml --ask-vault-pass      (or: make check)
+
+- name: Homelab unit status (read-only)
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - ansible.builtin.import_tasks: tasks/report_status.yml
