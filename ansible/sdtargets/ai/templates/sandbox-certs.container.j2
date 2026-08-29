@@ -1,0 +1,31 @@
+[Unit]
+Description=n8n Sandbox Service - mTLS bootstrap (one-shot)
+PartOf=ai.target
+After=ai.target
+OnFailure=notify-failure@%n.service
+
+[Container]
+Image={{ versions.n8n_sandbox_api.image }}:{{ versions.n8n_sandbox_api.tag }}
+ContainerName=sandbox-certs
+User=0
+Group=0
+# Genera la CA + i leaf mTLS in sandbox-tls solo se non esistono gia'.
+# La rotazione dei certificati si fa svuotando il volume sandbox-tls a mano
+# (poi vanno riavviati sandbox-api e sandbox-runner-1).
+Entrypoint=sh
+Exec=-c "if [ ! -f /tls/api/grpc-server.crt ]; then bootstrap-mtls.sh --out-dir /tls --api-san sandbox-api --control-san-prefix sandbox-runner; fi && chown -R sandbox-api:sandbox-api /tls/api"
+Environment=NUM_RUNNERS=1
+Volume=sandbox-tls:/tls
+SecurityLabelDisable=true
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=120
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sandbox-certs
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

@@ -1,0 +1,41 @@
+[Unit]
+Description=n8n Sandbox Service - API
+PartOf=ai.target
+After=ai.target sandbox-certs.service
+Requires=sandbox-certs.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.n8n_sandbox_api.image }}:{{ versions.n8n_sandbox_api.tag }}
+ContainerName=sandbox-api
+Network=ai.network
+Volume=sandbox-tls:/tls:ro
+EnvironmentFile=%h/.config/ai/n8n-sandbox/sandbox-api.env
+SecurityLabelDisable=true
+NoNewPrivileges=true
+AutoUpdate=registry
+HealthCmd=wget -qO- http://localhost:8080/healthz || exit 1
+HealthInterval=10s
+HealthTimeout=5s
+HealthRetries=5
+HealthStartPeriod=20s
+Notify=healthy
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sandbox-api
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

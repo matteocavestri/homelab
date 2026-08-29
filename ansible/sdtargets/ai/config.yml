@@ -48,6 +48,8 @@ ollama:
   keep_alive: "5m"
   flash_attention: "1"
   kv_cache_type: "q4_0"
+  context_length: "24576"   # default num_ctx (24k) when a request omits it; clients can still override
+
   nvidia_visible_devices: "all"
   nvidia_driver_capabilities: "compute,utility"
 

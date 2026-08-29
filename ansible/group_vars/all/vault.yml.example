@@ -14,6 +14,10 @@ vault_openwebui:
   oauth_client_secret: "CHANGEME"
 vault_searxng:
   secret_key: "CHANGEME"
+vault_n8n_sandbox:
+  api_keys: "CHANGEME"
+  runner_registration_token: "CHANGEME"
+  runner_api_key: "CHANGEME"
 vault_openai_edge_tts:
   # inline in openai-edge-tts.container (Environment=API_KEY=...), non in un .env
   api_key: "CHANGEME"

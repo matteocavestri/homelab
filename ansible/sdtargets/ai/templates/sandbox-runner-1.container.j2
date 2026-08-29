@@ -1,0 +1,43 @@
+[Unit]
+Description=n8n Sandbox Service - Runner 1 (privileged Docker-in-Docker)
+PartOf=ai.target
+After=ai.target sandbox-api.service
+Requires=sandbox-api.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.n8n_sandbox_runner.image }}:{{ versions.n8n_sandbox_runner.tag }}
+ContainerName=sandbox-runner-1
+Network=ai.network
+Volume=sandbox-tls:/tls:ro
+Volume=sandbox-runner-docker:/var/lib/docker
+EnvironmentFile=%h/.config/ai/n8n-sandbox/sandbox-runner.env
+# DinD rootless: serve un container privileged completo + /dev/fuse per il
+# driver overlay del dockerd interno. In rootless "--privileged" concede solo
+# le capability che l'utente di deploy possiede gia' (non root host reale), ma
+# un'evasione dalla sandbox resta con i privilegi di quell'utente: tenere
+# 8080/9090/9091 non pubblicate e non fidarsi del filtro egress verso la LAN.
+PodmanArgs=--privileged
+AddDevice=/dev/fuse
+SecurityLabelDisable=true
+NoNewPrivileges=false
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=60
+
+[Service]
+Restart=always
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=300
+TimeoutStopSec=90
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sandbox-runner-1
+Slice=ai.slice
+
+[Install]
+WantedBy=ai.target

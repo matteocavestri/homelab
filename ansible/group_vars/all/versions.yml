@@ -121,6 +121,20 @@ versions:
     image: docker.io/n8nio/n8n
     tag: 2.37.4
     mode: semver
+  n8n_sandbox_api:
+    image: ghcr.io/n8n-io/n8n-sandbox-service-api
+    tag: 1.1.1
+    mode: semver
+  n8n_sandbox_runner:
+    image: ghcr.io/n8n-io/n8n-sandbox-service-runner-dind
+    tag: 1.1.1
+    mode: semver
+  n8n_sandbox_sandbox:
+    # pulled by the runner's inner dockerd, not by podman
+    image: ghcr.io/n8n-io/n8n-sandbox-service-sandbox
+    tag: latest
+    mode: digest
+    last_digest: ""
   node_exporter:
     image: docker.io/prom/node-exporter
     tag: v1.12.1

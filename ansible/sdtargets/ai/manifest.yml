@@ -44,6 +44,14 @@ config_files:
     dest: "~/.config/ai/qdrant/qdrant.env"
     mode: "0600"
     restart: ["qdrant.service"]
+  - src: "sandbox-api.env.j2"
+    dest: "~/.config/ai/n8n-sandbox/sandbox-api.env"
+    mode: "0600"
+    restart: ["sandbox-api.service"]
+  - src: "sandbox-runner.env.j2"
+    dest: "~/.config/ai/n8n-sandbox/sandbox-runner.env"
+    mode: "0600"
+    restart: ["sandbox-runner-1.service"]
   - src: "searxng.env.j2"
     dest: "~/.config/ai/searxng/searxng.env"
     mode: "0600"
