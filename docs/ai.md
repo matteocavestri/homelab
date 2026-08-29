@@ -17,7 +17,7 @@ under host pressure.
 | openwebui | `ghcr.io/open-webui/open-webui` | v0.11.1 | `127.0.0.1:8081` (+ `monitoring.network`) | `openwebui-data:/app/backend/data` |
 | ollama | `docker.io/ollama/ollama` | 0.33.1 | `127.0.0.1:11434`, GPU | `ollama-data:/root/.ollama` |
 | comfyui | `localhost/comfyui-p4` | local build (untracked) | `127.0.0.1:8188`, GPU (CDI) | `comfyui-storage:/root` |
-| n8n | `docker.io/n8nio/n8n` | 2.37.4 | `127.0.0.1:5678` | `n8n-data:/home/node/.n8n` |
+| n8n | `docker.io/n8nio/n8n` | 2.37.4 | `127.0.0.1:5678` (+ `jellyfin`/`arr`/`monitoring` networks) | `n8n-data:/home/node/.n8n` |
 | qdrant | `docker.io/qdrant/qdrant` | v1.19 | `127.0.0.1:6333` | `qdrant-data:/qdrant/storage` |
 | searxng | `docker.io/searxng/searxng` | latest (digest) | `127.0.0.1:8083` | `settings.yml:ro` |
 | crawl4ai | `docker.io/unclecode/crawl4ai` | 0.9.2 | internal | `crawl4ai-data` |
@@ -69,7 +69,9 @@ offload and spills to the LVM swap.
 - **ollama** — `flash_attention`, `kv_cache_type: q4_0`, default
   `context_length: 24576`, `keep_alive: 5m`, all NVIDIA devices.
 - **comfyui** — `--lowvram`.
-- **n8n** — internal task runners, `webhook_url: https://n8n.cavestrihome.com`.
+- **n8n** — internal task runners, `webhook_url: https://n8n.cavestrihome.com`,
+  `N8N_METRICS=true` (Prometheus `/metrics` on `127.0.0.1:5678`, scraped over
+  `monitoring.network`). Also joins `jellyfin.network` and `arr.network`.
 - **openai-edge-tts** — Italian defaults (`it-IT-ElsaNeural`), mp3, API key
   required.
 - **searxng** — `base_url: https://web.cavestrihome.com/`.

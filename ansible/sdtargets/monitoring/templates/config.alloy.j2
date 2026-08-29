@@ -201,6 +201,17 @@ prometheus.scrape "nzbget" {
   forward_to      = [prometheus.remote_write.mimir.receiver]
 }
 
+prometheus.scrape "n8n" {
+  targets = [{
+    __address__ = "n8n:5678",
+    instance    = "leonardo",
+  }]
+  job_name        = "n8n"
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to      = [prometheus.remote_write.mimir.receiver]
+}
+
 // HTTP/TLS blackbox probes
 
 prometheus.exporter.blackbox "probes" {
