@@ -3,6 +3,9 @@
 Ansible playbook that deploys a Podman Quadlet container stack (rootless,
 `systemd --user`) on AlmaLinux 10.
 
+Per-target reference documentation lives in [`docs/`](docs/README.md)
+(one page per systemd target: `docs/jellyfin.md`, `docs/arr.md`, …).
+
 ## Layout
 
 ```
