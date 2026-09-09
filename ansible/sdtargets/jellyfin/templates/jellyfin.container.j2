@@ -14,7 +14,7 @@ PublishPort=127.0.0.1:8096:8096
 SecurityLabelDisable=true
 AddDevice=nvidia.com/gpu=all
 Volume=jellyfin-config:/config
-Mount=type=tmpfs,target=/cache,tmpfs-size=2G
+Mount=type=tmpfs,target=/cache,tmpfs-size=4G
 Volume=/mnt/Media:/media
 EnvironmentFile=%h/.config/media/jellyfin/jellyfin.env
 AutoUpdate=registry

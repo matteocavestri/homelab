@@ -9,7 +9,7 @@ versions:
     mode: semver
   authentik:
     image: ghcr.io/goauthentik/server
-    tag: 2026.8.0
+    tag: 2026.8.2
     mode: semver
     pin_digest: sha256:5217eed4e86a3c6666ecf81c3430753ef958f97f93ac614070d458c10e0b2b33
   authentik_postgres:
@@ -23,7 +23,7 @@ versions:
     mode: semver
   crowdsec:
     image: docker.io/crowdsecurity/crowdsec
-    tag: v1.7.8
+    tag: v1.8.1
     mode: semver
   crowdsec_web_ui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
@@ -43,7 +43,7 @@ versions:
     mode: semver
   freshrss:
     image: docker.io/freshrss/freshrss
-    tag: 1.29.1
+    tag: 1.30.0
     mode: semver
   geoipupdate:
     image: ghcr.io/maxmind/geoipupdate
@@ -55,15 +55,15 @@ versions:
     mode: semver
   grafana:
     image: docker.io/grafana/grafana
-    tag: 13.2.0
+    tag: 13.2.1
     mode: semver
   homarr:
     image: ghcr.io/homarr-labs/homarr
-    tag: v1.76.2
+    tag: v1.77.0
     mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
-    tag: v2.1.2
+    tag: v2.2.0
     mode: semver
   immich_machine_learning:
     image: ghcr.io/immich-app/immich-machine-learning
@@ -86,7 +86,7 @@ versions:
     last_digest: sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb
   jellyfin:
     image: docker.io/jellyfin/jellyfin
-    tag: 10.11.11
+    tag: 12.0
     mode: semver
   jellyfin_exporter:
     image: docker.io/rebelcore/jellyfin-exporter
@@ -98,7 +98,7 @@ versions:
     mode: semver
   lidarr:
     image: lscr.io/linuxserver/lidarr
-    tag: 3.1.0.4875-ls40
+    tag: 3.1.0.4875-ls41
     mode: semver
   loki:
     image: docker.io/grafana/loki
@@ -119,21 +119,21 @@ versions:
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: 2.38.1
+    tag: 2.39.1
     mode: semver
   n8n_sandbox_api:
     image: ghcr.io/n8n-io/n8n-sandbox-service-api
-    tag: 1.3.0
+    tag: 1.3.4
     mode: semver
   n8n_sandbox_runner:
     image: ghcr.io/n8n-io/n8n-sandbox-service-runner-dind
-    tag: 1.3.0
+    tag: 1.3.4
     mode: semver
   n8n_sandbox_sandbox:
     image: ghcr.io/n8n-io/n8n-sandbox-service-sandbox
     tag: latest
     mode: digest
-    last_digest: sha256:c733e5b211420bda0adbbb0b815438c70959e94471e3d26bc46ed5c8ce4f1fc7
+    last_digest: sha256:634b2c28f03db91803cc8d0b0a03bbf75f9d5d09b531277ecd5c82877ef7ae5d
   node_exporter:
     image: docker.io/prom/node-exporter
     tag: v1.12.1
@@ -149,13 +149,13 @@ versions:
     mode: semver
   nvidia_gpu_exporter:
     image: docker.io/utkuozdemir/nvidia_gpu_exporter
-    tag: 1.14.0
+    tag: 1.15.1
     mode: semver
   nzbget:
     image: lscr.io/linuxserver/nzbget
     tag: latest
     mode: digest
-    last_digest: sha256:5f3d3fa71029004156eff2cbf4ef4455ce4ce59517cf13fa7d1d7c8a4cd2c8a4
+    last_digest: sha256:4cc4afc944e0239037b7b95c64deb8e39e49ca770b7e2f61476a04443d7fcab9
   nzbget_exporter:
     image: docker.io/frebib/nzbget-exporter
     tag: latest
@@ -163,7 +163,7 @@ versions:
     last_digest: sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692
   ollama:
     image: docker.io/ollama/ollama
-    tag: 0.33.2
+    tag: 0.33.3
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
@@ -174,7 +174,7 @@ versions:
     image: ghcr.io/open-webui/open-terminal
     tag: latest
     mode: digest
-    last_digest: sha256:8f6d2045aa69e348e39d89bf59e6b267773532335333eed14ff16bbc7c964b73
+    last_digest: sha256:8d3a93d382c922c37352984302ebb8ee729cb01efd4ae8b221d9f881efb4b5c6
   openwebui:
     image: ghcr.io/open-webui/open-webui
     tag: v0.11.3
@@ -197,7 +197,7 @@ versions:
     image: lscr.io/linuxserver/prowlarr
     tag: latest
     mode: digest
-    last_digest: sha256:ab91301778251f82a31bbfc87f0497376d59e84439d9a1ceff6a61d594d1e3d7
+    last_digest: sha256:c7502a75b021d964481c129c84590b9cbc40f83aadd4e553f173871bc0deaa3c
   pyroscope:
     image: docker.io/grafana/pyroscope
     tag: 2.3.0
@@ -219,17 +219,17 @@ versions:
     image: lscr.io/linuxserver/radarr
     tag: latest
     mode: digest
-    last_digest: sha256:119aaa4a4f7349bcd2a136c5373a0d7925b5479915c7dfe0c0ad352db2a6d438
+    last_digest: sha256:95ba0801df4d9d1d79d0d9a3849f656542497dab061d91b87ad4f53a71aff3ef
   searxng:
     image: docker.io/searxng/searxng
     tag: latest
     mode: digest
-    last_digest: sha256:b36af7984b87191b595bc5301418ed6432c047668a4547ab531a7439b816fac3
+    last_digest: sha256:3547509b419cd6a67333d6d68bd1ffad8d46d3669d82e7a7bd538f7b45827432
   sonarr:
     image: lscr.io/linuxserver/sonarr
     tag: latest
     mode: digest
-    last_digest: sha256:c19aa4ecdf03d73e1d5c901da33744cb7eb4d921f89bafed1ca264601d7fa224
+    last_digest: sha256:4d9df314875e1249ab7d6170c2b9b3dc1d8e6383f168ceb10dc9a5ad9b324739
   sportarr:
     image: docker.io/sportarr/sportarr
     tag: 4.1.6.1116
