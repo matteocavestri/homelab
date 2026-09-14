@@ -39,7 +39,7 @@ versions:
     mode: semver
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr
-    tag: v3.5.0
+    tag: v3.5.2
     mode: semver
   freshrss:
     image: docker.io/freshrss/freshrss
@@ -59,17 +59,17 @@ versions:
     mode: semver
   homarr:
     image: ghcr.io/homarr-labs/homarr
-    tag: v1.77.0
+    tag: v1.77.1
     mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
-    tag: v2.2.0
+    tag: v2.3.0
     mode: semver
   immich_machine_learning:
     image: ghcr.io/immich-app/immich-machine-learning
     tag: release
     mode: digest
-    last_digest: sha256:5a0839dc5303cd7215bcd2180a26aed3af41675aefb3e75e5157e9f10ad16e6e
+    last_digest: sha256:f8b2869891c861a58dde969d86e7ea8a186e6059a55886632ee3249e51fb574a
   immich_postgres:
     image: ghcr.io/immich-app/postgres
     tag: 14-vectorchord0.4.3-pgvectors0.3.0
@@ -83,7 +83,7 @@ versions:
     image: ghcr.io/immich-app/immich-server
     tag: release
     mode: digest
-    last_digest: sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb
+    last_digest: sha256:ae13784ffcfcce8f4178113eb6661602a1fd1912f3d539880b8ac0dd95fc8ac2
   jellyfin:
     image: docker.io/jellyfin/jellyfin
     tag: 12.0
@@ -115,11 +115,11 @@ versions:
     mode: semver
   mimir:
     image: docker.io/grafana/mimir
-    tag: 3.2.0
+    tag: 3.2.1
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: 2.39.1
+    tag: 2.39.5
     mode: semver
   n8n_sandbox_api:
     image: ghcr.io/n8n-io/n8n-sandbox-service-api
@@ -155,7 +155,7 @@ versions:
     image: lscr.io/linuxserver/nzbget
     tag: latest
     mode: digest
-    last_digest: sha256:4cc4afc944e0239037b7b95c64deb8e39e49ca770b7e2f61476a04443d7fcab9
+    last_digest: sha256:24951ff9689ddbc0843e309ed16db74409a077541a8aeaecca606ae3565768f2
   nzbget_exporter:
     image: docker.io/frebib/nzbget-exporter
     tag: latest
@@ -163,7 +163,7 @@ versions:
     last_digest: sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692
   ollama:
     image: docker.io/ollama/ollama
-    tag: 0.33.3
+    tag: 0.34.0
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
@@ -174,7 +174,7 @@ versions:
     image: ghcr.io/open-webui/open-terminal
     tag: latest
     mode: digest
-    last_digest: sha256:8d3a93d382c922c37352984302ebb8ee729cb01efd4ae8b221d9f881efb4b5c6
+    last_digest: sha256:3ebbc7304e8b8b5a019acbd27c88b438a5e3641641cb596df111e3299a96bfa3
   openwebui:
     image: ghcr.io/open-webui/open-webui
     tag: v0.11.3
@@ -192,7 +192,7 @@ versions:
     image: quay.io/navidys/prometheus-podman-exporter
     tag: latest
     mode: digest
-    last_digest: sha256:b32899364b6761e2f4f496f110f2bc91a6cbab064f737c19efff200f7f3a25bf
+    last_digest: sha256:ddaa9003e86f435f2d958ab68041959e4d2bb290a350a2649a123c449db032db
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
     tag: latest
@@ -219,26 +219,26 @@ versions:
     image: lscr.io/linuxserver/radarr
     tag: latest
     mode: digest
-    last_digest: sha256:95ba0801df4d9d1d79d0d9a3849f656542497dab061d91b87ad4f53a71aff3ef
+    last_digest: sha256:fe051413dfd91b383ba04910552e83fb0306895fefee275c48dafe7bb90807dc
   searxng:
     image: docker.io/searxng/searxng
     tag: latest
     mode: digest
-    last_digest: sha256:3547509b419cd6a67333d6d68bd1ffad8d46d3669d82e7a7bd538f7b45827432
+    last_digest: sha256:e0e0557627cc3e46cc82d8c23bb3a3a74eb203ae42f73142db555551af336096
   sonarr:
     image: lscr.io/linuxserver/sonarr
     tag: latest
     mode: digest
-    last_digest: sha256:4d9df314875e1249ab7d6170c2b9b3dc1d8e6383f168ceb10dc9a5ad9b324739
+    last_digest: sha256:82172b363f9eddc02aca544f880a044f2ceb9aaf190bc87e4454e2f705eb91d0
   sportarr:
     image: docker.io/sportarr/sportarr
-    tag: 4.1.6.1116
+    tag: 4.1.7.1117
     mode: semver
   tdarr:
     image: ghcr.io/haveagitgat/tdarr
     tag: latest
     mode: digest
-    last_digest: sha256:45742f00e51a58553844c8b13d97e7ae9b2ee9a056bd8e5993d9a8282a45a23f
+    last_digest: sha256:f192e24e989f405c45c52c34ee6502c2edc4d4e1552bbff1a8c4321bc9b35b3b
   tempo:
     image: docker.io/grafana/tempo
     tag: 3.0.3
@@ -250,5 +250,5 @@ versions:
     tag_pattern: ^(?P<version>\d+\.\d+\.\d+)(-\d+)?-full$
   vaultwarden:
     image: docker.io/vaultwarden/server
-    tag: 1.37.2
+    tag: 1.37.3
     mode: semver
