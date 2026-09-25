@@ -241,6 +241,7 @@ run_backup() {
         backup_volume "vaultwarden-data" "${target_dir}/vaultwarden" || (( errors++ ))
         backup_volume "freshrss-data" "${target_dir}/freshrss" || (( errors++ ))
         backup_volume "freshrss-extensions" "${target_dir}/freshrss" || (( errors++ ))
+        backup_volume "trilium-data" "${target_dir}/trilium" || (( errors++ ))
         ;;
 
     immich)

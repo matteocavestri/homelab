@@ -118,7 +118,7 @@ seconds.
 | jellyfin | 03:30 | config tree, jellyfin-config volume |
 | arr | 03:45 | config tree, every `*-config` volume (incl. sportarr) + tdarr |
 | monitoring | 04:00 | config tree, data volumes of ntfy/alertmanager/grafana/mimir/loki/tempo/pyroscope |
-| office | 04:15 | config tree, vaultwarden-data, freshrss-data/-extensions |
+| office | 04:15 | config tree, vaultwarden-data, freshrss-data/-extensions, trilium-data |
 | immich | 04:30 | config tree, `pg_dump` immich-postgres |
 | ai | 04:45 | config tree, openwebui-data only |
 
@@ -313,4 +313,5 @@ containers above (updates an IPTV EPG file).
 | Service | Image | Version | Ports | Network | Volumes | Config |
 |---|---|---|---|---|---|---|
 | freshrss | `docker.io/freshrss/freshrss` | 1.29.1 | 127.0.0.1:8183 | office.network + monitoring.network | `freshrss-data`, `freshrss-extensions` | `freshrss.env` |
+| trilium | `docker.io/triliumnext/trilium` | 0.105.0 | 127.0.0.1:8084 | office.network + monitoring.network + ai.network | `trilium-data` | `trilium.env` |
 | vaultwarden | `docker.io/vaultwarden/server` | 1.37.2 | 127.0.0.1:8087 | office.network + monitoring.network | `vaultwarden-data:/data` | `vaultwarden.env` |

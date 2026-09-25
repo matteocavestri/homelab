@@ -12,3 +12,7 @@ config_files:
     dest: "~/.config/office/vaultwarden.env"
     mode: "0600"
     restart: ["vaultwarden.service"]
+  - src: "trilium.env.j2"
+    dest: "~/.config/office/trilium.env"
+    mode: "0600"
+    restart: ["trilium.service"]

@@ -44,8 +44,10 @@ runs as that user, so the runner is kept off the LAN-reachable surface.
 
 ## Networking
 
-`ai.network` (bridge). `openwebui` also joins `monitoring.network`. Ollama binds
-`0.0.0.0` inside the network; Open WebUI reaches it at `http://ollama:11434`.
+`ai.network` (bridge). `openwebui` also joins `monitoring.network`. `trilium`
+(from `office.target`) also joins `ai.network` to reach Ollama for its AI
+features. Ollama binds `0.0.0.0` inside the network; other containers reach it
+at `http://ollama:11434`.
 GPU: ollama, comfyui, tdarr-style CDI (`nvidia.com/gpu`). OTel traces/metrics
 from Open WebUI go to `alloy.dns.podman:14317`.
 
