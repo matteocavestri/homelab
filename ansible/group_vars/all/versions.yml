@@ -104,6 +104,11 @@ versions:
     image: docker.io/grafana/loki
     tag: 3.7.8
     mode: semver
+  lemonade:
+    image: ghcr.io/lemonade-sdk/lemonade-server
+    tag: latest
+    mode: digest
+    last_digest: sha256:bd4b89738ca57a90ce3276ddf9270c317d369dc4bc4eded94568d37b88c2bc0d
   mcpo:
     image: ghcr.io/open-webui/mcpo
     tag: latest

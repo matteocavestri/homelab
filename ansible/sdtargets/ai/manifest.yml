@@ -12,6 +12,10 @@ config_files:
     dest: "~/.config/ai/crawl4ai/crawl4ai.env"
     mode: "0600"
     restart: ["crawl4ai.service"]
+  - src: "lemonade.env.j2"
+    dest: "~/.config/ai/lemonade/lemonade.env"
+    mode: "0600"
+    restart: ["lemonade.service"]
   - src: "mcpo-config.json.j2"
     dest: "~/.config/ai/mcpo-config.json"
     mode: "0644"

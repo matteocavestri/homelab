@@ -16,6 +16,7 @@ under host pressure.
 |---|---|---|---|---|
 | openwebui | `ghcr.io/open-webui/open-webui` | v0.11.1 | `127.0.0.1:8081` (+ `monitoring.network`) | `openwebui-data:/app/backend/data` |
 | ollama | `docker.io/ollama/ollama` | 0.33.1 | `127.0.0.1:11434`, GPU | `ollama-data:/root/.ollama` |
+| lemonade | `ghcr.io/lemonade-sdk/lemonade-server` | latest (digest) | `127.0.0.1:13305`, GPU (CDI) | `lemonade-{cache,llama,data,config}` |
 | comfyui | `localhost/comfyui-p4` | local build (untracked) | `127.0.0.1:8188`, GPU (CDI) | `comfyui-storage:/root` |
 | n8n | `docker.io/n8nio/n8n` | 2.37.4 | `127.0.0.1:5678` (+ `jellyfin`/`arr`/`monitoring` networks) | `n8n-data:/home/node/.n8n` |
 | qdrant | `docker.io/qdrant/qdrant` | v1.19 | `127.0.0.1:6333` | `qdrant-data:/qdrant/storage` |

@@ -229,6 +229,7 @@ Most proxy-facing services use `Network=host` directly rather than
 |---|---|---|---|---|---|---|
 | comfyui | `localhost/comfyui-p4` | local build (untracked) | 127.0.0.1:8188 | ai.network, GPU (CDI) | `comfyui-storage:/root` | `comfyui.env` |
 | crawl4ai | `docker.io/unclecode/crawl4ai` | 0.9.2 | internal | ai.network | `crawl4ai-data:/home/appuser/.crawl4ai` | `crawl4ai.env` |
+| lemonade | `ghcr.io/lemonade-sdk/lemonade-server` | latest (digest-tracked) | 127.0.0.1:13305 | ai.network, GPU | `lemonade-cache`, `lemonade-llama`, `lemonade-data`, `lemonade-config` | `lemonade.env` |
 | mcpo | `ghcr.io/open-webui/mcpo` | latest (digest-tracked) | internal | ai.network | `mcpo-config.json:/app/config.json:ro`, `~/projects:/projects`, podman socket | — |
 | n8n | `docker.io/n8nio/n8n` | 2.37.1 | 127.0.0.1:5678 | ai.network | `n8n-data:/home/node/.n8n` | `n8n.env` |
 | ollama | `docker.io/ollama/ollama` | 0.32.15 | 127.0.0.1:11434 | ai.network, GPU | `ollama-data:/root/.ollama` | `ollama.env` |

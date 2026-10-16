@@ -53,6 +53,10 @@ ollama:
   nvidia_visible_devices: "all"
   nvidia_driver_capabilities: "compute,utility"
 
+lemonade:
+  nvidia_visible_devices: "all"
+  nvidia_driver_capabilities: "compute,utility,graphics"   # graphics: Vulkan backend
+
 openai_edge_tts:
   port: "5050"
   default_voice: "it-IT-ElsaNeural"

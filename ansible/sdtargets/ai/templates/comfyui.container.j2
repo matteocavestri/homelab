@@ -9,7 +9,10 @@ StartLimitBurst=5
 [Container]
 # cu118-slim: only tag supporting Pascal sm_61 (Tesla P4)
 # Image=docker.io/yanwk/comfyui-boot:cu118-slim
-Image=localhost/comfyui-p4:latest
+# Image=localhost/comfyui-p4:latest
+# torch 2.14.0+cu126: ultima wheel PyTorch con kernel Pascal (sm_60 gira su sm_61)
+# Rollback: Image=localhost/comfyui-p4:latest (vecchia immagine) e Volume=comfyui-storage:/root
+Image=localhost/comfyui-p4:v0.40.0
 ContainerName=comfyui
 Network=ai.network
 PublishPort=127.0.0.1:8188:8188
@@ -18,7 +21,10 @@ PublishPort=127.0.0.1:8188:8188
 AddDevice=nvidia.com/gpu=all
 
 # single volume on /root, per upstream cu118-slim compose
-Volume=comfyui-storage:/root
+# Volume=comfyui-storage:/root
+# dati (models, custom_nodes, input, output, user); codice e Python stanno nell'immagine
+Volume=comfyui-data:/data
+Exec=--cache-none --base-directory /data
 
 EnvironmentFile=%h/.config/ai/comfyui/comfyui.env
 
