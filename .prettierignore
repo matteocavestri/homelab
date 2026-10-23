@@ -1,0 +1,7 @@
+# versions.yml is rewritten by scripts/check_updates.py --apply with
+# ruamel.yaml at width 4096 (to keep one tag per line and preserve comments);
+# prettier re-wrapping it would be undone on the next --apply.
+ansible/group_vars/all/versions.yml
+
+# Ansible-vault encrypted: not valid plain YAML, prettier would fail to parse it.
+ansible/group_vars/all/vault.yml

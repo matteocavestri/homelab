@@ -30,6 +30,7 @@ mode: digest
 skopeo calls run in parallel; each row prints as soon as it is ready.
 --apply only rewrites versions.yml - it never touches Ansible or runs a deploy.
 """
+
 import argparse
 import concurrent.futures
 import hashlib
@@ -45,6 +46,7 @@ import yaml
 
 try:
     from ruamel.yaml import YAML
+
     HAVE_RUAMEL = True
 except ImportError:
     HAVE_RUAMEL = False
@@ -59,7 +61,10 @@ DEFAULT_JOBS = 12
 # minute, so it gets a longer timeout and a short-lived on-disk cache. Digest and
 # freshness `inspect` calls are always live.
 LIST_TAGS_TIMEOUT = 120
-CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "homelab-check-updates"
+CACHE_DIR = (
+    Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+    / "homelab-check-updates"
+)
 CACHE_TTL = 6 * 3600
 REFRESH = False  # set from --refresh
 
@@ -113,14 +118,23 @@ def tag_sortkey(tag):
 
 
 def result(key, current, latest, status, detail=None):
-    return {"key": key, "current": current, "latest": latest, "status": status, "detail": detail}
+    return {
+        "key": key,
+        "current": current,
+        "latest": latest,
+        "status": status,
+        "detail": detail,
+    }
 
 
 def run_skopeo(args, timeout):
     try:
         proc = subprocess.run(
             ["skopeo", "--command-timeout", f"{timeout}s", *args],
-            capture_output=True, text=True, timeout=timeout + 10, check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout + 10,
+            check=True,
         )
     except FileNotFoundError:
         raise RuntimeError("'skopeo' not found on this system (dnf install skopeo)")
@@ -128,13 +142,19 @@ def run_skopeo(args, timeout):
         raise RuntimeError(f"timed out after {timeout}s (slow or unreachable registry)")
     except subprocess.CalledProcessError as e:
         msg = (e.stderr or "").strip()
-        raise RuntimeError(msg.splitlines()[-1] if msg else f"skopeo exited {e.returncode}")
+        raise RuntimeError(
+            msg.splitlines()[-1] if msg else f"skopeo exited {e.returncode}"
+        )
     return proc.stdout
 
 
 def list_tags(repo, timeout):
     cache = CACHE_DIR / (hashlib.sha256(repo.encode()).hexdigest()[:16] + ".json")
-    if not REFRESH and cache.is_file() and time.time() - cache.stat().st_mtime < CACHE_TTL:
+    if (
+        not REFRESH
+        and cache.is_file()
+        and time.time() - cache.stat().st_mtime < CACHE_TTL
+    ):
         return json.loads(cache.read_text())
     raw = run_skopeo(["list-tags", f"docker://{repo}"], max(timeout, LIST_TAGS_TIMEOUT))
     tags = json.loads(raw).get("Tags", [])
@@ -162,14 +182,23 @@ def check_semver(key, entry, timeout):
     else:
         family = tag_family(pinned)
         if family is None:
-            return result(key, pinned, None, ERROR,
-                          "pinned tag is not version-like - use mode: digest")
+            return result(
+                key,
+                pinned,
+                None,
+                ERROR,
+                "pinned tag is not version-like - use mode: digest",
+            )
         candidates = [t for t in tags if tag_family(t) == family]
         scope = f"family {family}"
 
-    candidates = sorted({t for t in candidates if not JUNK_RX.search(t)}, key=tag_sortkey)
+    candidates = sorted(
+        {t for t in candidates if not JUNK_RX.search(t)}, key=tag_sortkey
+    )
     if not candidates:
-        return result(key, pinned, None, ERROR, f"no tag in scope ({scope}); check tag_pattern")
+        return result(
+            key, pinned, None, ERROR, f"no tag in scope ({scope}); check tag_pattern"
+        )
 
     latest = candidates[-1]
     if tag_sortkey(latest) <= tag_sortkey(pinned):
@@ -182,11 +211,17 @@ def check_semver(key, entry, timeout):
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
                 new_built, old_built = pool.map(
-                    lambda ref: image_created(repo, ref, timeout), (latest, pinned))
+                    lambda ref: image_created(repo, ref, timeout), (latest, pinned)
+                )
             if new_built and old_built and new_built <= old_built:
-                return result(key, pinned, latest, UP_TO_DATE,
-                              f"tag {latest} exists but its image is not newer "
-                              f"({new_built[:10]} <= {old_built[:10]})")
+                return result(
+                    key,
+                    pinned,
+                    latest,
+                    UP_TO_DATE,
+                    f"tag {latest} exists but its image is not newer "
+                    f"({new_built[:10]} <= {old_built[:10]})",
+                )
             if new_built:
                 detail = f"built {new_built[:10]}"
         except RuntimeError as e:
@@ -234,7 +269,10 @@ def print_row(r, name_w):
         label += f"  ({r['detail']})"
     current = (r["current"] or "")[:40]
     latest = (r["latest"] or "")[:40]
-    print(f"{r['key']:<{name_w}}  {r['mode']:<7}  {current:<40}  {latest:<40}  {label}", flush=True)
+    print(
+        f"{r['key']:<{name_w}}  {r['mode']:<7}  {current:<40}  {latest:<40}  {label}",
+        flush=True,
+    )
 
 
 def apply_updates(results):
@@ -265,26 +303,49 @@ def apply_updates(results):
         doc = yaml.safe_load(VERSIONS_FILE.read_text())
         patch(doc["versions"])
         with open(VERSIONS_FILE, "w") as f:
-            yaml.dump(doc, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+            yaml.dump(
+                doc, f, default_flow_style=False, sort_keys=False, allow_unicode=True
+            )
         print(f"\n--apply: versions.yml updated ({VERSIONS_FILE})")
-        print("WARNING: ruamel.yaml not installed, file comments were lost "
-              "(see scripts/requirements.txt).")
+        print(
+            "WARNING: ruamel.yaml not installed, file comments were lost "
+            "(see scripts/requirements.txt)."
+        )
 
     print("versions.yml was only written to disk: no container was touched.")
-    print("To deploy the new images: ansible-playbook deploy.yml --diff --ask-vault-pass")
+    print(
+        "To deploy the new images: ansible-playbook deploy.yml --diff --ask-vault-pass"
+    )
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
-    parser.add_argument("--apply", action="store_true", help="write updates to versions.yml")
-    parser.add_argument("--only", metavar="KEY", help="check only this versions.yml key")
-    parser.add_argument("--refresh", action="store_true",
-                        help=f"ignore the cached tag lists (kept {CACHE_TTL // 3600}h in {CACHE_DIR})")
-    parser.add_argument("--jobs", type=int, default=DEFAULT_JOBS,
-                        help=f"parallel skopeo calls (default: {DEFAULT_JOBS})")
-    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT,
-                        help=f"per-call skopeo timeout in seconds (default: {DEFAULT_TIMEOUT})")
+    parser.add_argument(
+        "--apply", action="store_true", help="write updates to versions.yml"
+    )
+    parser.add_argument(
+        "--only", metavar="KEY", help="check only this versions.yml key"
+    )
+    parser.add_argument(
+        "--refresh",
+        action="store_true",
+        help=f"ignore the cached tag lists (kept {CACHE_TTL // 3600}h in {CACHE_DIR})",
+    )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=DEFAULT_JOBS,
+        help=f"parallel skopeo calls (default: {DEFAULT_JOBS})",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=DEFAULT_TIMEOUT,
+        help=f"per-call skopeo timeout in seconds (default: {DEFAULT_TIMEOUT})",
+    )
     args = parser.parse_args()
 
     global REFRESH
@@ -301,7 +362,9 @@ def main():
         keys = sorted(versions)
 
     name_w = max((len(k) for k in keys), default=10)
-    header = f"{'IMAGE':<{name_w}}  {'MODE':<7}  {'CURRENT':<40}  {'LATEST':<40}  STATUS"
+    header = (
+        f"{'IMAGE':<{name_w}}  {'MODE':<7}  {'CURRENT':<40}  {'LATEST':<40}  STATUS"
+    )
     if not args.json:
         print(header)
         print("-" * len(header))
@@ -324,7 +387,9 @@ def main():
         n_base = sum(r["status"] == NO_BASELINE for r in results)
         n_err = sum(r["status"] == ERROR for r in results)
         print("-" * len(header))
-        print(f"{len(results)} images checked: {n_up} updates, {n_base} without baseline, {n_err} errors")
+        print(
+            f"{len(results)} images checked: {n_up} updates, {n_base} without baseline, {n_err} errors"
+        )
 
     if args.apply:
         apply_updates(results)

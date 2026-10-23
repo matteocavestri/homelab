@@ -9,6 +9,10 @@ Per-target reference documentation lives in [`docs/`](docs/README.md)
 ## Layout
 
 ```
+flake.nix                  # dev shell (ansible, skopeo, python, LSPs, formatters)
+flake.lock                 # pinned flake inputs
+.envrc                     # direnv -> use flake
+.nvim.lua                  # per-project Neovim config for this repo
 Makefile                   # deploy / deploy-<target> / diff / check / updates / list
 ansible/
   ansible.cfg
@@ -39,6 +43,32 @@ Each `sdtargets/<name>/` is one systemd `.target`. Quadlet and systemd unit
 templates (`*.container/.network/.target/.slice/.service/.timer.j2`) are deployed
 by filename convention; `env` and other config files are declared explicitly in
 `manifest.yml` with their destination, mode and which units to restart on change.
+
+## Development environment
+
+`flake.nix` pins the control-node toolchain used by the `Makefile` and the
+helper scripts: Ansible (`ansible`, `ansible-lint`, `ansible-language-server`),
+`skopeo` and a `python3` with PyYAML + ruamel.yaml, plus the language servers
+and formatters that `.nvim.lua` expects.
+
+```bash
+direnv allow     # or: nix develop
+```
+
+With the shell active:
+
+- `make deploy` / `make diff` / `make check` use the flake's Ansible, and
+  `ANSIBLE_CONFIG` points at `ansible/ansible.cfg` even from the repo root, so
+  `ansible-vault`/`ansible-lint` invoked manually find that config too.
+- `python3 scripts/check_updates.py` works as-is — no venv/pip step (the venv
+  below stays as the non-Nix fallback).
+- Neovim gets `ansiblels`, `yamlls`, `pylsp`, `bashls`, `nixd`, `prettier`,
+  `shfmt`, `black`, `ruff` and `shellcheck` on `$PATH`, so the project
+  `.nvim.lua` (LSP, lint-on-save, format-on-save) works without Mason. It's the
+  same layered pattern as the dotfiles repo: `:trust` it on first open, and
+  launch Neovim from a shell where direnv has loaded the flake.
+  `versions.yml` (rewritten by `check_updates.py --apply`) and the encrypted
+  `vault.yml` are exempt from formatting via `.prettierignore`.
 
 ## Usage
 
@@ -90,15 +120,22 @@ enabled+active or a unit has failed.
 
 ### Check for image updates
 
-```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r scripts/requirements.txt   # requires skopeo
+With the dev shell active (`direnv allow`), `python3`, PyYAML/ruamel.yaml and
+`skopeo` already come from the flake:
 
+```bash
 python3 scripts/check_updates.py                 # table
 python3 scripts/check_updates.py --json           # machine-readable
 python3 scripts/check_updates.py --only jellyfin  # single image
 python3 scripts/check_updates.py --apply          # write updates to versions.yml
 python3 scripts/check_updates.py --refresh        # ignore the 6h tag-list cache
+```
+
+Outside Nix, use the venv instead:
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r scripts/requirements.txt   # requires skopeo
 ```
 
 `semver` entries only compare a pinned tag against tags of the same shape (so

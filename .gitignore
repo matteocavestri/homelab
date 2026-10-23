@@ -3,6 +3,9 @@
 ansible/inventory/host_vars/
 .ansible/
 
+# Nix / direnv
+.direnv/
+
 # Python
 __pycache__/
 *.pyc
