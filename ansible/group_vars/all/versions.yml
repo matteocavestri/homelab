@@ -1,33 +1,34 @@
+---
 versions:
   alertmanager:
     image: docker.io/prom/alertmanager
-    tag: v0.34.1
+    tag: v0.35.0
     mode: semver
   alloy:
     image: docker.io/grafana/alloy
-    tag: v1.20.1
+    tag: v1.21.3
     mode: semver
   authentik:
     image: ghcr.io/goauthentik/server
-    tag: 2026.8.3
+    tag: 2026.8.5
     mode: semver
     pin_digest: sha256:5217eed4e86a3c6666ecf81c3430753ef958f97f93ac614070d458c10e0b2b33
   authentik_postgres:
     image: docker.io/library/postgres
     tag: 17-alpine
     mode: digest
-    last_digest: sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+    last_digest: sha256:3540c0362c809df084ffac0ae69fe794515f9de92692f02178bcdce0ef0302ac
   crawl4ai:
     image: docker.io/unclecode/crawl4ai
-    tag: 0.9.4
+    tag: 0.9.5
     mode: semver
   crowdsec:
     image: docker.io/crowdsecurity/crowdsec
-    tag: v1.8.1
+    tag: v1.8.2
     mode: semver
   crowdsec_web_ui:
     image: ghcr.io/theduffman85/crowdsec-web-ui
-    tag: 2026.10.5
+    tag: 2026.11.8
     mode: semver
   ddns_updater:
     image: docker.io/qmcgaw/ddns-updater
@@ -43,7 +44,7 @@ versions:
     mode: semver
   freshrss:
     image: docker.io/freshrss/freshrss
-    tag: 1.30.1
+    tag: 1.30.4
     mode: semver
   geoipupdate:
     image: ghcr.io/maxmind/geoipupdate
@@ -55,21 +56,21 @@ versions:
     mode: semver
   grafana:
     image: docker.io/grafana/grafana
-    tag: 13.2.4
+    tag: 13.3.1
     mode: semver
   homarr:
     image: ghcr.io/homarr-labs/homarr
-    tag: v2.5.1
+    tag: v2.12.0
     mode: semver
   homepage:
     image: ghcr.io/gethomepage/homepage
-    tag: v2.5.0
+    tag: v2.7.0
     mode: semver
   immich_machine_learning:
     image: ghcr.io/immich-app/immich-machine-learning
     tag: release
     mode: digest
-    last_digest: sha256:513c831cfb010ad319341a0c86b42c575a0d5b688d3e8cae346ee624074a58ed
+    last_digest: sha256:f4e7275c9fbd956ed7bccc738ac57890bcbd9f9c17844d2ea0b137e38a083454
   immich_postgres:
     image: ghcr.io/immich-app/postgres
     tag: 14-vectorchord0.4.3-pgvectors0.3.0
@@ -77,38 +78,38 @@ versions:
     tag_pattern: ^14-vectorchord[0-9.]+-pgvectors[0-9.]+$
   immich_redis:
     image: docker.io/valkey/valkey
-    tag: 9.1.2
+    tag: 9.1.3
     mode: semver
   immich_server:
     image: ghcr.io/immich-app/immich-server
     tag: release
     mode: digest
-    last_digest: sha256:db996e352359771c6a3db121a0ed8761516b22f727fc092a0f46dcfef82c1bc1
+    last_digest: sha256:7b7b575029168bfb9eb901d868ce7dbfda0d7818e78aaace29b7b8a08cd4e7d5
   jellyfin:
     image: docker.io/jellyfin/jellyfin
-    tag: '12.2'
+    tag: '12.4'
     mode: semver
   jellyfin_exporter:
     image: docker.io/rebelcore/jellyfin-exporter
-    tag: v1.5.2
+    tag: v1.6.0
     mode: semver
   jellyseerr:
     image: ghcr.io/seerr-team/seerr
-    tag: v3.5.0
+    tag: v3.5.1
     mode: semver
   lidarr:
     image: lscr.io/linuxserver/lidarr
-    tag: 3.1.0.4875-ls43
+    tag: 3.1.6.5079-ls48
     mode: semver
   loki:
     image: docker.io/grafana/loki
-    tag: 3.7.8
+    tag: 3.7.9
     mode: semver
   lemonade:
     image: ghcr.io/lemonade-sdk/lemonade-server
     tag: latest
     mode: digest
-    last_digest: sha256:bd4b89738ca57a90ce3276ddf9270c317d369dc4bc4eded94568d37b88c2bc0d
+    last_digest: sha256:7c5da79eb6ddccc65e9477e024db1ac9de4deca5ed45b1cb5840241f0336f72c
   mcpo:
     image: ghcr.io/open-webui/mcpo
     tag: latest
@@ -120,47 +121,47 @@ versions:
     mode: semver
   mimir:
     image: docker.io/grafana/mimir
-    tag: 3.2.2
+    tag: 3.2.4
     mode: semver
   n8n:
     image: docker.io/n8nio/n8n
-    tag: 2.44.0
+    tag: 3.2.0
     mode: semver
   n8n_sandbox_api:
     image: ghcr.io/n8n-io/n8n-sandbox-service-api
-    tag: 1.8.1
+    tag: 1.14.0
     mode: semver
   n8n_sandbox_runner:
     image: ghcr.io/n8n-io/n8n-sandbox-service-runner-dind
-    tag: 1.8.1
+    tag: 1.14.0
     mode: semver
   n8n_sandbox_sandbox:
     image: ghcr.io/n8n-io/n8n-sandbox-service-sandbox
     tag: latest
     mode: digest
-    last_digest: sha256:b397f4b51c75faf83cdd9f7aaf8a415a96e6462478cd7694a2b795f664ba1233
+    last_digest: sha256:f138f039255b60802778beb274ece7b72bdd30b0ec22c943136736866f61dccb
   node_exporter:
     image: docker.io/prom/node-exporter
     tag: v1.12.1
     mode: semver
   npmplus:
     image: docker.io/zoeyvid/npmplus
-    tag: 2026-07-24-r1
+    tag: 2026-10-22-r1
     mode: semver
     tag_pattern: ^\d{4}-\d{2}-\d{2}-r\d+$
   ntfy:
     image: docker.io/binwiederhier/ntfy
-    tag: v2.30.0
+    tag: v2.37.2
     mode: semver
   nvidia_gpu_exporter:
     image: docker.io/utkuozdemir/nvidia_gpu_exporter
-    tag: 1.15.1
+    tag: 1.18.0
     mode: semver
   nzbget:
     image: lscr.io/linuxserver/nzbget
     tag: latest
     mode: digest
-    last_digest: sha256:90f08a0c260f5ba3be401d9b21f7a92975ac0fb2331bb1f456ed9f09f3ca4ddb
+    last_digest: sha256:6f86d5cb17fa12c214e0c699addde8ee5b9622fbafd2f4dc2eb8f89e7251dc49
   nzbget_exporter:
     image: docker.io/frebib/nzbget-exporter
     tag: latest
@@ -168,7 +169,7 @@ versions:
     last_digest: sha256:af2cb4ef63b5801f6e0002562dfe3e36e1c4bf1777e0a96d2cad9c322722a692
   ollama:
     image: docker.io/ollama/ollama
-    tag: 0.40.3
+    tag: 0.40.16
     mode: semver
   openai_edge_tts:
     image: docker.io/travisvn/openai-edge-tts
@@ -179,14 +180,14 @@ versions:
     image: ghcr.io/open-webui/open-terminal
     tag: latest
     mode: digest
-    last_digest: sha256:4fd3bcc4da21ff3ded64a811465bd0f828d908c24114fae5800e3f1879cc0e03
+    last_digest: sha256:9ee880ebf65d7500a346e3ca74de089b9cfe9cf97ffca00336aff3505a1d4c7e
   openwebui:
     image: ghcr.io/open-webui/open-webui
-    tag: v0.12.0
+    tag: v0.13.3
     mode: semver
   pihole:
     image: docker.io/pihole/pihole
-    tag: 2026.09.0
+    tag: 2026.10.1
     mode: semver
   pipelines:
     image: ghcr.io/open-webui/pipelines
@@ -202,7 +203,7 @@ versions:
     image: lscr.io/linuxserver/prowlarr
     tag: latest
     mode: digest
-    last_digest: sha256:f9151e5bc1025c6d0a630d503210cdcb6bb55a7cc098562609d96a408d838902
+    last_digest: sha256:431d7efebcef466e56adaa40a7a2fa2b0e85159a037b8bf465eaadbf0cf5bedf
   pyroscope:
     image: docker.io/grafana/pyroscope
     tag: 2.3.0
@@ -214,50 +215,50 @@ versions:
     mode: semver
   qbittorrent_exporter:
     image: ghcr.io/martabal/qbittorrent-exporter
-    tag: v2.0.3
+    tag: v2.0.4
     mode: semver
   qdrant:
     image: docker.io/qdrant/qdrant
-    tag: v1.19
+    tag: v1.20
     mode: semver
   radarr:
     image: lscr.io/linuxserver/radarr
     tag: latest
     mode: digest
-    last_digest: sha256:cfbc4fa09dc9d78f7cedc898f4ec48c6277cacedc523c4e159db6ff1c741959c
+    last_digest: sha256:51a9ac2a9eb47afc833541e5fd6c11b86eb9f810694c22fa2429e3078e9194b2
   searxng:
     image: docker.io/searxng/searxng
     tag: latest
     mode: digest
-    last_digest: sha256:9b61996edcc679fb6665290f95fda15389a14eda6060e41a25c63ab2758f2436
+    last_digest: sha256:71a410e383ea1c1f973a0c38e566757c1f0c5f3976a33be2c70918fcd93bdcc7
   sonarr:
     image: lscr.io/linuxserver/sonarr
     tag: latest
     mode: digest
-    last_digest: sha256:0deb8db6c839ac475e9cd86277712772c40ba7f929a003d7e1de36c4b666bc13
+    last_digest: sha256:673dc4609a5672bc8e46069c86ffcea283a86b48d34a6c93d8da8c24a1b87571
   sportarr:
     image: docker.io/sportarr/sportarr
-    tag: 4.1.9.1119
+    tag: 4.1.12.1122
     mode: semver
   tdarr:
     image: ghcr.io/haveagitgat/tdarr
     tag: latest
     mode: digest
-    last_digest: sha256:7ba5325ea64951181a30f2a8d5bbc4fc0985e4c275ea1d09d15491b47b4cd8d6
+    last_digest: sha256:ce61af20247825024b790d879ad305411c7e07092e88b4cdf5c686e8dafcf8c0
   tempo:
     image: docker.io/grafana/tempo
-    tag: 3.1.0
+    tag: 3.1.1
     mode: semver
   tika:
     image: docker.io/apache/tika
-    tag: 4.1.0-1-full
+    tag: 4.2.0-1-full
     mode: semver
     tag_pattern: ^(?P<version>\d+\.\d+\.\d+)(-\d+)?-full$
   trilium:
     image: docker.io/triliumnext/trilium
-    tag: v0.106.0
+    tag: v0.107.0
     mode: semver
   vaultwarden:
     image: docker.io/vaultwarden/server
-    tag: 1.37.4
+    tag: 1.37.5
     mode: semver
