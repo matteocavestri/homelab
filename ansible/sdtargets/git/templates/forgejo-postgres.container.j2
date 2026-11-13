@@ -1,0 +1,33 @@
+[Unit]
+Description=Forgejo PostgreSQL Database
+PartOf=git.target
+After=git.target
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.forgejo_postgres.image }}:{{ versions.forgejo_postgres.tag }}
+ContainerName=forgejo-postgres
+Network=git.network
+Volume=forgejo-postgres-data:/var/lib/postgresql/data
+EnvironmentFile=%h/.config/git/forgejo-postgres.env
+ShmSize=128m
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=forgejo-postgres
+Slice=git.slice
+
+[Install]
+WantedBy=git.target

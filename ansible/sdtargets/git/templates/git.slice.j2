@@ -1,0 +1,18 @@
+[Unit]
+Description=Git Slice
+Before=slices.target
+
+[Slice]
+# CPU
+CPUWeight={{ git_slice.cpu_weight }}
+StartupCPUWeight={{ git_slice.startup_cpu_weight }}
+CPUQuota={{ git_slice.cpu_quota }}
+{% if git_slice.allowed_cpus is defined and git_slice.allowed_cpus %}
+AllowedCPUs={{ git_slice.allowed_cpus }}
+{% endif %}
+# Memory
+MemoryMin={{ git_slice.memory_min }}
+MemoryLow={{ git_slice.memory_low }}
+MemoryHigh={{ git_slice.memory_high }}
+MemoryMax={{ git_slice.memory_max }}
+MemorySwapMax={{ git_slice.memory_swap_max }}

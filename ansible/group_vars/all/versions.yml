@@ -42,6 +42,18 @@ versions:
     image: ghcr.io/flaresolverr/flaresolverr
     tag: v3.5.2
     mode: semver
+  forgejo:
+    image: codeberg.org/forgejo/forgejo
+    tag: 17-rootless
+    mode: digest
+  forgejo_postgres:
+    image: docker.io/library/postgres
+    tag: 17-alpine
+    mode: digest
+  forgejo_runner:
+    image: data.forgejo.org/forgejo/runner
+    tag: "13"
+    mode: digest
   freshrss:
     image: docker.io/freshrss/freshrss
     tag: 1.30.4

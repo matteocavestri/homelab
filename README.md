@@ -31,7 +31,7 @@ ansible/
     common/                # shared assets, not a systemd target
       files/backup-target.sh
       templates/           # notify@ units, podman drop-ins
-    <sdtarget>/            # ai auth arr immich jellyfin monitoring netcore
+    <sdtarget>/            # ai auth arr git immich jellyfin monitoring netcore
       config.yml           #   office proxy infrastructure media
       manifest.yml         # config.yml  = slice limits + app config
       templates/*.j2       # manifest.yml = env/config file map + restarts
@@ -157,6 +157,7 @@ seconds.
 | monitoring | 04:00 | config tree, data volumes of ntfy/alertmanager/grafana/mimir/loki/tempo/pyroscope |
 | office | 04:15 | config tree, vaultwarden-data, freshrss-data/-extensions, trilium-data |
 | immich | 04:30 | config tree, `pg_dump` immich-postgres |
+| git | 05:00 | config tree, `pg_dump` forgejo-postgres, forgejo-data/-config, forgejo-runner-data |
 | ai | 04:45 | config tree, openwebui-data only |
 
 ## Services
@@ -174,7 +175,7 @@ pinning), memory `MemoryMin`/`MemoryLow`/`MemoryHigh`/`MemoryMax`
 (hard-guaranteed / soft-guaranteed / throttle / OOM ceiling), and `MemorySwapMax`.
 Host: 56 threads, 32 GB RAM, 12 GB zram + 16 GB LVM swap. Tiers — **high**
 (netcore, proxy, auth, monitoring: keep alive under pressure), **medium**
-(immich, jellyfin, office), **low** (ai, arr: best-effort, compressible).
+(immich, jellyfin, office, git), **low** (ai, arr: best-effort, compressible).
 `infrastructure`/`media` have no dedicated slice.
 
 ### netcore.target
@@ -339,6 +340,20 @@ ports are actually published by `gluetun.container` itself.
 
 Also ships `update-egr.service`/`.timer`, a daily unit unrelated to the
 containers above (updates an IPTV EPG file).
+
+### git.target
+
+**Resource slice** — `git.slice`, tier: medium
+
+| CPUWeight (run/startup) | CPUQuota | AllowedCPUs | Memory min/low/high/max | Swap |
+|---|---|---|---|---|
+| 150 / 300 | 400% | — | 256M / 512M / 2G / 3G | 1G |
+
+| Service | Image | Version | Ports | Network | Volumes | Config |
+|---|---|---|---|---|---|---|
+| forgejo-postgres | `docker.io/library/postgres` | 17-alpine (digest) | internal | git.network | `forgejo-postgres-data:/var/lib/postgresql/data` | `forgejo-postgres.env` |
+| forgejo | `codeberg.org/forgejo/forgejo` | 17-rootless (digest) | 127.0.0.1:8085, 2222 (SSH) | git.network | `forgejo-data:/var/lib/gitea`, `forgejo-config:/etc/gitea` | `forgejo.env` |
+| forgejo-runner | `data.forgejo.org/forgejo/runner` | 13 (digest) | internal | git.network | `forgejo-runner-data:/data`, host podman socket | `forgejo-runner.env`, `runner-config.yml`, `runner-entrypoint.sh` |
 
 ### office.target
 

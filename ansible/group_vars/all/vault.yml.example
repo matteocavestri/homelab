@@ -63,3 +63,8 @@ vault_freshrss:
   oidc_client_crypto_key: "CHANGEME"
 vault_vaultwarden:
   admin_token: "CHANGEME"
+vault_forgejo:
+  postgres_password: "CHANGEME"
+  secret_key: "CHANGEME"        # openssl rand -hex 32
+  internal_token: "CHANGEME"    # forgejo generate secret INTERNAL_TOKEN
+  runner_secret: "CHANGEME"     # openssl rand -hex 20 (40 hex chars)

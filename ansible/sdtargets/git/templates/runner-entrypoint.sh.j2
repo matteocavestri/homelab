@@ -1,0 +1,13 @@
+#!/bin/sh
+# Creates /data/.runner from the shared secret on first start (the secret must
+# already be registered server-side with `forgejo forgejo-cli actions register`),
+# then runs the daemon.
+set -eu
+cd /data
+if [ ! -f /data/.runner ]; then
+  forgejo-runner create-runner-file \
+    --instance "$FORGEJO_INSTANCE" \
+    --secret "$RUNNER_SECRET" \
+    --name "$RUNNER_NAME"
+fi
+exec forgejo-runner daemon --config /config/runner-config.yml

@@ -1,0 +1,26 @@
+log:
+  level: info
+runner:
+  file: /data/.runner
+  capacity: {{ forgejo_runner.capacity }}
+  timeout: 3h
+  fetch_timeout: 5s
+  fetch_interval: 2s
+  labels:
+    - "chimera:docker://docker.io/chimeralinux/chimera:latest"
+    - "docker:docker://docker.io/chimeralinux/chimera:latest"
+cache:
+  enabled: false
+container:
+  # job containers join git.network (NetworkName=git) so they resolve `forgejo`
+  network: "git"
+  privileged: false
+  # label=disable makes the :z relabel unnecessary for the nbuild-work bind mount
+  options: "--init --security-opt seccomp=unconfined --security-opt label=disable --security-opt unmask=ALL -v {{ forgejo_runner.nbuild_work_host }}:{{ forgejo_runner.nbuild_work_path }}"
+  # explicit unix socket -> shared into job containers at the same host path
+  docker_host: "unix://{{ forgejo_runner.podman_socket }}"
+  # bind mounts (also those from `options`) are dropped unless whitelisted here
+  valid_volumes:
+    - "{{ forgejo_runner.nbuild_work_host }}"
+host:
+  workdir_parent:

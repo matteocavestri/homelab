@@ -251,6 +251,16 @@ run_backup() {
 			"immich" "immich" || ((errors++))
 		;;
 
+	git)
+		backup_configs "$target" "${target_dir}/configs" || ((errors++))
+		backup_postgres "forgejo-postgres" \
+			"${target_dir}/forgejo-postgres" \
+			"forgejo" "forgejo" || ((errors++))
+		backup_volume "forgejo-data" "${target_dir}/forgejo" || ((errors++))
+		backup_volume "forgejo-config" "${target_dir}/forgejo" || ((errors++))
+		backup_volume "forgejo-runner-data" "${target_dir}/forgejo-runner" || ((errors++))
+		;;
+
 	ai)
 		backup_configs "$target" "${target_dir}/configs" || ((errors++))
 		backup_volume "openwebui-data" "${target_dir}/openwebui" || ((errors++))

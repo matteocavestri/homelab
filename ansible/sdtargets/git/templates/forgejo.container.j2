@@ -1,0 +1,38 @@
+[Unit]
+Description=Forgejo Git Forge
+PartOf=git.target
+After=git.target forgejo-postgres.service
+Requires=forgejo-postgres.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.forgejo.image }}:{{ versions.forgejo.tag }}
+ContainerName=forgejo
+Network=git.network
+PublishPort=127.0.0.1:8085:{{ forgejo.http_port }}
+PublishPort={{ forgejo.ssh_port }}:{{ forgejo.ssh_port }}
+Volume=forgejo-data:/var/lib/gitea
+Volume=forgejo-config:/etc/gitea
+Volume=/etc/localtime:/etc/localtime:ro
+EnvironmentFile=%h/.config/git/forgejo.env
+NoNewPrivileges=true
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=30
+
+[Service]
+Restart=on-failure
+RestartSec=10
+RestartSteps=3
+RestartMaxDelaySec=60
+TimeoutStartSec=120
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=forgejo
+Slice=git.slice
+
+[Install]
+WantedBy=git.target

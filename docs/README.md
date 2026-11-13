@@ -22,6 +22,7 @@ default.target
 ├─ infrastructure.target   → netcore, proxy, auth, monitoring
 ├─ media.target            → jellyfin, arr, immich
 ├─ office.target
+├─ git.target
 └─ ai.target
 ```
 
@@ -38,6 +39,7 @@ of their own). `infrastructure.target` also runs Homarr/Homepage directly.
 | [monitoring](monitoring.md) | high | Grafana / Mimir / Loki / Tempo / Pyroscope / Alertmanager / ntfy |
 | [immich](immich.md) | medium | Immich photo management |
 | [jellyfin](jellyfin.md) | medium | Jellyfin media server + IPTV EPG job |
+| [git](git.md) | medium | Forgejo + PostgreSQL + Actions runner |
 | [office](office.md) | medium | Vaultwarden, FreshRSS |
 | [ai](ai.md) | low | Open WebUI, Ollama, n8n, ComfyUI, RAG tooling, n8n sandbox |
 | [arr](arr.md) | low | *arr media automation behind a Gluetun VPN |

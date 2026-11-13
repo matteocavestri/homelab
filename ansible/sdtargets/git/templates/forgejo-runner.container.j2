@@ -1,0 +1,42 @@
+[Unit]
+Description=Forgejo Actions Runner
+PartOf=git.target
+After=git.target forgejo.service
+Requires=forgejo.service
+OnFailure=notify-failure@%n.service
+StartLimitIntervalSec=5min
+StartLimitBurst=5
+
+[Container]
+Image={{ versions.forgejo_runner.image }}:{{ versions.forgejo_runner.tag }}
+ContainerName=forgejo-runner
+Network=git.network
+# Root inside the rootless user namespace == the unprivileged host user, which
+# is what owns the podman socket. Not real root on the host.
+User=0:0
+Volume=forgejo-runner-data:/data
+Volume={{ forgejo_runner.nbuild_work_host }}:{{ forgejo_runner.nbuild_work_path }}:z
+Volume=%h/.config/git/runner-config.yml:/config/runner-config.yml:ro
+Volume=%h/.config/git/runner-entrypoint.sh:/config/runner-entrypoint.sh:ro
+Volume={{ forgejo_runner.podman_socket }}:{{ forgejo_runner.podman_socket }}
+SecurityLabelDisable=true
+EnvironmentFile=%h/.config/git/forgejo-runner.env
+Exec=/bin/sh /config/runner-entrypoint.sh
+AutoUpdate=registry
+StopSignal=SIGTERM
+StopTimeout=60
+
+[Service]
+Restart=on-failure
+RestartSec=15
+RestartSteps=3
+RestartMaxDelaySec=120
+TimeoutStartSec=120
+TimeoutStopSec=60
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=forgejo-runner
+Slice=git.slice
+
+[Install]
+WantedBy=git.target

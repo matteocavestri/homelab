@@ -1,0 +1,35 @@
+---
+# Tier: medium
+# Job containers started by the runner live in the host podman (outside this
+# slice), so these limits only cover forgejo, postgres and the runner daemon.
+git_slice:
+  cpu_weight: "150"
+  startup_cpu_weight: "300"
+  cpu_quota: "400%"
+  memory_min: "256M"
+  memory_low: "512M"
+  memory_high: "2G"
+  memory_max: "3G"
+  memory_swap_max: "1G"
+
+forgejo_postgres:
+  user: "forgejo"
+  db: "forgejo"
+
+forgejo:
+  domain: "git.cavestrihome.com"
+  root_url: "https://git.cavestrihome.com/"
+  http_port: "3000"        # container port; published on 127.0.0.1:8085
+  ssh_port: "2222"         # container and host port
+  app_name: "Forgejo"
+
+forgejo_runner:
+  name: "homelab-runner"
+  instance_url: "http://forgejo:3000"   # internal, via git.network
+  capacity: "2"
+  # rootless host podman API socket (user uid 1000 -> /run/user/1000), mounted
+  # at the SAME path inside the runner so job containers can bind it by host path
+  podman_socket: "/run/user/1000/podman/podman.sock"
+  # persistent build dir: host path -> mounted at /nbuild-work in every job container
+  nbuild_work_host: "/home/admin/FMPT/nbuild-work"
+  nbuild_work_path: "/nbuild-work"

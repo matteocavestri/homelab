@@ -1,0 +1,26 @@
+# Deploy metadata for this sdtarget. Quadlet/systemd unit files in templates/
+# are deployed by convention (see tasks/deploy_target.yml); env & other config
+# files are listed explicitly here with their dest, mode and which units to
+# restart when they change.
+---
+config_files:
+  - src: "forgejo-postgres.env.j2"
+    dest: "~/.config/git/forgejo-postgres.env"
+    mode: "0600"
+    restart: ["forgejo-postgres.service"]
+  - src: "forgejo.env.j2"
+    dest: "~/.config/git/forgejo.env"
+    mode: "0600"
+    restart: ["forgejo.service"]
+  - src: "forgejo-runner.env.j2"
+    dest: "~/.config/git/forgejo-runner.env"
+    mode: "0600"
+    restart: ["forgejo-runner.service"]
+  - src: "runner-config.yml.j2"
+    dest: "~/.config/git/runner-config.yml"
+    mode: "0644"
+    restart: ["forgejo-runner.service"]
+  - src: "runner-entrypoint.sh.j2"
+    dest: "~/.config/git/runner-entrypoint.sh"
+    mode: "0755"
+    restart: ["forgejo-runner.service"]

@@ -99,3 +99,10 @@
         apply: { tags: [office] }
       vars: { sdtarget: office }
       tags: [office]
+
+    - name: "sdtarget: git"
+      ansible.builtin.include_tasks:
+        file: tasks/deploy_target.yml
+        apply: { tags: [git] }
+      vars: { sdtarget: git }
+      tags: [git]
